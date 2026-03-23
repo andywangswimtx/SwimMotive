@@ -1,0 +1,61 @@
+{
+  "meet": "2025 NCSA Spring Swimming Championships",
+  "gender": "Women",
+  "course": "LCM",
+  "qualifying_period": "January 1, 2024, through March 9, 2025",
+  "standards": [
+    {
+      "event": "50 FREE",
+      "standard": "27.59"
+    },
+    {
+      "event": "100 FREE",
+      "standard": "59.89"
+    },
+    {
+      "event": "200 FREE",
+      "standard": "2:08.09"
+    },
+    {
+      "event": "400/500 FREE",
+      "standard": "4:27.89"
+    },
+    {
+      "event": "800/1000 FREE",
+      "standard": "9:08.99"
+    },
+    {
+      "event": "1500/1650 FREE",
+      "standard": "17:34.59"
+    },
+    {
+      "event": "50 BACK",
+      "standard": "100 Back Qualifying Time"
+    },
+    {
+      "event": "100 BACK",
+      "standard": "1:07.19"
+    },
+    {
+      "event": "200 BACK",
+      "standard": "2:24.29"
+    },
+    {
+      "event": "50 BREAST",
+      "standard": "100 Breast Qualifying Time"
+    },
+    {
+      "event": "100 BREAST",
+      "standard": "1:16.29"
+    },
+    {
+      "event": "200 BREAST",
+      "standard": "2:41.89"
+    },
+    {
+      "event": "50 FLY",
+      "standard": "100 Fly Qualifying Time"
+    }
+  ]
+}
+

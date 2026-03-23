@@ -1,0 +1,89 @@
+{
+  "meet": "2026 TYR Futures Championships",
+  "category": "18 & Under Standards",
+  "gender": "Women",
+  "course": "LCM",
+  "qualifying_period": "June 1, 2025 through Entry Deadline",
+  "standards": [
+    {
+      "event": "50 FR",
+      "time": "27.39"
+    },
+    {
+      "event": "100 FR",
+      "time": "59.29"
+    },
+    {
+      "event": "200 FR",
+      "time": "2:07.79"
+    },
+    {
+      "event": "400 FR",
+      "time": "4:28.79"
+    },
+    {
+      "event": "800 FR",
+      "time": "9:13.79"
+    },
+    {
+      "event": "1500 FR",
+      "time": "17:40.19"
+    },
+    {
+      "event": "50 BK",
+      "time": "30.89"
+    },
+    {
+      "event": "100 BK",
+      "time": "1:06.79"
+    },
+    {
+      "event": "200 BK",
+      "time": "2:23.99"
+    },
+    {
+      "event": "50 BR",
+      "time": "34.79"
+    },
+    {
+      "event": "100 BR",
+      "time": "1:15.99"
+    },
+    {
+      "event": "200 BR",
+      "time": "2:43.39"
+    },
+    {
+      "event": "50 FL",
+      "time": "29.49"
+    },
+    {
+      "event": "100 FL",
+      "time": "1:04.69"
+    },
+    {
+      "event": "200 FL",
+      "time": "2:21.89"
+    },
+    {
+      "event": "200 IM",
+      "time": "2:26.19"
+    },
+    {
+      "event": "400 IM",
+      "time": "5:07.29"
+    },
+    {
+      "event": "4x100 FR-R",
+      "time": "4:04.29"
+    },
+    {
+      "event": "4x200 FR-R",
+      "time": "8:40.89"
+    },
+    {
+      "event": "4x100 MED-R",
+      "time": "4:33.79"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "meet": "2026 TYR Futures Championships",
+  "category": "18 & Under Standards",
+  "gender": "Men",
+  "course": "LCM",
+  "qualifying_period": "June 1, 2025 through Entry Deadline",
+  "standards": [
+    {
+      "event": "50 FR",
+      "standard": "24.59"
+    },
+    {
+      "event": "100 FR",
+      "standard": "53.59"
+    },
+    {
+      "event": "200 FR",
+      "standard": "1:57.79"
+    },
+    {
+      "event": "400 FR",
+      "standard": "4:09.99"
+    },
+    {
+      "event": "800 FR",
+      "standard": "8:40.69"
+    },
+    {
+      "event": "1500 FR",
+      "standard": "16:38.99"
+    },
+    {
+      "event": "50 BK",
+      "standard": "27.89"
+    },
+    {
+      "event": "100 BK",
+      "standard": "1:00.59"
+    },
+    {
+      "event": "200 BK",
+      "standard": "2:11.89"
+    },
+    {
+      "event": "50 BR",
+      "standard": "30.89"
+    },
+    {
+      "event": "100 BR",
+      "standard": "1:08.19"
+    },
+    {
+      "event": "200 BR",
+      "standard": "2:29.09"
+    },
+    {
+      "event": "50 FL",
+      "standard": "26.29"
+    },
+    {
+      "event": "100 FL",
+      "standard": "57.99"
+    },
+    {
+      "event": "200 FL",
+      "standard": "2:10.19"
+    },
+    {
+      "event": "200 IM",
+      "standard": "2:12.79"
+    },
+    {
+      "event": "400 IM",
+      "standard": "4:42.39"
+    },
+    {
+      "event": "4x100 FR-R",
+      "standard": "3:40.89"
+    },
+    {
+      "event": "4x200 FR-R",
+      "standard": "8:00.49"
+    },
+    {
+      "event": "4x100 MED-R",
+      "standard": "4:05.89"
+    }
+  ],
+  "notes": [
+    "Swimmers may qualify for 50 Bk/Br/Fly using the 50 standard or the corresponding 100 standard (to be seeded after the 50 qualifiers)."
+  ]
+}
+

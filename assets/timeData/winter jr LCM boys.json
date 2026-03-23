@@ -1,0 +1,93 @@
+{
+  "meet": "2026 Speedo Winter Junior Championships",
+  "gender": "Men",
+  "course": "LCM",
+  "qualifying_period": "November 1, 2025 through Entry Deadline",
+  "standards": [
+    {
+      "event": "50 FR",
+      "qualifying_standard": "24.09",
+      "bonus_standard": "24.59"
+    },
+    {
+      "event": "100 FR",
+      "qualifying_standard": "52.59",
+      "bonus_standard": "53.59"
+    },
+    {
+      "event": "200 FR",
+      "qualifying_standard": "1:55.29",
+      "bonus_standard": "1:57.79"
+    },
+    {
+      "event": "400 FR",
+      "qualifying_standard": "4:04.99",
+      "bonus_standard": "4:09.99"
+    },
+    {
+      "event": "800 FR",
+      "qualifying_standard": "8:28.19",
+      "bonus_standard": "8:40.69"
+    },
+    {
+      "event": "1500 FR",
+      "qualifying_standard": "16:14.79",
+      "bonus_standard": "16:38.99"
+    },
+    {
+      "event": "100 BK",
+      "qualifying_standard": "58.79",
+      "bonus_standard": "1:00.59"
+    },
+    {
+      "event": "200 BK",
+      "qualifying_standard": "2:08.29",
+      "bonus_standard": "2:11.89"
+    },
+    {
+      "event": "100 BR",
+      "qualifying_standard": "1:05.89",
+      "bonus_standard": "1:08.19"
+    },
+    {
+      "event": "200 BR",
+      "qualifying_standard": "2:24.09",
+      "bonus_standard": "2:29.09"
+    },
+    {
+      "event": "100 FL",
+      "qualifying_standard": "56.49",
+      "bonus_standard": "57.99"
+    },
+    {
+      "event": "200 FL",
+      "qualifying_standard": "2:06.39",
+      "bonus_standard": "2:10.19"
+    },
+    {
+      "event": "200 IM",
+      "qualifying_standard": "2:09.29",
+      "bonus_standard": "2:12.79"
+    },
+    {
+      "event": "400 IM",
+      "qualifying_standard": "4:35.89",
+      "bonus_standard": "4:42.39"
+    },
+    {
+      "event": "4x100 FR-R",
+      "qualifying_standard": "3:35.79",
+      "bonus_standard": null
+    },
+    {
+      "event": "4x200 FR-R",
+      "qualifying_standard": "7:52.39",
+      "bonus_standard": null
+    },
+    {
+      "event": "4x100 Med-R",
+      "qualifying_standard": "3:58.69",
+      "bonus_standard": null
+    }
+  ]
+}

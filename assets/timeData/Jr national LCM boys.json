@@ -1,0 +1,59 @@
+{
+  "meet": "2026 Speedo Junior National Championships",
+  "gender": "Men",
+  "course": "LCM",
+  "qualifying_period": "June 1, 2025 through Entry Deadline",
+  "standards": [
+    {
+      "event": "50 FR",
+      "qualifying_standard": "23.79",
+      "bonus_standard": "24.59"
+    },
+    {
+      "event": "100 FR",
+      "qualifying_standard": "51.99",
+      "bonus_standard": "53.59"
+    },
+    {
+      "event": "200 FR",
+      "qualifying_standard": "1:54.09",
+      "bonus_standard": "1:57.79"
+    },
+    {
+      "event": "400 FR",
+      "qualifying_standard": "4:02.19",
+      "bonus_standard": "4:09.99"
+    },
+    {
+      "event": "800 FR",
+      "qualifying_standard": "8:23.09",
+      "bonus_standard": "8:40.69"
+    },
+    {
+      "event": "1500 FR",
+      "qualifying_standard": "16:05.09",
+      "bonus_standard": "16:38.99"
+    },
+    {
+      "event": "50 BK",
+      "qualifying_standard": "26.69",
+      "bonus_standard": "27.89"
+    },
+    {
+      "event": "100 BK",
+      "qualifying_standard": "58.19",
+      "bonus_standard": "1:00.59"
+    },
+    {
+      "event": "200 BK",
+      "qualifying_standard": "2:06.99",
+      "bonus_standard": "2:11.89"
+    },
+    {
+      "event": "50 BR",
+      "qualifying_standard": "29.59",
+      "bonus_standard": "30.89"
+    }
+  ]
+}
+
