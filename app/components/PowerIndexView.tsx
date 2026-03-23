@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
     calculatePowerIndex,
     EventName,
     interpretScore,
     parseTimeString,
-} from "../powerIndex";
+} from "../utils/PowerIndex";
 import type { Gender } from "../utils/dataManager";
 
 export type PowerIndexViewProps = {
@@ -16,14 +17,14 @@ export type PowerIndexViewProps = {
 
 const CATEGORY_STYLES: Record<
   string,
-  { bg: string; text: string; bar: string; emoji: string }
+  { bg: string; text: string; border: string; icon: string; iconLib: "Ionicons" | "MaterialCommunityIcons" }
 > = {
-  elite: { bg: "#fffbeb", text: "#b45309", bar: "#f59e0b", emoji: "🥇" },
-  top: { bg: "#eff6ff", text: "#1d4ed8", bar: "#3b82f6", emoji: "⚡" },
-  competitive: { bg: "#ecfdf5", text: "#047857", bar: "#10b981", emoji: "🏊" },
-  developing: { bg: "#fefce8", text: "#a16207", bar: "#eab308", emoji: "📈" },
-  base: { bg: "#f9fafb", text: "#4b5563", bar: "#9ca3af", emoji: "🌊" },
-  offchart: { bg: "#fff1f2", text: "#be123c", bar: "#f43f5e", emoji: "📊" },
+  elite: { bg: "#fffbeb", text: "#b45309", border: "#f59e0b", icon: "medal", iconLib: "Ionicons" },
+  top: { bg: "#eff6ff", text: "#1d4ed8", border: "#3b82f6", icon: "flash", iconLib: "Ionicons" },
+  competitive: { bg: "#ffffff", text: "#059669", border: "#10b981", icon: "swim", iconLib: "MaterialCommunityIcons" },
+  developing: { bg: "#ffffff", text: "#d97706", border: "#fbbf24", icon: "trending-up", iconLib: "Ionicons" },
+  base: { bg: "#ffffff", text: "#4b5563", border: "#9ca3af", icon: "water", iconLib: "Ionicons" },
+  offchart: { bg: "#fff1f2", text: "#be123c", border: "#f43f5e", icon: "alert-circle", iconLib: "Ionicons" },
 };
 
 export default function PowerIndexView({
@@ -31,7 +32,7 @@ export default function PowerIndexView({
   powerIndexEvent,
   time,
 }: PowerIndexViewProps) {
-  const piGender = gender === "Boy" ? "Boys" : "Girls";
+  const piGender = gender === "Boy" ? "Boy" : "Girl";
 
   const parsedSeconds = useMemo(() => parseTimeString(time), [time]);
 
@@ -64,21 +65,27 @@ export default function PowerIndexView({
     <View
       style={[
         styles.card,
-        { backgroundColor: style.bg, borderColor: style.bar },
+        { backgroundColor: style.bg, borderColor: style.border },
       ]}
     >
       {/* Title row */}
       <View style={styles.headerRow}>
-        <View>
-          <Text style={styles.label}>Power Index</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.label}>POWER INDEX</Text>
           <Text style={styles.subLabel}>
             SwimCloud benchmark (1 = elite, 100 = base)
           </Text>
         </View>
-        <Text style={styles.emoji}>{style.emoji}</Text>
+        <View style={styles.iconContainer}>
+            {style.iconLib === "Ionicons" ? (
+                <Ionicons name={style.icon as any} size={24} color={style.border} />
+            ) : (
+                <MaterialCommunityIcons name={style.icon as any} size={24} color={style.border} />
+            )}
+        </View>
       </View>
 
-      {/* Score */}
+      {/* Score and Label */}
       <View style={styles.scoreRow}>
         <Text style={[styles.score, { color: style.text }]}>
           {result.score.toFixed(1)}
@@ -88,14 +95,27 @@ export default function PowerIndexView({
         </Text>
       </View>
 
-      {/* Progress bar */}
+      {/* Progress bar (Subtle) */}
       <View style={styles.progressBg}>
         <View
           style={[
             styles.progressFill,
             {
               width: `${barPercent}%`,
-              backgroundColor: style.bar,
+              backgroundColor: style.border,
+              opacity: 0.1,
+            },
+          ]}
+        />
+        <View
+          style={[
+            styles.progressFill,
+            {
+              position: 'absolute',
+              width: `${barPercent}%`,
+              backgroundColor: style.border,
+              height: 4,
+              bottom: 0,
             },
           ]}
         />
@@ -106,73 +126,76 @@ export default function PowerIndexView({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 24,
+    padding: 20,
     borderWidth: 2,
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
-
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10,
+    alignItems: "flex-start",
+    marginBottom: 6,
   },
-
   label: {
-    fontSize: 12,
-    fontWeight: "600",
+    fontSize: 14,
+    fontWeight: "700",
     color: "#6b7280",
-    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
-
   subLabel: {
-    fontSize: 10,
+    fontSize: 11,
     color: "#9ca3af",
     marginTop: 2,
+    fontWeight: "500",
   },
-
-  emoji: {
-    fontSize: 24,
+  iconContainer: {
+    backgroundColor: "#f3f4f6",
+    padding: 8,
+    borderRadius: 12,
   },
-
   scoreRow: {
     flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 10,
+    alignItems: "baseline",
+    marginVertical: 12,
   },
-
   score: {
-    fontSize: 40,
+    fontSize: 52,
     fontWeight: "900",
+    letterSpacing: -1,
   },
-
   scoreLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginLeft: 8,
-    marginBottom: 4,
+    fontSize: 18,
+    fontWeight: "700",
+    marginLeft: 12,
   },
-
   progressBg: {
-    height: 8,
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.6)",
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#f3f4f6",
     overflow: "hidden",
+    marginTop: 8,
+    position: 'relative',
   },
-
   progressFill: {
     height: "100%",
-    borderRadius: 999,
   },
-
   empty: {
     backgroundColor: "#f9fafb",
-    padding: 16,
-    borderRadius: 16,
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
   },
-
   emptyText: {
     textAlign: "center",
     color: "#9ca3af",
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: "500",
   },
 });

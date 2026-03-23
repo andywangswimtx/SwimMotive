@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import {
     AgeGroup,
@@ -15,7 +17,12 @@ import {
     PoolType,
 } from "../utils/dataManager";
 
-import type { EventName } from "../powerIndex";
+import {
+    calculatePowerIndex,
+    EventName,
+    interpretScore,
+    parseTimeString,
+} from "../utils/PowerIndex";
 import MotivationalStandardsView from "./MotivationalStandardsView";
 import PowerIndexView from "./PowerIndexView";
 import SingleStandardView from "./SingleStandardView";
@@ -48,6 +55,7 @@ export default function ResultsView({
   userTime,
   onBackToInput,
 }: ResultsViewProps) {
+  const insets = useSafeAreaInsets();
   const [viewMode, setViewMode] = useState<ViewMode>("selection");
 
   const motivationalStandards = getMotivationalStandards(
@@ -194,19 +202,19 @@ export default function ResultsView({
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <Pressable onPress={onBackToInput}>
-          <Text style={styles.back}>← Back</Text>
-        </Pressable>
+        <View style={[styles.header, { paddingTop: Math.max(insets.top, 24) }]}>
+          <Pressable onPress={onBackToInput} style={styles.backButton}>
+            <Text style={styles.backText}>← Your Time Entry Page</Text>
+          </Pressable>
+  
+          <Text style={styles.title}>Your Results</Text>
+          <Text style={styles.subtitle}>Choose a standards comparison</Text>
+        </View>
 
-        <Text style={styles.title}>Your Results</Text>
-        <Text style={styles.subtitle}>Choose a standards comparison</Text>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Power Index */}
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Power Index Summary Card */}
         {powerIndexEvent ? (
-          <View style={{ marginBottom: 12 }}>
+          <View style={{ marginBottom: 20 }}>
             <PowerIndexView
               gender={gender}
               powerIndexEvent={powerIndexEvent}
@@ -219,112 +227,214 @@ export default function ResultsView({
           </View>
         )}
 
-        {/* Buttons */}
+        {/* Standard Comparison Buttons */}
         {renderButton(
-          "🇺🇸",
-          "US Olympic Trial",
-          poolType === "LCM" && olympicTrialStandard
-            ? () => setViewMode("olympicTrial")
-            : null,
-        )}
-
-        {renderButton(
-          "🏊",
+          "swim",
+          "MaterialCommunityIcons",
+          "#f1f5f9",
+          "#3b82f6",
           "Age Group Motivational",
           motivationalStandards ? () => setViewMode("motivational") : null,
         )}
 
         {renderButton(
-          "🏅",
+          "medal",
+          "Ionicons",
+          "#fff7ed",
+          "#f97316",
           "Jr. National Cuts",
           jrNationalStandard ? () => setViewMode("jrNational") : null,
         )}
 
         {renderButton(
-          "❄️",
+          "snowflake",
+          "MaterialCommunityIcons",
+          "#fff1f2",
+          "#f43f5e",
           "Winter Jr. Cuts",
           winterJrStandard ? () => setViewMode("winterJr") : null,
         )}
 
         {renderButton(
-          "⭐",
+          "star",
+          "Ionicons",
+          "#fefce8",
+          "#eab308",
           "NCSA Cuts",
           ncsaStandard ? () => setViewMode("ncsa") : null,
         )}
 
         {renderButton(
-          "⚡",
+          "flash",
+          "Ionicons",
+          "#f0fdf4",
+          "#10b981",
           "Futures Cuts",
           futuresStandard ? () => setViewMode("futures") : null,
         )}
 
         {renderButton(
-          "🏆",
+          "trophy",
+          "Ionicons",
+          "#f5f3ff",
+          "#8b5cf6",
           "TSC Regional Cuts",
           tscStandards ? () => setViewMode("tsc") : null,
         )}
+
+        {renderButton(
+          "flag",
+          "Ionicons",
+          "#fef2f2",
+          "#be123c",
+          "Olympic Trial Cuts",
+          olympicTrialStandard ? () => setViewMode("olympicTrial") : null,
+        )}
+
+        {/* Coming Soon Section */}
+        <Text style={styles.sectionHeader}>COMING SOON</Text>
+        <View style={styles.disabledBox}>
+            <Text style={styles.disabledText}>More standards being added...</Text>
+        </View>
       </ScrollView>
     </View>
   );
 
   function renderButton(
     icon: string,
+    iconLib: "Ionicons" | "MaterialCommunityIcons",
+    iconBg: string,
+    color: string,
     label: string,
     onPress: (() => void) | null,
   ) {
+    const IconComp = iconLib === "Ionicons" ? Ionicons : MaterialCommunityIcons;
+
     return (
       <Pressable
         onPress={onPress || undefined}
-        style={[styles.card, !onPress && styles.disabled]}
+        style={[styles.card, !onPress && styles.disabledCard]}
       >
-        <Text style={styles.icon}>{icon}</Text>
-        <Text style={styles.cardText}>{label}</Text>
-        <Text style={styles.arrow}>{onPress ? "→" : "🔒"}</Text>
+        <View style={[styles.iconWrapper, { backgroundColor: iconBg }]}>
+           <IconComp name={icon as any} size={20} color={color} />
+        </View>
+        <Text style={[styles.cardText, !onPress && styles.disabledTextSecondary]}>{label}</Text>
+        <Ionicons 
+            name="arrow-forward" 
+            size={18} 
+            color={onPress ? color : "#9ca3af"} 
+            style={{ opacity: onPress ? 1 : 0.4 }} 
+        />
       </Pressable>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#eef2ff" },
+  container: { flex: 1, backgroundColor: "#f8fafc" },
 
   header: {
     backgroundColor: "#4f46e5",
-    padding: 16,
+    padding: 24,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    shadowColor: "#4f46e5",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 15,
+    elevation: 10,
+    zIndex: 10,
   },
-  back: { color: "white", marginBottom: 6 },
-  title: { color: "white", fontSize: 18, fontWeight: "bold" },
-  subtitle: { color: "#c7d2fe", fontSize: 12 },
+  backButton: {
+    marginBottom: 12,
+  },
+  backText: {
+    color: "#e0e7ff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  title: {
+    color: "white",
+    fontSize: 28,
+    fontWeight: "900",
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    color: "#c7d2fe",
+    fontSize: 14,
+    marginTop: 4,
+    fontWeight: "500",
+  },
 
-  content: { padding: 16 },
+  content: {
+    padding: 20,
+    paddingTop: 30,
+  },
+
+  sectionHeader: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#94a3b8",
+    marginTop: 30,
+    marginBottom: 12,
+    marginLeft: 4,
+    letterSpacing: 1,
+  },
 
   card: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
-    padding: 14,
+    padding: 16,
+    borderRadius: 20,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+
+  iconWrapper: {
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    marginBottom: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
   },
 
-  disabled: {
-    opacity: 0.5,
+  cardText: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1e293b",
   },
 
-  icon: { fontSize: 18, marginRight: 10 },
-  cardText: { flex: 1, fontWeight: "600" },
-  arrow: { fontSize: 16, color: "#6366f1" },
+  disabledCard: {
+    backgroundColor: "#f1f5f9",
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+
+  disabledTextSecondary: {
+    color: "#94a3b8",
+  },
 
   disabledBox: {
-    backgroundColor: "#f3f4f6",
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 12,
+    backgroundColor: "#f1f5f9",
+    padding: 20,
+    borderRadius: 24,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderStyle: "dashed",
   },
 
   disabledText: {
     textAlign: "center",
-    fontSize: 12,
-    color: "#9ca3af",
+    fontSize: 14,
+    color: "#94a3b8",
+    fontWeight: "600",
   },
 });

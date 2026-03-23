@@ -8,6 +8,8 @@ import {
     View,
 } from "react-native";
 
+import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getEventDisplayName } from "../utils/dataManager";
 import {
     calculateImprovement,
@@ -45,6 +47,7 @@ export default function TwoStandardView({
   colorClass,
   onBack,
 }: Props) {
+  const insets = useSafeAreaInsets();
   const [showPopup, setShowPopup] = useState(false);
 
   const userSeconds = timeToSeconds(userTime);
@@ -100,20 +103,63 @@ export default function TwoStandardView({
   const isPurple = colorClass === "purple";
 
   const colors = {
-    header: isPurple ? "#7c3aed" : "#e11d48",
-    primary: isPurple ? "#7c3aed" : "#e11d48",
-    midZone: isPurple ? "#c084fc" : "#fb7185",
-    user: isPurple ? "#7c3aed" : "#e11d48",
-    bonusCard: "#ffedd5",
-    standardCard: isPurple ? "#f3e8ff" : "#ffe4e6",
+    header: colorClass === "rose" ? "#e11d48" : (isPurple ? "#7c3aed" : "#e11d48"),
+    primary: colorClass === "rose" ? "#e11d48" : (isPurple ? "#7c3aed" : "#e11d48"),
+    midZone: colorClass === "rose" ? "#fecaca" : (isPurple ? "#c084fc" : "#fb7185"),
+    fastZone: "#bbf7d0",
+    user: "#ef4444",
+    bonusCard: "#fff7ed",
+    bonusBorder: "#fed7aa",
+    standardCard: "#fff1f2",
+    standardBorder: "#fecaca",
+  };
+
+  const renderSummaryItem = (
+    label: string,
+    time: string,
+    improvement: ReturnType<typeof calculateImprovement>,
+    bgColor: string,
+    borderColor: string,
+    valColor: string,
+  ) => {
+    return (
+      <View style={[styles.summaryCard, { backgroundColor: bgColor, borderColor: borderColor }]}>
+        <View style={styles.summaryRow}>
+          <Text style={[styles.summaryLabel, { fontSize: 18, color: '#111827' }]}>{label} Cut</Text>
+          <Text style={[styles.summaryValue, { color: '#4b5563' }]}>{time}</Text>
+        </View>
+        
+        {improvement.achieved ? (
+          <View style={styles.achievedRow}>
+             <Ionicons name="checkmark-circle" size={20} color="#059669" />
+             <Text style={styles.greenAchievementText}>Achieved</Text>
+          </View>
+        ) : (
+          <View style={styles.improvementGrid}>
+             <View style={styles.gridItem}>
+                <Text style={styles.gridLabel}>% Improve</Text>
+                <Text style={[styles.gridValue, { color: valColor }]}>{improvement.percentage.toFixed(2)}%</Text>
+             </View>
+             <View style={styles.gridItem}>
+                <Text style={styles.gridLabel}>Seconds</Text>
+                <Text style={[styles.gridValue, { color: valColor }]}>{improvement.totalSeconds.toFixed(2)}s</Text>
+             </View>
+             <View style={styles.gridItem}>
+                <Text style={styles.gridLabel}>Per 50</Text>
+                <Text style={[styles.gridValue, { color: valColor }]}>{improvement.per50.toFixed(2)}s</Text>
+             </View>
+          </View>
+        )}
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.header }]}>
-        <Pressable onPress={onBack}>
-          <Text style={styles.back}>← Back</Text>
+      <View style={[styles.header, { backgroundColor: colors.header, paddingTop: Math.max(insets.top, 24) }]}>
+        <Pressable onPress={onBack} style={styles.backButton}>
+          <Text style={styles.backText}>← Results Selection Page</Text>
         </Pressable>
 
         <Text style={styles.title}>{meetName}</Text>
@@ -122,165 +168,112 @@ export default function TwoStandardView({
         </Text>
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
-          {/* User time */}
-          <Text style={styles.smallLabel}>Your Time</Text>
-          <Text style={[styles.time, { color: colors.primary }]}>
-            {normalizeTimeDisplay(userTime)}
-          </Text>
+          <View style={styles.achievementContainer}>
+            <Text style={styles.smallLabel}>Your Time</Text>
+            <Text style={[styles.time, { color: colors.user }]}>
+                {normalizeTimeDisplay(userTime)}
+            </Text>
 
-          {standardImprovement.achieved ? (
-            <Text style={styles.green}>✓ {standardLabel} cut achieved!</Text>
-          ) : bonusImprovement.achieved ? (
-            <Text style={styles.blue}>✓ {bonusLabel} cut achieved</Text>
-          ) : (
-            <Text style={styles.orange}>Working toward {bonusLabel} cut</Text>
-          )}
+            {standardImprovement.achieved ? (
+                <Text style={styles.greenAchievement}>✓ {standardLabel} cut achieved!</Text>
+            ) : bonusImprovement.achieved ? (
+                <Text style={styles.blueAchievement}>✓ {bonusLabel} cut achieved</Text>
+            ) : (
+                <Text style={[styles.orangeAchievement, { color: '#f97316' }]}>Working toward {bonusLabel} cut</Text>
+            )}
+          </View>
 
-          {/* Chart */}
-          <Pressable style={styles.chart} onPress={() => setShowPopup(true)}>
-            {/* Slower zone */}
-            <View
-              style={{
-                position: "absolute",
-                left: 0,
-                width: `${bonusPos}%`,
-                top: 0,
-                bottom: 0,
-                backgroundColor: "#e5e7eb",
-              }}
-            />
+          {/* Chart Section */}
+          <Pressable style={styles.chartWrapper} onPress={() => setShowPopup(true)}>
+             <View style={styles.chartArea}>
+                {/* Slower zone */}
+                <View
+                style={{
+                    position: "absolute",
+                    left: 0,
+                    width: `${bonusPos}%`,
+                    height: 50,
+                    top: 5,
+                    backgroundColor: "#f3f4f6",
+                    borderTopLeftRadius: 4,
+                    borderBottomLeftRadius: 4,
+                }}
+                />
 
-            {/* Mid zone */}
-            <View
-              style={{
-                position: "absolute",
-                left: `${bonusPos}%`,
-                width: `${standardPos - bonusPos}%`,
-                top: 0,
-                bottom: 0,
-                backgroundColor: colors.midZone,
-                opacity: 0.5,
-              }}
-            />
+                {/* Mid zone */}
+                <View
+                style={{
+                    position: "absolute",
+                    left: `${bonusPos}%`,
+                    width: `${standardPos - bonusPos}%`,
+                    height: 50,
+                    top: 5,
+                    backgroundColor: colors.midZone,
+                    opacity: 0.3,
+                }}
+                />
 
-            {/* Faster zone */}
-            <View
-              style={{
-                position: "absolute",
-                left: `${standardPos}%`,
-                right: 0,
-                top: 0,
-                bottom: 0,
-                backgroundColor: "#86efac",
-                opacity: 0.4,
-              }}
-            />
+                {/* Faster zone */}
+                <View
+                style={{
+                    position: "absolute",
+                    left: `${standardPos}%`,
+                    right: 0,
+                    height: 50,
+                    top: 5,
+                    backgroundColor: colors.fastZone,
+                    opacity: 0.8,
+                    borderTopRightRadius: 4,
+                    borderBottomRightRadius: 4,
+                }}
+                />
 
-            {/* Bonus marker */}
-            <View
-              style={{
-                position: "absolute",
-                left: `${bonusPos}%`,
-                width: 2,
-                top: 0,
-                bottom: 0,
-                backgroundColor: "#6b7280",
-              }}
-            />
-
-            {/* Standard marker */}
-            <View
-              style={{
-                position: "absolute",
-                left: `${standardPos}%`,
-                width: 2,
-                top: 0,
-                bottom: 0,
-                backgroundColor: "#6b7280",
-              }}
-            />
-
-            {/* User marker */}
-            <View
-              style={{
-                position: "absolute",
-                left: `${userPos}%`,
-                width: 3,
-                top: 0,
-                bottom: 0,
-                backgroundColor: colors.user,
-              }}
-            />
-          </Pressable>
-
-          <Text style={styles.hint}>Tap chart for improvement details</Text>
-
-          {/* Summary */}
-          <View style={{ marginTop: 12 }}>
-            {/* Bonus */}
-            <View
-              style={[
-                styles.summaryCard,
-                { backgroundColor: colors.bonusCard },
-              ]}
-            >
-              <View style={styles.row}>
-                <Text style={styles.bold}>{bonusLabel} Cut</Text>
-                <Text style={styles.mono}>{bonusStandard}</Text>
-              </View>
-
-              {bonusImprovement.achieved ? (
-                <Text style={styles.green}>✓ Achieved</Text>
-              ) : (
-                <View style={styles.grid}>
-                  <Stat
-                    label="% Improve"
-                    value={`${bonusImprovement.percentage.toFixed(2)}%`}
-                  />
-                  <Stat
-                    label="Seconds"
-                    value={`${bonusImprovement.totalSeconds.toFixed(2)}s`}
-                  />
-                  <Stat
-                    label="Per 50"
-                    value={`${bonusImprovement.per50.toFixed(2)}s`}
-                  />
+                {/* Bonus Line and Label */}
+                <View style={[styles.cutLineWrapper, { left: `${bonusPos}%` }]}>
+                    <View style={styles.cutLine} />
+                    <Text style={styles.cutNameLabel}>{bonusLabel}</Text>
+                    <Text style={styles.cutTimeLabel}>{bonusStandard}</Text>
                 </View>
-              )}
+
+                {/* Standard Line and Label */}
+                <View style={[styles.cutLineWrapper, { left: `${standardPos}%` }]}>
+                    <View style={styles.cutLine} />
+                    <Text style={styles.cutNameLabel}>{standardLabel}</Text>
+                    <Text style={styles.cutTimeLabel}>{standard}</Text>
+                </View>
+
+                {/* User marker */}
+                <View
+                    style={[
+                        styles.userMarkerLine,
+                        { left: `${userPos}%`, backgroundColor: colors.user },
+                    ]}
+                >
+                    <View style={[styles.userMarkerBadge, { backgroundColor: colors.user }]}>
+                        <Text style={styles.userMarkerText}>YOU</Text>
+                    </View>
+                </View>
+             </View>
+             
+             <View style={styles.axisLabels}>
+                <Text style={styles.axisText}>← Slower</Text>
+                <Text style={styles.axisText}>Faster →</Text>
             </View>
 
-            {/* Standard */}
-            <View
-              style={[
-                styles.summaryCard,
-                { backgroundColor: colors.standardCard },
-              ]}
-            >
-              <View style={styles.row}>
-                <Text style={styles.bold}>{standardLabel} Cut</Text>
-                <Text style={styles.mono}>{standard}</Text>
-              </View>
+            <Text style={styles.hint}>Tap chart for improvement details</Text>
+          </Pressable>
 
-              {standardImprovement.achieved ? (
-                <Text style={styles.green}>✓ Achieved</Text>
-              ) : (
-                <View style={styles.grid}>
-                  <Stat
-                    label="% Improve"
-                    value={`${standardImprovement.percentage.toFixed(2)}%`}
-                  />
-                  <Stat
-                    label="Seconds"
-                    value={`${standardImprovement.totalSeconds.toFixed(2)}s`}
-                  />
-                  <Stat
-                    label="Per 50"
-                    value={`${standardImprovement.per50.toFixed(2)}s`}
-                  />
-                </View>
-              )}
+          <View style={styles.divider} />
+
+          {/* Table Section */}
+          <View style={styles.tableSection}>
+            <Text style={styles.sectionTitle}>Improvement Needed</Text>
+            
+            <View style={styles.summaryContainer}>
+                {renderSummaryItem(bonusLabel, bonusStandard, bonusImprovement, colors.bonusCard, colors.bonusBorder, '#c2410c')}
+                {renderSummaryItem(standardLabel, standard, standardImprovement, colors.standardCard, colors.standardBorder, '#be123c')}
             </View>
           </View>
         </View>
@@ -297,26 +290,42 @@ export default function TwoStandardView({
                 Improvement Details
               </Text>
               <Pressable onPress={() => setShowPopup(false)}>
-                <Text style={{ color: "white" }}>✕</Text>
+                <Ionicons name="close" size={24} color="white" />
               </Pressable>
             </View>
 
-            <View
-              style={{
-                padding: 20,
-                flexDirection: "row",
-                justifyContent: "space-around",
-              }}
-            >
-              <View style={{ alignItems: "center" }}>
-                <Text style={styles.smallLabel}>{bonusLabel}</Text>
-                <Text style={styles.modalTime}>{bonusStandard}</Text>
+            <ScrollView style={{ padding: 12 }}>
+              <View style={styles.modalTableHeader}>
+                <Text style={[styles.modalHeaderCell, { textAlign: 'left', flex: 0.8 }]}>Cut</Text>
+                <Text style={styles.modalHeaderCell}>Standard</Text>
+                <Text style={styles.modalHeaderCell}>% Improve</Text>
+                <Text style={styles.modalHeaderCell}>Secs</Text>
+                <Text style={styles.modalHeaderCell}>Per 50</Text>
               </View>
-              <View style={{ alignItems: "center" }}>
-                <Text style={styles.smallLabel}>{standardLabel}</Text>
-                <Text style={styles.modalTime}>{standard}</Text>
-              </View>
-            </View>
+
+              {[
+                { label: bonusLabel, time: bonusStandard, imp: bonusImprovement, color: '#c2410c' },
+                { label: standardLabel, time: standard, imp: standardImprovement, color: '#be123c' }
+              ].map((row) => (
+                <View key={row.label} style={[styles.modalRow, row.imp.achieved && styles.modalRowAchieved]}>
+                  <Text style={[styles.modalCell, { textAlign: "left", flex: 0.8, fontWeight: '800' }]}>{row.label}</Text>
+                  <Text style={[styles.modalCell, { fontWeight: '700' }]}>{row.time}</Text>
+                  <View style={styles.modalCell}>
+                    {row.imp.achieved ? (
+                      <Ionicons name="checkmark" size={16} color="#059669" />
+                    ) : (
+                      <Text style={[styles.modalValueText, { color: row.color, fontWeight: '700' }]}>{row.imp.percentage.toFixed(2)}%</Text>
+                    )}
+                  </View>
+                  <Text style={styles.modalCell}>
+                    {row.imp.achieved ? "--" : row.imp.totalSeconds.toFixed(2)}
+                  </Text>
+                  <Text style={styles.modalCell}>
+                    {row.imp.achieved ? "--" : row.imp.per50.toFixed(2)}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -324,98 +333,221 @@ export default function TwoStandardView({
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center" }}>
-      <Text style={{ fontSize: 12, color: "#6b7280" }}>{label}</Text>
-      <Text style={{ fontWeight: "bold", fontFamily: "monospace" }}>
-        {value}
-      </Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#eef2ff" },
+  container: { flex: 1, backgroundColor: "#f0f7ff" },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  header: {
+    padding: 24,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+  },
+  backButton: { marginBottom: 16 },
+  backText: { color: "rgba(255,255,255,0.7)", fontSize: 14, fontWeight: "600" },
+  title: { color: "white", fontWeight: "900", fontSize: 24, letterSpacing: -0.5 },
+  subtitle: { color: "rgba(255,255,255,0.8)", fontSize: 13, marginTop: 4, fontWeight: "500" },
 
-  header: { padding: 16 },
-  back: { color: "white", marginBottom: 6 },
-  title: { color: "white", fontSize: 18, fontWeight: "bold" },
-  subtitle: { color: "#e0e7ff", fontSize: 12 },
+  scrollContent: { padding: 16, paddingBottom: 40 },
 
   card: {
     backgroundColor: "white",
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 3,
   },
 
-  smallLabel: { fontSize: 12, color: "#6b7280" },
-  time: { fontSize: 28, fontWeight: "bold" },
+  achievementContainer: {
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  smallLabel: { fontSize: 14, color: "#6b7280", fontWeight: "600" },
+  time: { fontSize: 44, fontWeight: "900", letterSpacing: -1 },
+  greenAchievement: { color: "#059669", fontWeight: "700", marginTop: 4, fontSize: 15 },
+  blueAchievement: { color: "#2563eb", fontWeight: "700", marginTop: 4, fontSize: 15 },
+  orangeAchievement: { color: "#d97706", fontWeight: "700", marginTop: 4, fontSize: 15 },
 
-  green: { color: "green", marginTop: 4 },
-  blue: { color: "#2563eb", marginTop: 4 },
-  orange: { color: "orange", marginTop: 4 },
-
-  chart: {
+  chartWrapper: {
+    marginBottom: 30,
+  },
+  chartArea: {
+    height: 60,
+    marginTop: 30,
+    marginBottom: 50,
+    position: 'relative',
+  },
+  cutLineWrapper: {
+    position: "absolute",
+    height: 60,
+    alignItems: "center",
+    width: 60,
+    marginLeft: -30,
+  },
+  cutLine: {
+    width: 1.5,
     height: 50,
-    backgroundColor: "#e5e7eb",
-    borderRadius: 8,
-    marginTop: 20,
+    backgroundColor: "#4b5563",
+    top: 5,
   },
+  cutNameLabel: {
+    position: 'absolute',
+    top: -20,
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#374151',
+  },
+  cutTimeLabel: {
+    position: 'absolute',
+    bottom: -20,
+    fontSize: 9,
+    fontWeight: '600',
+    color: '#6b7280',
+  },
+  userMarkerLine: {
+    position: "absolute",
+    height: 60,
+    width: 3,
+    top: 5,
+    zIndex: 10,
+    alignItems: 'center',
+  },
+  userMarkerBadge: {
+    position: 'absolute',
+    top: 15,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    minWidth: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  userMarkerText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: '900',
+  },
+
+  axisLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 4,
+  },
+  axisText: { fontSize: 11, color: "#9ca3af", fontWeight: "600" },
 
   hint: {
     textAlign: "center",
     fontSize: 12,
     color: "#9ca3af",
-    marginTop: 8,
+    marginTop: 12,
+    fontWeight: "500",
   },
 
+  divider: {
+    height: 1,
+    backgroundColor: "#f3f4f6",
+    marginVertical: 24,
+  },
+
+  tableSection: {},
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#1f2937",
+    marginBottom: 16,
+  },
+  summaryContainer: {
+    gap: 12,
+  },
   summaryCard: {
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 10,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
   },
-
-  row: {
+  summaryRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
   },
+  summaryLabel: { color: "#64748b", fontWeight: "600", fontSize: 14 },
+  summaryValue: { color: "#1e293b", fontWeight: "800", fontSize: 18 },
 
-  bold: { fontWeight: "600" },
-
-  mono: { fontFamily: "monospace" },
-
-  grid: {
+  achievedRow: {
     flexDirection: "row",
-    marginTop: 10,
-  },
-
-  center: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
   },
+  greenAchievementText: {
+    color: "#059669",
+    fontWeight: "700",
+    marginLeft: 6,
+    fontSize: 14,
+  },
+
+  improvementGrid: {
+    flexDirection: "row",
+    borderTopWidth: 1,
+    borderColor: "rgba(0,0,0,0.05)",
+    paddingTop: 12,
+  },
+  gridItem: { flex: 1, alignItems: "center" },
+  gridLabel: { fontSize: 10, color: "#64748b", fontWeight: "600", marginBottom: 2 },
+  gridValue: { fontSize: 13, fontWeight: "700", color: "#334155" },
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     padding: 16,
   },
-
   modal: {
     backgroundColor: "white",
-    borderRadius: 16,
+    borderRadius: 24,
+    overflow: 'hidden',
   },
-
   modalHeader: {
-    padding: 12,
+    padding: 20,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
-
-  modalTime: {
-    fontSize: 18,
-    fontWeight: "bold",
+  modalTableHeader: {
+    flexDirection: 'row',
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+    marginBottom: 5,
+    paddingHorizontal: 12,
+  },
+  modalHeaderCell: {
+    flex: 1,
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#374151',
+    textAlign: 'right',
+    paddingHorizontal: 2,
+  },
+  modalRow: {
+    flexDirection: "row",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: "#f1f5f9",
+    alignItems: 'center',
+    paddingHorizontal: 12,
+  },
+  modalRowAchieved: {
+    backgroundColor: "#f0fdf4",
+  },
+  modalCell: {
+    flex: 1,
+    fontSize: 12,
+    color: "#4b5563",
+    textAlign: "right",
+    paddingHorizontal: 2,
+    justifyContent: 'center',
+  },
+  modalValueText: {
+    fontSize: 12,
   },
 });

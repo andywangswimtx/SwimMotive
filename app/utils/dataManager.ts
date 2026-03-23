@@ -6,31 +6,39 @@
  * in your React components.
  */
 
-import olympicTrialLcm from "../../imports/2024 US Olympic Trial Standards LCM.json";
-import futuresLcmMen from "../../imports/futrures LCM men.json";
-import futuresLcmWomen from "../../imports/futrures LCM women.json";
-import futuresScyMen from "../../imports/futrures SCY men.json";
-import futuresScyWomen from "../../imports/futrures SCY women.json";
-import jrNationalLcmBoys from "../../imports/jr national LCM boys.json";
-import jrNationalLcmGirls from "../../imports/jr national LCM girls.json";
-import jrNationalScyBoys from "../../imports/jr national SCY boys.json";
-import jrNationalScyGirls from "../../imports/jr national SCY girls.json";
-import lcmBoysMoti from "../../imports/LCM_boys_moti_cuts.json";
-import lcmGirlsMoti from "../../imports/LCM_girls_moti_cuts.json";
-import ncsaLcmMen from "../../imports/NCSA LCM men.json";
-import ncsaLcmWomen from "../../imports/NCSA LCM women.json";
-import ncsaScyMen from "../../imports/NCSA SCY men.json";
-import ncsaScyWomen from "../../imports/NCSA SCY women.json";
-import scyBoysMoti from "../../imports/SCY_boys_moti_cuts.json";
-import scyGirlsMoti from "../../imports/SCY_girls_moti_cuts.json";
-import tscLcmBoys from "../../imports/TSC_sectional_LCM_boys.json";
-import tscLcmGirls from "../../imports/TSC_sectional_LCM_girls.json";
-import tscScyBoys from "../../imports/TSC_sectional_SCY_boys.json";
-import tscScyGirls from "../../imports/TSC_sectional_SCY_girls.json";
-import winterJrLcmBoys from "../../imports/winter jr LCM boys.json";
-import winterJrLcmGirls from "../../imports/winter jr LCM girls.json";
-import winterJrScyBoys from "../../imports/winter jr SCY boys.json";
-import winterJrScyGirls from "../../imports/winter jr SCY girls.json";
+import olympicTrialLcm from "../../assets/timeData/2024 US Olympic Trial Standards LCM.json";
+import futuresLcmBoys from "../../assets/timeData/futrures LCM boys.json";
+import futuresLcmGirls from "../../assets/timeData/futrures LCM girls.json";
+import futuresScyBoys from "../../assets/timeData/futrures SCY boys.json";
+import futuresScyGirls from "../../assets/timeData/futrures SCY girls.json";
+import jrNationalLcmBoys from "../../assets/timeData/Jr national LCM boys.json";
+import jrNationalLcmGirls from "../../assets/timeData/Jr national LCM girls.json";
+import jrNationalScyBoys from "../../assets/timeData/Jr national SCY boys.json";
+import jrNationalScyGirls from "../../assets/timeData/Jr national SCY girls.json";
+import lcmBoysMoti from "../../assets/timeData/LCM boys moti cuts.json";
+import lcmGirlsMoti from "../../assets/timeData/LCM girls moti cuts.json";
+import ncsaLcmBoys from "../../assets/timeData/NCSA LCM boys.json";
+import ncsaLcmGirls from "../../assets/timeData/NCSA LCM girls.json";
+import ncsaScyBoys from "../../assets/timeData/NCSA SCY boys.json";
+import ncsaScyGirls from "../../assets/timeData/NCSA SCY girls.json";
+import scyBoysMoti from "../../assets/timeData/SCY boys moti cuts.json";
+import scyGirlsMoti from "../../assets/timeData/SCY girls moti cuts.json";
+import tscLcmBoys from "../../assets/timeData/TSC sectional LCM boys.json";
+import tscLcmGirls from "../../assets/timeData/TSC sectional LCM girls.json";
+import tscScyBoys from "../../assets/timeData/TSC sectional SCY boys.json";
+import tscScyGirls from "../../assets/timeData/TSC sectional SCY girls.json";
+import winterJrLcmBoys from "../../assets/timeData/winter jr LCM boys.json";
+import winterJrLcmGirls from "../../assets/timeData/winter jr LCM girls.json";
+import winterJrScyBoys from "../../assets/timeData/winter jr SCY boys.json";
+import winterJrScyGirls from "../../assets/timeData/winter jr SCY girls.json";
+
+// Power Index Data
+import piLcmBoys from "../../assets/timeData/Power Index vs times LCM boys.json";
+import piLcmGirls from "../../assets/timeData/Power Index vs time LCM girls.json";
+import piScyBoys from "../../assets/timeData/Power Index vs time SCY boys.json";
+import piScyGirls from "../../assets/timeData/Power Index vs time SCY girls.json";
+
+export { piLcmBoys, piLcmGirls, piScyBoys, piScyGirls };
 
 export type Gender = "Boy" | "Girl";
 export type PoolType = "SCY" | "LCM";
@@ -226,9 +234,9 @@ export function getFuturesStandard(
 ): FuturesStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" ? futuresScyWomen : futuresScyMen;
+    data = gender === "Girl" ? futuresScyGirls : futuresScyBoys;
   } else {
-    data = gender === "Girl" ? futuresLcmWomen : futuresLcmMen;
+    data = gender === "Girl" ? futuresLcmGirls : futuresLcmBoys;
   }
 
   // Map app event code (e.g. 500_FR) to JSON event name (e.g. "400/500 FR")
@@ -267,9 +275,9 @@ export function getNCSAStandard(
 ): FuturesStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" ? ncsaScyWomen : ncsaScyMen;
+    data = gender === "Girl" ? ncsaScyGirls : ncsaScyBoys;
   } else {
-    data = gender === "Girl" ? ncsaLcmWomen : ncsaLcmMen;
+    data = gender === "Girl" ? ncsaLcmGirls : ncsaLcmBoys;
   }
 
   // Map app event code (e.g. 500_FR) to JSON event name (e.g. "500 FREE")

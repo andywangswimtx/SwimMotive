@@ -1,13 +1,9 @@
-/**
- * Swim Power Index
- *
- * This module contains the data and math used by the SwimPowerIndexCalc app.
- * It is designed to be portable so you can embed the scoring logic into another app.
- *
- * Data Source: swimcloud.com (as used in the original app)
- */
+import powerIndexLcmBoys from "../../assets/timeData/Power Index vs times LCM boys.json";
+import powerIndexLcmGirls from "../../assets/timeData/Power Index vs time LCM girls.json";
+import powerIndexScyBoys from "../../assets/timeData/Power Index vs time SCY boys.json";
+import powerIndexScyGirls from "../../assets/timeData/Power Index vs time SCY girls.json";
 
-export type Gender = "Boys" | "Girls";
+export type Gender = "Boy" | "Girl";
 
 export const SCORE_HEADERS = [
   1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
@@ -15,6 +11,7 @@ export const SCORE_HEADERS = [
 export type ScoreHeader = (typeof SCORE_HEADERS)[number];
 
 export type EventName =
+  // SCY Events
   | "50SCY Free"
   | "100SCY Free"
   | "200SCY Free"
@@ -32,7 +29,25 @@ export type EventName =
   | "200SCY Fly"
   | "100SCY IM"
   | "200SCY IM"
-  | "400SCY IM";
+  | "400SCY IM"
+  // LCM Events
+  | "50LCM Free"
+  | "100LCM Free"
+  | "200LCM Free"
+  | "400LCM Free"
+  | "800LCM Free"
+  | "1500LCM Free"
+  | "50LCM Back"
+  | "100LCM Back"
+  | "200LCM Back"
+  | "50LCM Breast"
+  | "100LCM Breast"
+  | "200LCM Breast"
+  | "50LCM Fly"
+  | "100LCM Fly"
+  | "200LCM Fly"
+  | "200LCM IM"
+  | "400LCM IM";
 
 export const EVENT_NAMES: EventName[] = [
   "50SCY Free",
@@ -53,149 +68,81 @@ export const EVENT_NAMES: EventName[] = [
   "100SCY IM",
   "200SCY IM",
   "400SCY IM",
+  "50LCM Free",
+  "100LCM Free",
+  "200LCM Free",
+  "400LCM Free",
+  "800LCM Free",
+  "1500LCM Free",
+  "50LCM Back",
+  "100LCM Back",
+  "200LCM Back",
+  "50LCM Breast",
+  "100LCM Breast",
+  "200LCM Breast",
+  "50LCM Fly",
+  "100LCM Fly",
+  "200LCM Fly",
+  "200LCM IM",
+  "400LCM IM",
 ];
 
 export type SwimData = Record<EventName, number[]>;
 
 /**
+ * Parses a JSON time string (e.g. "1:34.09") into total seconds.
+ */
+function parseJsonTime(timeStr: string): number {
+  const parts = timeStr.split(":").reverse();
+  let totalSeconds = 0;
+  totalSeconds += parseFloat(parts[0]);
+  if (parts.length > 1) totalSeconds += parseInt(parts[1], 10) * 60;
+  if (parts.length > 2) totalSeconds += parseInt(parts[2], 10) * 3600;
+  return totalSeconds;
+}
+
+/**
+ * Transform JSON data into internal SwimData format.
+ */
+function parseSwimData(json: any): Partial<SwimData> {
+  const data: any = {};
+  const pool = json.pool; // "SCY" or "LCM"
+
+  json.events.forEach((evt: any) => {
+    // Map JSON "FREE" to "Free", "BACK" to "Back", etc.
+    const strokeMap: Record<string, string> = {
+      FREE: "Free",
+      BACK: "Back",
+      BREAST: "Breast",
+      FLY: "Fly",
+      IM: "IM",
+    };
+    const stroke = strokeMap[evt.stroke] || evt.stroke;
+    const eventName = `${evt.distance}${pool} ${stroke}`;
+    const times = evt.standards.map((s: any) => parseJsonTime(s.time));
+    data[eventName] = times;
+  });
+
+  return data;
+}
+
+/**
  * Benchmark times (in seconds) for each score in SCORE_HEADERS.
  * The first element is the "Index 1" (elite), and the last element is "Index 100" (base).
  */
-export const BOYS_DATA: SwimData = {
-  "50SCY Free": [
-    19.49, 20.05, 20.65, 21.21, 21.75, 22.26, 22.74, 23.21, 23.66, 24.09, 24.52,
-  ],
-  "100SCY Free": [
-    42.69, 43.93, 45.23, 46.47, 47.64, 48.75, 49.82, 50.84, 51.83, 52.78, 53.7,
-  ],
-  "200SCY Free": [
-    94.09, 96.83, 99.7, 102.42, 105.0, 107.46, 109.81, 112.07, 114.24, 116.33,
-    118.35,
-  ],
-  "500SCY Free": [
-    253.39, 260.77, 268.51, 275.83, 282.78, 289.41, 295.74, 301.82, 307.66,
-    313.28, 318.72,
-  ],
-  "1000SCY Free": [
-    530.99, 546.46, 562.68, 578.02, 592.59, 606.47, 619.75, 632.48, 644.71,
-    656.5, 667.89,
-  ],
-  "1650SCY Free": [
-    885.99, 911.8, 938.88, 964.47, 988.78, 1011.94, 1034.09, 1055.33, 1075.75,
-    1095.42, 1114.42,
-  ],
-  "50SCY Back": [
-    21.29, 21.91, 22.56, 23.17, 23.76, 24.31, 24.84, 25.35, 25.84, 26.32, 26.78,
-  ],
-  "100SCY Back": [
-    46.39, 47.74, 49.15, 50.49, 51.77, 52.98, 54.14, 55.25, 56.32, 57.35, 58.36,
-  ],
-  "200SCY Back": [
-    101.49, 104.44, 107.54, 110.48, 113.26, 115.91, 118.45, 120.88, 123.22,
-    125.48, 127.66,
-  ],
-  "50SCY Breast": [
-    24.19, 24.89, 25.63, 26.33, 26.99, 27.62, 28.23, 28.81, 29.37, 29.9, 30.43,
-  ],
-  "100SCY Breast": [
-    52.59, 54.12, 55.72, 57.24, 58.69, 60.06, 61.38, 62.64, 63.85, 65.02, 66.15,
-  ],
-  "200SCY Breast": [
-    113.99, 117.31, 120.79, 124.08, 127.21, 130.19, 133.04, 135.77, 138.4,
-    140.93, 143.38,
-  ],
-  "50SCY Fly": [
-    20.99, 21.6, 22.24, 22.84, 23.42, 23.97, 24.49, 25.0, 25.48, 25.95, 26.41,
-  ],
-  "100SCY Fly": [
-    46.09, 47.43, 48.84, 50.17, 51.43, 52.64, 53.79, 54.89, 55.96, 56.98, 57.98,
-  ],
-  "200SCY Fly": [
-    102.99, 105.99, 109.13, 112.11, 114.93, 117.63, 120.2, 122.67, 125.04,
-    127.33, 129.55,
-  ],
-  "100SCY IM": [
-    47.29, 48.66, 50.11, 51.47, 52.77, 54.01, 55.19, 56.32, 57.41, 58.46, 59.49,
-  ],
-  "200SCY IM": [
-    103.99, 107.02, 110.19, 113.2, 116.05, 118.77, 121.37, 123.86, 126.26,
-    128.57, 130.81,
-  ],
-  "400SCY IM": [
-    224.99, 231.54, 238.42, 244.92, 251.09, 256.97, 262.6, 267.99, 273.17,
-    278.17, 283.0,
-  ],
-};
+export const BOY_DATA = {
+  ...parseSwimData(powerIndexScyBoys),
+  ...parseSwimData(powerIndexLcmBoys),
+} as SwimData;
 
-export const GIRLS_DATA: SwimData = {
-  "50SCY Free": [
-    22.09, 22.73, 23.4, 24.04, 24.65, 25.23, 25.78, 26.31, 26.82, 27.31, 27.79,
-  ],
-  "100SCY Free": [
-    48.39, 49.8, 51.27, 52.67, 54.0, 55.26, 56.47, 57.63, 58.75, 59.82, 60.87,
-  ],
-  "200SCY Free": [
-    104.79, 107.84, 111.04, 114.07, 116.94, 119.68, 122.3, 124.81, 127.23,
-    129.56, 131.81,
-  ],
-  "500SCY Free": [
-    280.29, 288.45, 297.02, 305.12, 312.8, 320.13, 327.14, 333.86, 340.32,
-    346.54, 352.56,
-  ],
-  "1000SCY Free": [
-    579.99, 596.89, 614.61, 631.36, 647.27, 662.44, 676.94, 690.84, 704.21,
-    717.09, 729.53,
-  ],
-  "1650SCY Free": [
-    971.89, 1000.21, 1029.91, 1057.98, 1084.64, 1110.05, 1134.35, 1157.65,
-    1180.05, 1201.63, 1222.47,
-  ],
-  "50SCY Back": [
-    24.29, 24.99, 25.74, 26.44, 27.1, 27.74, 28.35, 28.93, 29.49, 30.03, 30.56,
-  ],
-  "100SCY Back": [
-    52.09, 53.6, 55.19, 56.7, 58.13, 59.49, 60.79, 62.04, 63.24, 64.4, 65.52,
-  ],
-  "200SCY Back": [
-    113.89, 117.2, 120.68, 123.97, 127.1, 130.08, 132.92, 135.65, 138.28,
-    140.81, 143.26,
-  ],
-  "50SCY Breast": [
-    27.69, 28.49, 29.34, 30.14, 30.9, 31.62, 32.31, 32.98, 33.62, 34.23, 34.83,
-  ],
-  "100SCY Breast": [
-    59.79, 61.53, 63.35, 65.08, 66.72, 68.29, 69.78, 71.21, 72.59, 73.92, 75.21,
-  ],
-  "200SCY Breast": [
-    129.39, 133.16, 137.11, 140.85, 144.4, 147.78, 151.01, 154.12, 157.1,
-    159.97, 162.75,
-  ],
-  "50SCY Fly": [
-    23.99, 24.68, 25.42, 26.11, 26.77, 27.4, 28.0, 28.57, 29.12, 29.66, 30.18,
-  ],
-  "100SCY Fly": [
-    51.99, 53.5, 55.09, 56.59, 58.02, 59.38, 60.68, 61.92, 63.12, 64.27, 65.4,
-  ],
-  "200SCY Fly": [
-    115.89, 119.26, 122.8, 126.15, 129.33, 132.36, 135.26, 138.04, 140.71,
-    143.28, 145.77,
-  ],
-  "100SCY IM": [
-    52.99, 54.53, 56.15, 57.68, 59.13, 60.52, 61.84, 63.11, 64.33, 65.51, 66.66,
-  ],
-  "200SCY IM": [
-    116.49, 119.88, 123.44, 126.8, 130.0, 133.05, 135.96, 138.75, 141.44,
-    144.02, 146.53,
-  ],
-  "400SCY IM": [
-    249.89, 257.17, 264.8, 272.02, 278.88, 285.41, 291.66, 297.65, 303.41,
-    308.96, 314.32,
-  ],
-};
+export const GIRL_DATA = {
+  ...parseSwimData(powerIndexScyGirls),
+  ...parseSwimData(powerIndexLcmGirls),
+} as SwimData;
 
 export const SWIM_DATA: Record<Gender, SwimData> = {
-  Boys: BOYS_DATA,
-  Girls: GIRLS_DATA,
+  Boy: BOY_DATA,
+  Girl: GIRL_DATA,
 };
 
 /**
