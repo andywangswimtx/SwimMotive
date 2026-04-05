@@ -1,5 +1,5 @@
 {
-  "meet": "2026 Speedo Winter Junior Championships",
+  "meet": "2026 Winter Juniors",
   "gender": "Men",
   "course": "LCM",
   "qualifying_period": "November 1, 2025 through Entry Deadline",
@@ -73,21 +73,6 @@
       "event": "400 IM",
       "qualifying_standard": "4:35.89",
       "bonus_standard": "4:42.39"
-    },
-    {
-      "event": "4x100 FR-R",
-      "qualifying_standard": "3:35.79",
-      "bonus_standard": null
-    },
-    {
-      "event": "4x200 FR-R",
-      "qualifying_standard": "7:52.39",
-      "bonus_standard": null
-    },
-    {
-      "event": "4x100 Med-R",
-      "qualifying_standard": "3:58.69",
-      "bonus_standard": null
     }
   ]
 }

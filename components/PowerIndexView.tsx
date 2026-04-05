@@ -1,11 +1,11 @@
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
-    calculatePowerIndex,
-    EventName,
-    interpretScore,
-    parseTimeString,
+  calculatePowerIndex,
+  EventName,
+  interpretScore,
+  parseTimeString,
 } from "../utils/PowerIndex";
 import type { Gender } from "../utils/dataManager";
 
@@ -17,14 +17,56 @@ export type PowerIndexViewProps = {
 
 const CATEGORY_STYLES: Record<
   string,
-  { bg: string; text: string; border: string; icon: string; iconLib: "Ionicons" | "MaterialCommunityIcons" }
+  {
+    bg: string;
+    text: string;
+    border: string;
+    icon: string;
+    iconLib: "Ionicons" | "MaterialCommunityIcons";
+  }
 > = {
-  elite: { bg: "#fffbeb", text: "#b45309", border: "#f59e0b", icon: "medal", iconLib: "Ionicons" },
-  top: { bg: "#eff6ff", text: "#1d4ed8", border: "#3b82f6", icon: "flash", iconLib: "Ionicons" },
-  competitive: { bg: "#ffffff", text: "#059669", border: "#10b981", icon: "swim", iconLib: "MaterialCommunityIcons" },
-  developing: { bg: "#ffffff", text: "#d97706", border: "#fbbf24", icon: "trending-up", iconLib: "Ionicons" },
-  base: { bg: "#ffffff", text: "#4b5563", border: "#9ca3af", icon: "water", iconLib: "Ionicons" },
-  offchart: { bg: "#fff1f2", text: "#be123c", border: "#f43f5e", icon: "alert-circle", iconLib: "Ionicons" },
+  elite: {
+    bg: "#fffbeb",
+    text: "#b45309",
+    border: "#f59e0b",
+    icon: "medal",
+    iconLib: "Ionicons",
+  },
+  top: {
+    bg: "#eff6ff",
+    text: "#1d4ed8",
+    border: "#3b82f6",
+    icon: "flash",
+    iconLib: "Ionicons",
+  },
+  competitive: {
+    bg: "#ffffff",
+    text: "#059669",
+    border: "#10b981",
+    icon: "swim",
+    iconLib: "MaterialCommunityIcons",
+  },
+  developing: {
+    bg: "#ffffff",
+    text: "#d97706",
+    border: "#fbbf24",
+    icon: "trending-up",
+    iconLib: "Ionicons",
+  },
+  base: {
+    bg: "#ffffff",
+    text: "#4b5563",
+    border: "#9ca3af",
+    icon: "water",
+    iconLib: "Ionicons",
+  },
+  offchart: {
+    bg: "#fff1f2",
+    text: "#be123c",
+    border: "#f43f5e",
+    icon: "alert-circle",
+    iconLib: "Ionicons",
+  },
 };
 
 export default function PowerIndexView({
@@ -46,20 +88,14 @@ export default function PowerIndexView({
     return interpretScore(result.score);
   }, [result]);
 
-  if (!result || !interpretation) {
-    return (
-      <View style={styles.empty}>
-        <Text style={styles.emptyText}>
-          Could not calculate Power Index for this time.
-        </Text>
-      </View>
-    );
-  }
-
   const style =
-    CATEGORY_STYLES[interpretation.category] ?? CATEGORY_STYLES.base;
+    result && interpretation
+      ? (CATEGORY_STYLES[interpretation.category] ?? CATEGORY_STYLES.base)
+      : CATEGORY_STYLES.base;
 
-  const barPercent = Math.max(0, Math.min(100, 100 - result.score));
+  const barPercent = result
+    ? Math.max(0, Math.min(100, 100 - result.score))
+    : 0;
 
   return (
     <View
@@ -70,28 +106,37 @@ export default function PowerIndexView({
     >
       {/* Title row */}
       <View style={styles.headerRow}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.label}>POWER INDEX</Text>
-          <Text style={styles.subLabel}>
-            SwimCloud benchmark (1 = elite, 100 = base)
-          </Text>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "baseline",
+            flexWrap: "wrap",
+          }}
+        >
+          <Text style={styles.label}>SwimCloud POWER INDEX</Text>
+          <Text style={styles.subLabel}> (1 = elite, 100 = base) </Text>
         </View>
         <View style={styles.iconContainer}>
-            {style.iconLib === "Ionicons" ? (
-                <Ionicons name={style.icon as any} size={24} color={style.border} />
-            ) : (
-                <MaterialCommunityIcons name={style.icon as any} size={24} color={style.border} />
-            )}
+          {style.iconLib === "Ionicons" ? (
+            <Ionicons name={style.icon as any} size={24} color={style.border} />
+          ) : (
+            <MaterialCommunityIcons
+              name={style.icon as any}
+              size={24}
+              color={style.border}
+            />
+          )}
         </View>
       </View>
 
       {/* Score and Label */}
       <View style={styles.scoreRow}>
         <Text style={[styles.score, { color: style.text }]}>
-          {result.score.toFixed(1)}
+          {result ? result.score.toFixed(1) : "— —"}
         </Text>
         <Text style={[styles.scoreLabel, { color: style.text }]}>
-          {interpretation.label}
+          {interpretation ? interpretation.label : "Enter time to see score"}
         </Text>
       </View>
 
@@ -111,7 +156,7 @@ export default function PowerIndexView({
           style={[
             styles.progressFill,
             {
-              position: 'absolute',
+              position: "absolute",
               width: `${barPercent}%`,
               backgroundColor: style.border,
               height: 4,
@@ -162,10 +207,11 @@ const styles = StyleSheet.create({
   scoreRow: {
     flexDirection: "row",
     alignItems: "baseline",
-    marginVertical: 12,
+    marginTop: -20,
+    marginBottom: 8,
   },
   score: {
-    fontSize: 52,
+    fontSize: 42,
     fontWeight: "900",
     letterSpacing: -1,
   },
@@ -180,7 +226,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3f4f6",
     overflow: "hidden",
     marginTop: 8,
-    position: 'relative',
+    position: "relative",
   },
   progressFill: {
     height: "100%",

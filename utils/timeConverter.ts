@@ -1,4 +1,4 @@
-// src/utils/swimCalculations.ts
+// Swim time conversion and improvement calculation utilities
 
 // Convert time string (mm:ss.xx or :ss.xx or ss.xx) to seconds
 export function timeToSeconds(timeString: string): number | null {

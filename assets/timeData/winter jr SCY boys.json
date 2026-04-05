@@ -1,5 +1,5 @@
 {
-  "meet": "2026 Speedo Winter Junior Championships",
+  "meet": "2026 Winter Juniors",
   "gender": "Men",
   "course": "SCY",
   "qualifying_period": "November 1, 2025 through Entry Deadline",
@@ -73,31 +73,6 @@
       "event": "400 IM",
       "qualifying_standard": "3:56.49",
       "bonus_standard": "4:06.99"
-    },
-    {
-      "event": "4x50 FR-R",
-      "qualifying_standard": "3:05.79",
-      "bonus_standard": null
-    },
-    {
-      "event": "4x100 FR-R",
-      "qualifying_standard": "3:05.79",
-      "bonus_standard": null
-    },
-    {
-      "event": "4x200 FR-R",
-      "qualifying_standard": "6:49.59",
-      "bonus_standard": null
-    },
-    {
-      "event": "4x50 Med-R",
-      "qualifying_standard": "3:23.39",
-      "bonus_standard": null
-    },
-    {
-      "event": "4x100 Med-R",
-      "qualifying_standard": "3:23.39",
-      "bonus_standard": null
     }
   ]
 }

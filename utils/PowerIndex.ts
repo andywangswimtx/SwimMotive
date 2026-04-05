@@ -1,7 +1,4 @@
-import powerIndexLcmBoys from "../../assets/timeData/Power Index vs times LCM boys.json";
-import powerIndexLcmGirls from "../../assets/timeData/Power Index vs time LCM girls.json";
-import powerIndexScyBoys from "../../assets/timeData/Power Index vs time SCY boys.json";
-import powerIndexScyGirls from "../../assets/timeData/Power Index vs time SCY girls.json";
+// JSON imports removed. Data is lazy-loaded via getSwimData().
 
 export type Gender = "Boy" | "Girl";
 
@@ -126,24 +123,22 @@ function parseSwimData(json: any): Partial<SwimData> {
   return data;
 }
 
-/**
- * Benchmark times (in seconds) for each score in SCORE_HEADERS.
- * The first element is the "Index 1" (elite), and the last element is "Index 100" (base).
- */
-export const BOY_DATA = {
-  ...parseSwimData(powerIndexScyBoys),
-  ...parseSwimData(powerIndexLcmBoys),
-} as SwimData;
+let cachedSwimData: Record<Gender, SwimData> | null = null;
 
-export const GIRL_DATA = {
-  ...parseSwimData(powerIndexScyGirls),
-  ...parseSwimData(powerIndexLcmGirls),
-} as SwimData;
+export function getSwimData(gender: Gender): SwimData {
+  if (!cachedSwimData) {
+    const scyBoys = require("../assets/timeData/Power Index vs time SCY boys.json");
+    const lcmBoys = require("../assets/timeData/Power Index vs times LCM boys.json");
+    const scyGirls = require("../assets/timeData/Power Index vs time SCY girls.json");
+    const lcmGirls = require("../assets/timeData/Power Index vs time LCM girls.json");
 
-export const SWIM_DATA: Record<Gender, SwimData> = {
-  Boy: BOY_DATA,
-  Girl: GIRL_DATA,
-};
+    cachedSwimData = {
+      Boy: { ...parseSwimData(scyBoys), ...parseSwimData(lcmBoys) } as SwimData,
+      Girl: { ...parseSwimData(scyGirls), ...parseSwimData(lcmGirls) } as SwimData,
+    };
+  }
+  return cachedSwimData[gender];
+}
 
 /**
  * Parses a time string into total seconds.
@@ -231,8 +226,8 @@ export function interpretScore(score: number): ScoreInterpretation {
  */
 export function interpolateScore(
   userTime: number,
-  referenceTimes: number[],
-  referenceScores: number[],
+  referenceTimes: readonly number[],
+  referenceScores: readonly number[],
 ): { score: number; exactMatch: boolean } {
   const exactIndex = referenceTimes.indexOf(userTime);
   if (exactIndex !== -1) {
@@ -285,8 +280,8 @@ export function interpolateScore(
  */
 export function interpolateTimeFromScore(
   targetScore: number,
-  referenceScores: number[],
-  referenceTimes: number[],
+  referenceScores: readonly number[],
+  referenceTimes: readonly number[],
 ): number {
   const exactIndex = referenceScores.indexOf(targetScore);
   if (exactIndex !== -1) return referenceTimes[exactIndex];
@@ -320,21 +315,15 @@ export function interpolateTimeFromScore(
   return referenceTimes[0];
 }
 
-/**
- * Calculates the Power Index score for a swimmer in a given event.
- */
 export function calculatePowerIndex(
   gender: Gender,
   eventName: EventName,
   timeSeconds: number,
 ): { score: number; exactMatch: boolean } {
-  const referenceTimes = SWIM_DATA[gender][eventName];
+  const referenceTimes = getSwimData(gender)[eventName];
   return interpolateScore(timeSeconds, referenceTimes, SCORE_HEADERS);
 }
 
-/**
- * Returns the split (seconds per 50 yards) that would be required to hit a target score for a given event.
- */
 export function splitPer50ForScore(
   gender: Gender,
   eventName: EventName,
@@ -343,7 +332,7 @@ export function splitPer50ForScore(
   const time = interpolateTimeFromScore(
     targetScore,
     SCORE_HEADERS,
-    SWIM_DATA[gender][eventName],
+    getSwimData(gender)[eventName],
   );
   const distance = parseEventDistance(eventName);
   if (distance === 0) return NaN;

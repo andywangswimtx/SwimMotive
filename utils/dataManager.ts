@@ -6,39 +6,7 @@
  * in your React components.
  */
 
-import olympicTrialLcm from "../../assets/timeData/2024 US Olympic Trial Standards LCM.json";
-import futuresLcmBoys from "../../assets/timeData/futrures LCM boys.json";
-import futuresLcmGirls from "../../assets/timeData/futrures LCM girls.json";
-import futuresScyBoys from "../../assets/timeData/futrures SCY boys.json";
-import futuresScyGirls from "../../assets/timeData/futrures SCY girls.json";
-import jrNationalLcmBoys from "../../assets/timeData/Jr national LCM boys.json";
-import jrNationalLcmGirls from "../../assets/timeData/Jr national LCM girls.json";
-import jrNationalScyBoys from "../../assets/timeData/Jr national SCY boys.json";
-import jrNationalScyGirls from "../../assets/timeData/Jr national SCY girls.json";
-import lcmBoysMoti from "../../assets/timeData/LCM boys moti cuts.json";
-import lcmGirlsMoti from "../../assets/timeData/LCM girls moti cuts.json";
-import ncsaLcmBoys from "../../assets/timeData/NCSA LCM boys.json";
-import ncsaLcmGirls from "../../assets/timeData/NCSA LCM girls.json";
-import ncsaScyBoys from "../../assets/timeData/NCSA SCY boys.json";
-import ncsaScyGirls from "../../assets/timeData/NCSA SCY girls.json";
-import scyBoysMoti from "../../assets/timeData/SCY boys moti cuts.json";
-import scyGirlsMoti from "../../assets/timeData/SCY girls moti cuts.json";
-import tscLcmBoys from "../../assets/timeData/TSC sectional LCM boys.json";
-import tscLcmGirls from "../../assets/timeData/TSC sectional LCM girls.json";
-import tscScyBoys from "../../assets/timeData/TSC sectional SCY boys.json";
-import tscScyGirls from "../../assets/timeData/TSC sectional SCY girls.json";
-import winterJrLcmBoys from "../../assets/timeData/winter jr LCM boys.json";
-import winterJrLcmGirls from "../../assets/timeData/winter jr LCM girls.json";
-import winterJrScyBoys from "../../assets/timeData/winter jr SCY boys.json";
-import winterJrScyGirls from "../../assets/timeData/winter jr SCY girls.json";
-
-// Power Index Data
-import piLcmBoys from "../../assets/timeData/Power Index vs times LCM boys.json";
-import piLcmGirls from "../../assets/timeData/Power Index vs time LCM girls.json";
-import piScyBoys from "../../assets/timeData/Power Index vs time SCY boys.json";
-import piScyGirls from "../../assets/timeData/Power Index vs time SCY girls.json";
-
-export { piLcmBoys, piLcmGirls, piScyBoys, piScyGirls };
+// Removed static JSON imports. Data is now lazily loaded via inline require().
 
 export type Gender = "Boy" | "Girl";
 export type PoolType = "SCY" | "LCM";
@@ -125,9 +93,13 @@ export function getMotivationalStandards(
   let data: any;
 
   if (poolType === "SCY") {
-    data = gender === "Girl" ? scyGirlsMoti : scyBoysMoti;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/SCY girls moti cuts.json")
+      : require("../assets/timeData/SCY boys moti cuts.json");
   } else {
-    data = gender === "Girl" ? lcmGirlsMoti : lcmBoysMoti;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/LCM girls moti cuts.json")
+      : require("../assets/timeData/LCM boys moti cuts.json");
   }
 
   const genderKey = gender === "Girl" ? "Girls" : "Boys";
@@ -153,6 +125,8 @@ export function mapEventToPowerIndex(
     "100_FR": "Free",
     "200_FR": "Free",
     "500_FR": "Free", // SCY
+    "1000_FR": "Free", // SCY
+    "1650_FR": "Free", // SCY
     "400_FR": "Free", // LCM
     "800_FR": "Free", // LCM
     "1500_FR": "Free", // LCM
@@ -176,15 +150,13 @@ export function mapEventToPowerIndex(
   const distance = eventCode.split("_")[0];
 
   if (poolType === "SCY") {
-    // 1000/1650 FR and 400/800/1500 FR (LCM) are not in the SCY dataset
-    if (
-      ["400_FR", "800_FR", "1500_FR", "1000_FR", "1650_FR"].includes(eventCode)
-    )
-      return null;
+    // 400/800/1500 FR (LCM) are not in the SCY dataset
+    if (["400_FR", "800_FR", "1500_FR"].includes(eventCode)) return null;
     return `${distance}SCY ${stroke}`;
   } else {
-    // 500_FR and 100_IM are not in the LCM dataset
-    if (["500_FR", "100_IM"].includes(eventCode)) return null;
+    // 500_FR, 1000_FR, 1650_FR and 100_IM are not in the LCM dataset
+    if (["500_FR", "1000_FR", "1650_FR", "100_IM"].includes(eventCode))
+      return null;
     return `${distance}LCM ${stroke}`;
   }
 }
@@ -198,9 +170,13 @@ export function getTSCStandards(
   let data: any;
 
   if (poolType === "SCY") {
-    data = gender === "Girl" ? tscScyGirls : tscScyBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/TSC sectional SCY girls.json")
+      : require("../assets/timeData/TSC sectional SCY boys.json");
   } else {
-    data = gender === "Girl" ? tscLcmGirls : tscLcmBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/TSC sectional LCM girls.json")
+      : require("../assets/timeData/TSC sectional LCM boys.json");
   }
 
   const genderKey = gender === "Girl" ? "Women" : "Men";
@@ -234,19 +210,17 @@ export function getFuturesStandard(
 ): FuturesStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" ? futuresScyGirls : futuresScyBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/futrures SCY girls.json")
+      : require("../assets/timeData/futrures SCY boys.json");
   } else {
-    data = gender === "Girl" ? futuresLcmGirls : futuresLcmBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/futrures LCM girls.json")
+      : require("../assets/timeData/futrures LCM boys.json");
   }
 
-  // Map app event code (e.g. 500_FR) to JSON event name (e.g. "400/500 FR")
+  // Map app event code (e.g. 500_FR) to JSON event name (e.g. "500 FR")
   let futuresEvent = event.replace("_", " ");
-
-  if (poolType === "SCY") {
-    if (futuresEvent === "500 FR") futuresEvent = "400/500 FR";
-    else if (futuresEvent === "1000 FR") futuresEvent = "800/1000 FR";
-    else if (futuresEvent === "1650 FR") futuresEvent = "1500/1650 FR";
-  }
 
   try {
     const standardObj = data.standards?.find(
@@ -275,9 +249,13 @@ export function getNCSAStandard(
 ): FuturesStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" ? ncsaScyGirls : ncsaScyBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/NCSA SCY girls.json")
+      : require("../assets/timeData/NCSA SCY boys.json");
   } else {
-    data = gender === "Girl" ? ncsaLcmGirls : ncsaLcmBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/NCSA LCM girls.json")
+      : require("../assets/timeData/NCSA LCM boys.json");
   }
 
   // Map app event code (e.g. 500_FR) to JSON event name (e.g. "500 FREE")
@@ -310,7 +288,7 @@ export function getNCSAStandard(
 
     return {
       standard,
-      meet: data.meet || "2025 NCSA Spring Swimming Championships",
+      meet: data.meet || "2025 NCSA Spring Champs",
     };
   } catch {
     return null;
@@ -331,9 +309,13 @@ export function getWinterJrStandard(
 ): TwoStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" ? winterJrScyGirls : winterJrScyBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/winter jr SCY girls.json")
+      : require("../assets/timeData/winter jr SCY boys.json");
   } else {
-    data = gender === "Girl" ? winterJrLcmGirls : winterJrLcmBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/winter jr LCM girls.json")
+      : require("../assets/timeData/winter jr LCM boys.json");
   }
 
   // Map app event code (50_FR) to JSON event name (50 FR)
@@ -348,7 +330,7 @@ export function getWinterJrStandard(
     return {
       standard: standardObj.qualifying_standard,
       bonus: standardObj.bonus_standard,
-      meet: data.meet || "2026 Speedo Winter Junior Championships",
+      meet: data.meet || "2026 Winter Juniors",
     };
   } catch {
     return null;
@@ -363,9 +345,13 @@ export function getJrNationalStandard(
 ): TwoStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" ? jrNationalScyGirls : jrNationalScyBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/Jr national SCY girls.json")
+      : require("../assets/timeData/Jr national SCY boys.json");
   } else {
-    data = gender === "Girl" ? jrNationalLcmGirls : jrNationalLcmBoys;
+    data = gender === "Girl" 
+      ? require("../assets/timeData/Jr national LCM girls.json")
+      : require("../assets/timeData/Jr national LCM boys.json");
   }
 
   // Map app event code (50_FR) to JSON event name (50 FR)
@@ -376,12 +362,9 @@ export function getJrNationalStandard(
     if (!standardObj) return null;
 
     return {
-      standard: standardObj.qualifying_standard,
-      bonus: standardObj.bonus_standard,
-      meet:
-        data.championship ||
-        data.meet ||
-        "2026 Speedo Junior National Championships",
+      standard: standardObj.qualifying_standard || standardObj.qualifying,
+      bonus: standardObj.bonus_standard || standardObj.bonus,
+      meet: data.championship || data.meet || "2026 Junior Nationals",
     };
   } catch {
     return null;
@@ -410,6 +393,7 @@ export function getOlympicTrialStandard(
   const olympicEvent = `${distance} ${strokeNames[stroke] || stroke}`;
 
   try {
+    const olympicTrialLcm = require("../assets/timeData/2024 US Olympic Trial Standards LCM.json");
     const standardObj = olympicTrialLcm.events?.find(
       (s: any) => s.event === olympicEvent,
     );

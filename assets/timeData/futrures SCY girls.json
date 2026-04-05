@@ -18,20 +18,16 @@
       "standard": "1:52.29"
     },
     {
-      "event": "400/500 FR",
+      "event": "500 FR",
       "standard": "5:02.59"
     },
     {
-      "event": "800/1000 FR",
+      "event": "1000 FR",
       "standard": "10:20.49"
     },
     {
-      "event": "1500/1650 FR",
+      "event": "1650 FR",
       "standard": "17:14.39"
-    },
-    {
-      "event": "50 BK",
-      "standard": "26.29"
     },
     {
       "event": "100 BK",
@@ -42,20 +38,12 @@
       "standard": "2:04.19"
     },
     {
-      "event": "50 BR",
-      "standard": "29.79"
-    },
-    {
       "event": "100 BR",
       "standard": "1:05.49"
     },
     {
       "event": "200 BR",
       "standard": "2:22.69"
-    },
-    {
-      "event": "50 FL",
-      "standard": "25.69"
     },
     {
       "event": "100 FL",
@@ -73,7 +61,5 @@
       "event": "400 IM",
       "standard": "4:30.69"
     }
-  ],
-  "note": "This document does not list separate 'Bonus Standards' for the TYR Futures Championships; only the primary 18 & Under and 19 & Over time standards are provided[cite: 51, 61]."
+  ]
 }
-

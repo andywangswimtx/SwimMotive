@@ -18,20 +18,16 @@
       "standard": "1:41.59"
     },
     {
-      "event": "400/500 FR",
+      "event": "500 FR",
       "standard": "4:37.09"
     },
     {
-      "event": "800/1000 FR",
+      "event": "1000 FR",
       "standard": "9:34.29"
     },
     {
-      "event": "1500/1650 FR",
+      "event": "1650 FR",
       "standard": "16:05.49"
-    },
-    {
-      "event": "50 BK",
-      "standard": "23.69"
     },
     {
       "event": "100 BK",
@@ -42,20 +38,12 @@
       "standard": "1:52.79"
     },
     {
-      "event": "50 BR",
-      "standard": "26.29"
-    },
-    {
       "event": "100 BR",
       "standard": "57.99"
     },
     {
       "event": "200 BR",
       "standard": "2:07.99"
-    },
-    {
-      "event": "50 FL",
-      "standard": "22.89"
     },
     {
       "event": "100 FL",
@@ -73,10 +61,5 @@
       "event": "400 IM",
       "standard": "4:06.99"
     }
-  ],
-  "notes": [
-    "Swimmers may qualify for 50 Bk/Br/Fly using the 50 standard or the corresponding 100 standard.",
-    "Relay standards for SCY are not specified (listed as X)."
   ]
 }
-

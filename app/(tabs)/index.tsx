@@ -1,52 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import InputForm from '../components/InputForm';
-import ResultsView from '../components/ResultsView';
-import { Gender, AgeGroup, PoolType } from '../utils/dataManager';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import InputForm from '../../components/InputForm';
+import { useUserContext, SwimParams } from '../../context/UserContext';
 
-export default function App() {
-  const [appState, setAppState] = useState<'input' | 'results'>('input');
-  const [params, setParams] = useState<{
-    gender: Gender;
-    poolType: PoolType;
-    ageGroup: AgeGroup;
-    event: string;
-    userTime: string;
-  } | null>(null);
+export default function InputScreen() {
+  const { setParams } = useUserContext();
+  const router = useRouter();
 
-  const handleSubmit = (data: {
-    gender: Gender;
-    poolType: PoolType;
-    ageGroup: AgeGroup;
-    event: string;
-    userTime: string;
-  }) => {
+  const handleSubmit = (data: SwimParams) => {
     setParams(data);
-    setAppState('results');
-  };
-
-  const handleBackToInput = () => {
-    setAppState('input');
+    // Navigate to the Standards tab
+    router.push('/standards');
   };
 
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        {appState === 'input' ? (
-          <InputForm onSubmit={handleSubmit} />
-        ) : (
-          params && (
-            <ResultsView
-              gender={params.gender}
-              poolType={params.poolType}
-              ageGroup={params.ageGroup}
-              event={params.event}
-              userTime={params.userTime}
-              onBackToInput={handleBackToInput}
-            />
-          )
-        )}
+        <InputForm onSubmit={handleSubmit} />
       </View>
     </SafeAreaProvider>
   );
@@ -58,3 +30,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 });
+
