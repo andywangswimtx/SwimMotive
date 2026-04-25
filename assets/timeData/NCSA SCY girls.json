@@ -17,20 +17,16 @@
       "standard": "1:52.99"
     },
     {
-      "event": "400/500 FREE",
+      "event": "500 FREE",
       "standard": "4:59.99"
     },
     {
-      "event": "800/1000 FREE",
+      "event": "1000 FREE",
       "standard": "10:15.99"
     },
     {
-      "event": "1500/1650 FREE",
+      "event": "1650 FREE",
       "standard": "17:12.89"
-    },
-    {
-      "event": "50 BACK",
-      "standard": "100 Back Qualifying Time"
     },
     {
       "event": "100 BACK",
@@ -41,10 +37,6 @@
       "standard": "2:05.99"
     },
     {
-      "event": "50 BREAST",
-      "standard": "100 Breast Qualifying Time"
-    },
-    {
       "event": "100 BREAST",
       "standard": "1:06.39"
     },
@@ -53,8 +45,20 @@
       "standard": "2:23.29"
     },
     {
-      "event": "50 FLY",
-      "standard": "100 Fly Qualifying Time"
+      "event": "100 FLY",
+      "standard": "57.29"
+    },
+    {
+      "event": "200 FLY",
+      "standard": "2:06.39"
+    },
+    {
+      "event": "200 IM",
+      "standard": "2:07.99"
+    },
+    {
+      "event": "400 IM",
+      "standard": "4:29.99"
     }
   ]
 }

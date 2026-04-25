@@ -1,60 +1,60 @@
 {
-  "2024_TSC_Men_Sectional_Standards_SCY": {
+  "2024_TSC_Men_Sectionals_Standards_SCY": {
     "50_FREE": {
-      "Sectional_Standard": ":22.09",
-      "Sectional_Bonus_Standard": ":22.49"
+      "Sectionals_Standard": ":22.09",
+      "Sectionals_Bonus_Standard": ":22.49"
     },
     "100_FREE": {
-      "Sectional_Standard": ":47.79",
-      "Sectional_Bonus_Standard": ":48.59"
+      "Sectionals_Standard": ":47.79",
+      "Sectionals_Bonus_Standard": ":48.59"
     },
     "200_FREE": {
-      "Sectional_Standard": "1:43.99",
-      "Sectional_Bonus_Standard": "1:45.39"
+      "Sectionals_Standard": "1:43.99",
+      "Sectionals_Bonus_Standard": "1:45.39"
     },
     "500_FREE": {
-      "Sectional_Standard": "4:42.99",
-      "Sectional_Bonus_Standard": "4:43.89"
+      "Sectionals_Standard": "4:42.99",
+      "Sectionals_Bonus_Standard": "4:43.89"
     },
     "1000_FREE": {
-      "Sectional_Standard": "9:43.59",
-      "Sectional_Bonus_Standard": "9:48.09"
+      "Sectionals_Standard": "9:43.59",
+      "Sectionals_Bonus_Standard": "9:48.09"
     },
     "1650_FREE": {
-      "Sectional_Standard": "16:24.39",
-      "Sectional_Bonus_Standard": "16:33.59"
+      "Sectionals_Standard": "16:24.39",
+      "Sectionals_Bonus_Standard": "16:33.59"
     },
     "100_BACK": {
-      "Sectional_Standard": ":53.49",
-      "Sectional_Bonus_Standard": ":54.09"
+      "Sectionals_Standard": ":53.49",
+      "Sectionals_Bonus_Standard": ":54.09"
     },
     "200_BACK": {
-      "Sectional_Standard": "1:54.89",
-      "Sectional_Bonus_Standard": "1:56.19"
+      "Sectionals_Standard": "1:54.89",
+      "Sectionals_Bonus_Standard": "1:56.19"
     },
     "100_BREAST": {
-      "Sectional_Standard": "1:00.99",
-      "Sectional_Bonus_Standard": "1:01.69"
+      "Sectionals_Standard": "1:00.99",
+      "Sectionals_Bonus_Standard": "1:01.69"
     },
     "200_BREAST": {
-      "Sectional_Standard": "2:12.29",
-      "Sectional_Bonus_Standard": "2:13.79"
+      "Sectionals_Standard": "2:12.29",
+      "Sectionals_Bonus_Standard": "2:13.79"
     },
     "100_FLY": {
-      "Sectional_Standard": ":52.69",
-      "Sectional_Bonus_Standard": ":53.39"
+      "Sectionals_Standard": ":52.69",
+      "Sectionals_Bonus_Standard": ":53.39"
     },
     "200_FLY": {
-      "Sectional_Standard": "1:56.99",
-      "Sectional_Bonus_Standard": "1:58.69"
+      "Sectionals_Standard": "1:56.99",
+      "Sectionals_Bonus_Standard": "1:58.69"
     },
     "200_IM": {
-      "Sectional_Standard": "1:57.29",
-      "Sectional_Bonus_Standard": "1:58.79"
+      "Sectionals_Standard": "1:57.29",
+      "Sectionals_Bonus_Standard": "1:58.79"
     },
     "400_IM": {
-      "Sectional_Standard": "4:11.19",
-      "Sectional_Bonus_Standard": "4:14.89"
+      "Sectionals_Standard": "4:11.19",
+      "Sectionals_Bonus_Standard": "4:14.89"
     }
   }
 }

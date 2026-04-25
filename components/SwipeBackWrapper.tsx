@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Animated, PanResponder, View, StyleSheet } from "react-native";
+import { Animated, PanResponder, StyleSheet } from "react-native";
 
 interface Props {
   onSwipeBack: () => void;

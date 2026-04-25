@@ -18,7 +18,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Time Input",
+          title: "Input",
           tabBarIcon: ({ color, focused }) => (
             <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
               <Ionicons
@@ -33,11 +33,26 @@ export default function TabLayout() {
       <Tabs.Screen
         name="standards"
         options={{
-          title: "Swim Standards",
+          title: "Standards View",
           tabBarIcon: ({ color, focused }) => (
             <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
               <Ionicons
                 name={focused ? "trophy" : "trophy-outline"}
+                size={22}
+                color={color}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="all-standards"
+        options={{
+          title: "Standard Library",
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
+              <Ionicons
+                name={focused ? "list" : "list-outline"}
                 size={22}
                 color={color}
               />

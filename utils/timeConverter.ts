@@ -43,7 +43,10 @@ export function secondsToTime(seconds: number): string {
 // Normalize a user-entered or stored time string:
 // strips leading "0:" so "0:29.89" → "29.89"
 export function normalizeTimeDisplay(timeStr: string): string {
-  const trimmed = timeStr.trim();
+  let trimmed = timeStr.trim();
+  if (trimmed.startsWith(":")) {
+    trimmed = trimmed.substring(1);
+  }
   // Match "0:XX.XX" pattern (zero minutes)
   const match = trimmed.match(/^0:(\d{1,2}\.\d+)$/);
   return match ? match[1] : trimmed;

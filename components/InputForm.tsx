@@ -80,7 +80,9 @@ function SegmentedControl<T extends string>({
             <Text
               style={[
                 styles.segmentText,
-                isActive ? styles.segmentTextActive : styles.segmentTextInactive,
+                isActive
+                  ? styles.segmentTextActive
+                  : styles.segmentTextInactive,
               ]}
             >
               {opt.label}
@@ -122,35 +124,43 @@ export default function InputForm({ onSubmit }: InputFormProps) {
   const [gender, setGender] = useState<Gender>("Boy");
   const [poolType, setPoolType] = useState<PoolType>("SCY");
   const [ageGroup, setAgeGroup] = useState<AgeGroup>("15-16");
-  const [event, setEvent] = useState<string>("100_FR");
+  const [selectedStroke, setSelectedStroke] = useState("FR");
+  const [selectedDistance, setSelectedDistance] = useState("100");
   const [userTime, setUserTime] = useState<string>("");
   const [showAgePicker, setShowAgePicker] = useState(false);
-  const [showEventPicker, setShowEventPicker] = useState(false);
 
-  const events = getEventsForPoolType(poolType);
+  const allAvailableEvents = getEventsForPoolType(poolType);
+  const distancesForStroke = allAvailableEvents
+    .filter(evt => evt.endsWith(`_${selectedStroke}`))
+    .map(evt => evt.split("_")[0]);
+
+  // Ensure selectedDistance is valid when stroke changes
+  React.useEffect(() => {
+    if (!distancesForStroke.includes(selectedDistance)) {
+      setSelectedDistance(distancesForStroke[0] || "");
+    }
+  }, [selectedStroke, poolType]);
+
+  const STROKES = [
+    { id: "FR", label: "Freestyle", icon: "water" as const },
+    { id: "BK", label: "Backstroke", icon: "chevron-up" as const },
+    { id: "BR", label: "Breaststroke", icon: "ellipse" as const },
+    { id: "FL", label: "Butterfly", icon: "flash" as const },
+    { id: "IM", label: "IM", icon: "shuffle" as const },
+  ];
 
   const handlePoolTypeChange = useCallback((newPoolType: PoolType) => {
     setPoolType(newPoolType);
-    const newEvents = getEventsForPoolType(newPoolType);
-    setEvent(newEvents[0]);
   }, []);
 
   const handleSubmit = useCallback(() => {
-    if (!event || !userTime) {
-      Alert.alert("Missing Info", "Please fill in all fields");
+    const eventCode = `${selectedDistance}_${selectedStroke}`;
+    if (!userTime.trim()) {
+      Alert.alert("Missing Info", "Please enter your time");
       return;
     }
-    onSubmit({ gender, poolType, ageGroup, event, userTime });
-  }, [gender, poolType, ageGroup, event, userTime, onSubmit]);
-
-  const formatEventName = useCallback(
-    (eventCode: string) => {
-      const displayName = getEventDisplayName(eventCode);
-      const suffix = poolType === "SCY" ? "Y" : "M";
-      return displayName.replace(/^(\d+)/, `$1${suffix}`);
-    },
-    [poolType],
-  );
+    onSubmit({ gender, poolType, ageGroup, event: eventCode, userTime });
+  }, [gender, poolType, ageGroup, selectedStroke, selectedDistance, userTime, onSubmit]);
 
   return (
     <KeyboardAvoidingView
@@ -158,29 +168,29 @@ export default function InputForm({ onSubmit }: InputFormProps) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.scroll}
-        contentContainerStyle={{
-          paddingBottom: 40 + insets.bottom,
-          paddingTop: Math.max(insets.top, 20),
-        }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* ────── Header ────── */}
-        <View style={styles.headerBg}>
-          <Text style={styles.title}>Swim Time Calculator</Text>
-          <Image
-            source={require("../assets/images/four-strokes.svg")}
-            style={styles.headerImage}
-          />
-        </View>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.scroll}
+          contentContainerStyle={{
+            paddingBottom: 40 + insets.bottom,
+            paddingTop: 0,
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* ────── Header ────── */}
+          <View style={[styles.headerBg, { paddingTop: Math.max(insets.top, 20) + 10 }]}>
+            <Text style={styles.title}>Swim Time Calculator</Text>
+            <Image
+              source={require("../assets/images/four-strokes.png")}
+              style={styles.headerImage}
+            />
+          </View>
 
         {/* ────── Form Card ────── */}
         <View style={styles.card}>
           {/* Gender */}
-          <Text style={styles.fieldLabel}>
+          <Text style={[styles.fieldLabel, { marginTop: 4 }]}>
             <Ionicons name="people" size={14} color="#64748b" /> Gender
           </Text>
           <SegmentedControl
@@ -230,32 +240,52 @@ export default function InputForm({ onSubmit }: InputFormProps) {
             </View>
           )}
 
-          {/* Event */}
+          {/* Stroke Selector */}
           <Text style={styles.fieldLabel}>
-            <Ionicons name="stopwatch" size={14} color="#64748b" /> Swim Event
+            <Ionicons name="water" size={14} color="#64748b" /> Select Stroke
           </Text>
-          {Platform.OS === "ios" ? (
-            <DropdownTrigger
-              label={formatEventName(event)}
-              onPress={() => setShowEventPicker(true)}
-            />
-          ) : (
-            <View style={styles.pickerWrapper}>
-              <Picker
-                selectedValue={event}
-                onValueChange={(value) => setEvent(value)}
-                style={styles.picker}
-              >
-                {events.map((evt) => (
-                  <Picker.Item
-                    key={evt}
-                    label={formatEventName(evt)}
-                    value={evt}
-                  />
-                ))}
-              </Picker>
+          <View style={styles.strokesContainer}>
+            <View style={styles.categoryWrap}>
+              {STROKES.slice(0, 3).map((s) => (
+                <Pressable
+                  key={s.id}
+                  onPress={() => setSelectedStroke(s.id)}
+                  style={[styles.selectorBtn, selectedStroke === s.id && styles.selectorBtnActive]}
+                >
+                  <Ionicons name={s.icon} size={14} color={selectedStroke === s.id ? "#fff" : "#64748b"} style={{ marginRight: 6 }} />
+                  <Text style={[styles.selectorText, selectedStroke === s.id && styles.selectorTextActive]}>{s.label}</Text>
+                </Pressable>
+              ))}
             </View>
-          )}
+            <View style={[styles.categoryWrap, { marginTop: 8 }]}>
+              {STROKES.slice(3).map((s) => (
+                <Pressable
+                  key={s.id}
+                  onPress={() => setSelectedStroke(s.id)}
+                  style={[styles.selectorBtn, selectedStroke === s.id && styles.selectorBtnActive]}
+                >
+                  <Ionicons name={s.icon} size={14} color={selectedStroke === s.id ? "#fff" : "#64748b"} style={{ marginRight: 6 }} />
+                  <Text style={[styles.selectorText, selectedStroke === s.id && styles.selectorTextActive]}>{s.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {/* Distance Selector */}
+          <Text style={styles.fieldLabel}>
+            <Ionicons name="navigate" size={14} color="#64748b" /> Select Distance
+          </Text>
+          <View style={styles.categoryWrap}>
+            {distancesForStroke.map((d) => (
+              <Pressable
+                key={d}
+                onPress={() => setSelectedDistance(d)}
+                style={[styles.distanceBtn, selectedDistance === d && styles.distanceBtnActive]}
+              >
+                <Text style={[styles.distanceText, selectedDistance === d && styles.distanceTextActive]}>{d}</Text>
+              </Pressable>
+            ))}
+          </View>
 
           {/* User Time */}
           <Text style={styles.fieldLabel}>
@@ -310,10 +340,7 @@ export default function InputForm({ onSubmit }: InputFormProps) {
             <View style={styles.modalHandle} />
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Age Group</Text>
-              <Pressable
-                onPress={() => setShowAgePicker(false)}
-                hitSlop={12}
-              >
+              <Pressable onPress={() => setShowAgePicker(false)} hitSlop={12}>
                 <Text style={styles.doneButton}>Done</Text>
               </Pressable>
             </View>
@@ -340,10 +367,7 @@ export default function InputForm({ onSubmit }: InputFormProps) {
             <View style={styles.modalHandle} />
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Swim Event</Text>
-              <Pressable
-                onPress={() => setShowEventPicker(false)}
-                hitSlop={12}
-              >
+              <Pressable onPress={() => setShowEventPicker(false)} hitSlop={12}>
                 <Text style={styles.doneButton}>Done</Text>
               </Pressable>
             </View>
@@ -378,10 +402,10 @@ const styles = StyleSheet.create({
   headerBg: {
     backgroundColor: "#4f46e5",
     paddingHorizontal: 24,
-    paddingTop: 20,
+    paddingTop: 30,
     paddingBottom: 28,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     alignItems: "center",
     shadowColor: "#4f46e5",
     shadowOffset: { width: 0, height: 10 },
@@ -400,6 +424,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "900",
     letterSpacing: -0.5,
+    marginTop: -4,
   },
   headerImage: {
     width: "80%",
@@ -413,9 +438,10 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     marginHorizontal: 16,
-    marginTop: -8,
+    marginTop: 24,
     borderRadius: 24,
     padding: 22,
+    paddingTop: 14,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.06,
@@ -467,6 +493,37 @@ const styles = StyleSheet.create({
   segmentTextInactive: {
     color: "#64748b",
   },
+
+  // ── Selective Grid Styles ──
+  strokesContainer: { width: "100%" },
+  categoryWrap: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+  selectorBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f1f5f9",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  selectorBtnActive: { backgroundColor: "#6366f1", borderColor: "#4f46e5" },
+  selectorText: { fontSize: 13, fontWeight: "700", color: "#64748b" },
+  selectorTextActive: { color: "#fff" },
+
+  distanceBtn: {
+    minWidth: 50,
+    alignItems: "center",
+    backgroundColor: "#f1f5f9",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  distanceBtnActive: { backgroundColor: "#6366f1", borderColor: "#4f46e5" },
+  distanceText: { fontSize: 13, fontWeight: "800", color: "#64748b" },
+  distanceTextActive: { color: "#fff" },
 
   // ── Dropdowns ──
   dropdownTrigger: {

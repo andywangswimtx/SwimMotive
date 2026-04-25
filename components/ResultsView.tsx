@@ -2,7 +2,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
@@ -10,10 +10,12 @@ import {
   Gender,
   getEventDisplayName,
   getFuturesStandard,
+  getGulfStandard,
   getJrNationalStandard,
   getMotivationalStandards,
   getNCSAStandard,
   getOlympicTrialStandard,
+  getTAGSStandard,
   getTSCStandards,
   getWinterJrStandard,
   mapEventToPowerIndex,
@@ -21,6 +23,7 @@ import {
 } from "../utils/dataManager";
 
 import { EventName } from "../utils/PowerIndex";
+import ComingSoon from "./ComingSoon";
 import MotivationalStandardsView from "./MotivationalStandardsView";
 import PowerIndexView from "./PowerIndexView";
 import SingleStandardView from "./SingleStandardView";
@@ -45,7 +48,9 @@ type ViewMode =
   | "ncsa"
   | "winterJr"
   | "jrNational"
-  | "olympicTrial";
+  | "olympicTrial"
+  | "tags"
+  | "gulf";
 
 // ─── Button config ──────────────────────────────────────
 interface StandardButtonConfig {
@@ -67,46 +72,36 @@ function StandardCard({
   config: StandardButtonConfig;
   onPress: () => void;
 }) {
-  const IconComp =
-    config.iconLib === "Ionicons" ? Ionicons : MaterialCommunityIcons;
-
-  if (!config.available) {
-    return (
-      <View style={[styles.card, styles.cardDisabled]}>
-        <View style={[styles.iconBubble, { backgroundColor: "#f1f5f9" }]}>
-          <IconComp name={config.icon as any} size={20} color="#cbd5e1" />
-        </View>
-        <View style={styles.cardContent}>
-          <Text style={[styles.cardTitle, { color: "#94a3b8" }]}>
-            {config.label}
-          </Text>
-          <Text style={[styles.cardSub, { color: "#cbd5e1" }]}>
-            Not available for this event
-          </Text>
-        </View>
-        <Ionicons name="lock-closed" size={16} color="#cbd5e1" />
-      </View>
-    );
-  }
+  const IconComp = config.iconLib === "Ionicons" ? Ionicons : MaterialCommunityIcons;
 
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        pressed && styles.cardPressed,
+        !config.available && styles.cardDisabled,
+        pressed && config.available && styles.cardPressed,
       ]}
     >
-      <View style={[styles.iconBubble, { backgroundColor: config.iconBg }]}>
-        <IconComp name={config.icon as any} size={20} color={config.color} />
+      <View style={[styles.iconBubble, { backgroundColor: config.available ? config.iconBg : "#f1f5f9" }]}>
+        <IconComp name={config.icon as any} size={20} color={config.available ? config.color : "#cbd5e1"} />
       </View>
       <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{config.label}</Text>
-        <Text style={styles.cardSub}>{config.subtitle}</Text>
+        <Text style={[styles.cardTitle, !config.available && { color: "#94a3b8" }]}>
+          {config.label}
+        </Text>
+        <Text style={[styles.cardSub, !config.available && { color: "#cbd5e1" }]}>
+          {config.available ? config.subtitle : "Not available for this event"}
+        </Text>
       </View>
-      <View style={[styles.arrowBubble, { backgroundColor: config.iconBg }]}>
-        <Ionicons name="chevron-forward" size={16} color={config.color} />
-      </View>
+
+      {config.available ? (
+        <View style={[styles.arrowBubble, { backgroundColor: config.iconBg }]}>
+          <Ionicons name="chevron-forward" size={16} color={config.color} />
+        </View>
+      ) : (
+        <Ionicons name="lock-closed" size={16} color="#cbd5e1" />
+      )}
     </Pressable>
   );
 }
@@ -153,8 +148,7 @@ export default function ResultsView({
   // Gray out tab when in sub-view
   useEffect(() => {
     navigation.setOptions({
-      tabBarActiveTintColor:
-        viewMode !== "selection" ? "#9ca3af" : "#4f46e5",
+      tabBarActiveTintColor: viewMode !== "selection" ? "#9ca3af" : "#4f46e5",
     });
   }, [navigation, viewMode]);
 
@@ -167,22 +161,48 @@ export default function ResultsView({
     winterJrStandard,
     jrNationalStandard,
     olympicTrialStandard,
+    tagsStandard,
+    gulfStandard,
     powerIndexEvent,
   } = React.useMemo(
     () => ({
-      motivationalStandards: getMotivationalStandards(gender, poolType, ageGroup, event),
+      motivationalStandards: getMotivationalStandards(
+        gender,
+        poolType,
+        ageGroup,
+        event,
+      ),
       tscStandards: getTSCStandards(gender, poolType, event),
       futuresStandard: getFuturesStandard(gender, poolType, event),
       ncsaStandard: getNCSAStandard(gender, poolType, event),
       winterJrStandard: getWinterJrStandard(gender, poolType, event),
       jrNationalStandard: getJrNationalStandard(gender, poolType, event),
       olympicTrialStandard: getOlympicTrialStandard(gender, poolType, event),
-      powerIndexEvent: mapEventToPowerIndex(poolType, event) as EventName | null,
+      tagsStandard: getTAGSStandard(gender, poolType, ageGroup, event),
+      gulfStandard: getGulfStandard(gender, poolType, ageGroup, event),
+      powerIndexEvent: mapEventToPowerIndex(
+        poolType,
+        event,
+      ) as EventName | null,
     }),
     [gender, poolType, ageGroup, event],
   );
 
   const goBack = useCallback(() => setViewMode("selection"), []);
+
+  const handlePressStandard = useCallback((targetMode: ViewMode, isAvailable: boolean) => {
+    if (!userTime || userTime.trim() === "") {
+      Alert.alert(
+        "Input Required",
+        "Please enter an event and time in the time input page",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+    if (isAvailable) {
+      setViewMode(targetMode);
+    }
+  }, [userTime]);
 
   // ===== Sub views =====
   if (viewMode === "motivational" && motivationalStandards) {
@@ -205,10 +225,10 @@ export default function ResultsView({
     return (
       <SwipeBackWrapper onSwipeBack={goBack}>
         <TwoStandardView
-          standard={tscStandards.Sectional_Standard}
-          bonusStandard={tscStandards.Sectional_Bonus_Standard}
-          meetName="TSC Sectionals"
-          standardLabel="Regional"
+          standard={tscStandards.Sectionals_Standard}
+          bonusStandard={tscStandards.Sectionals_Bonus_Standard}
+          meetName="Sectionals"
+          standardLabel="Sectionals"
           bonusLabel="Bonus"
           userTime={userTime}
           event={event}
@@ -246,10 +266,12 @@ export default function ResultsView({
   if (viewMode === "jrNational" && jrNationalStandard) {
     return (
       <SwipeBackWrapper onSwipeBack={goBack}>
-        <SingleStandardView
+        <TwoStandardView
           standard={jrNationalStandard.standard}
+          bonusStandard={jrNationalStandard.bonus}
           meetName={jrNationalStandard.meet}
           standardLabel="Qualifying"
+          bonusLabel="Bonus"
           userTime={userTime}
           event={event}
           gender={gender}
@@ -319,14 +341,52 @@ export default function ResultsView({
     );
   }
 
+  if (viewMode === "tags" && tagsStandard) {
+    return (
+      <SwipeBackWrapper onSwipeBack={goBack}>
+        <SingleStandardView
+          standard={tagsStandard.standard}
+          meetName={tagsStandard.meet}
+          standardLabel="TAGS Cut"
+          userTime={userTime}
+          event={event}
+          gender={gender}
+          ageGroup={ageGroup}
+          poolType={poolType}
+          colorClass="emerald"
+          onBack={goBack}
+        />
+      </SwipeBackWrapper>
+    );
+  }
+
+  if (viewMode === "gulf" && gulfStandard) {
+    return (
+      <SwipeBackWrapper onSwipeBack={goBack}>
+        <SingleStandardView
+          standard={gulfStandard.standard}
+          meetName={gulfStandard.meet}
+          standardLabel="Gulf Cut"
+          userTime={userTime}
+          event={event}
+          gender={gender}
+          ageGroup={ageGroup}
+          poolType={poolType}
+          colorClass="sky"
+          onBack={goBack}
+        />
+      </SwipeBackWrapper>
+    );
+  }
+
   // ===== Build button configs =====
   const buttons: StandardButtonConfig[] = [
     {
       id: "motivational",
-      icon: "swim",
-      iconLib: "MaterialCommunityIcons",
-      color: "#3b82f6",
-      iconBg: "#eff6ff",
+      icon: "ribbon",
+      iconLib: "Ionicons",
+      color: "#10b981",
+      iconBg: "#ecfdf5",
       label: "USA Swimming Motivational Cuts",
       subtitle: "2024–2028 · B through AAAA",
       available: !!motivationalStandards,
@@ -338,52 +398,52 @@ export default function ResultsView({
       color: "#8b5cf6",
       iconBg: "#f5f3ff",
       label: "TSC Sectionals",
-      subtitle: "Sectional & Bonus standards",
+      subtitle: "Sectionals & Bonus standards",
       available: !!tscStandards,
     },
     {
       id: "ncsa",
       icon: "star",
       iconLib: "Ionicons",
-      color: "#eab308",
-      iconBg: "#fefce8",
+      color: "#0ea5e9",
+      iconBg: "#f0f9ff",
       label: "NCSA Standards",
       subtitle: "2025 Spring Championships",
       available: !!ncsaStandard,
     },
     {
       id: "futures",
-      icon: "flash",
+      icon: "rocket",
       iconLib: "Ionicons",
-      color: "#10b981",
-      iconBg: "#ecfdf5",
+      color: "#f59e0b",
+      iconBg: "#fffbeb",
       label: "Futures",
-      subtitle: "2026 TYR Futures Championships",
+      subtitle: "2026 Futures Championships",
       available: !!futuresStandard,
     },
     {
       id: "winterJr",
-      icon: "snowflake",
-      iconLib: "MaterialCommunityIcons",
-      color: "#f43f5e",
-      iconBg: "#fff1f2",
+      icon: "snow",
+      iconLib: "Ionicons",
+      color: "#3b82f6",
+      iconBg: "#eff6ff",
       label: "Winter Jr.",
-      subtitle: "2026 Winter Juniors",
+      subtitle: "2026 Speedo Winter Juniors",
       available: !!winterJrStandard,
     },
     {
       id: "jrNational",
-      icon: "medal",
+      icon: "flag",
       iconLib: "Ionicons",
-      color: "#f97316",
-      iconBg: "#fff7ed",
+      color: "#f43f5e",
+      iconBg: "#fff1f2",
       label: "Jr. National",
-      subtitle: "2026 Junior Nationals",
+      subtitle: "2026 Speedo Junior Nationals",
       available: !!jrNationalStandard,
     },
     {
       id: "olympicTrial",
-      icon: "flag",
+      icon: "medal",
       iconLib: "Ionicons",
       color: "#be123c",
       iconBg: "#fff1f2",
@@ -392,6 +452,31 @@ export default function ResultsView({
       available: !!olympicTrialStandard,
     },
   ];
+
+  if (ageGroup === "13-14") {
+    buttons.splice(1, 0, 
+      {
+        id: "tags",
+        icon: "location",
+        iconLib: "Ionicons",
+        color: "#059669",
+        iconBg: "#ecfdf5",
+        label: "TAGS Championships",
+        subtitle: `2025 Texas Age Group · ${poolType}`,
+        available: !!tagsStandard,
+      },
+      {
+        id: "gulf",
+        icon: "water",
+        iconLib: "Ionicons",
+        color: "#0284c7",
+        iconBg: "#f0f9ff",
+        label: "Gulf Championships",
+        subtitle: `2025 Gulf Age Group · ${poolType}`,
+        available: !!gulfStandard,
+      }
+    );
+  }
 
   // Format event for header subtitle
   const eventDisplay = getEventDisplayName(event);
@@ -402,11 +487,9 @@ export default function ResultsView({
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, 24) }]}>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, 14) }]}>
         <Text style={styles.headerTitle}>Swim Standards</Text>
-        <Text style={styles.headerSubtitle}>
-          Choose a standard to view
-        </Text>
+        <Text style={styles.headerSubtitle}>Choose a standard to view</Text>
 
         {/* Context pills */}
         <View style={styles.pillRow}>
@@ -463,18 +546,11 @@ export default function ResultsView({
           <StandardCard
             key={btn.id}
             config={btn}
-            onPress={() => setViewMode(btn.id)}
+            onPress={() => handlePressStandard(btn.id, btn.available)}
           />
         ))}
 
-        {/* Coming Soon */}
-        <Text style={styles.sectionLabel}>COMING SOON</Text>
-        <View style={styles.comingSoon}>
-          <Ionicons name="time-outline" size={18} color="#94a3b8" />
-          <Text style={styles.comingSoonText}>
-            More standards being added...
-          </Text>
-        </View>
+        <ComingSoon />
       </ScrollView>
     </View>
   );
@@ -491,7 +567,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#4f46e5",
     paddingHorizontal: 24,
-    paddingBottom: 22,
+    paddingBottom: 16,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
     shadowColor: "#4f46e5",
@@ -506,12 +582,14 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "900",
     letterSpacing: -0.5,
+    marginLeft: 4,
   },
   headerSubtitle: {
     color: "#c7d2fe",
     fontSize: 14,
     marginTop: 4,
     fontWeight: "500",
+    marginLeft: 4,
   },
 
   // Context pills

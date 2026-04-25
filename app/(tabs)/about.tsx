@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Text,
   UIManager,
-  View
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -124,36 +124,34 @@ export default function AboutScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Gradient-like header background */}
-      <View style={styles.headerBg} />
-
       <ScrollView
         contentContainerStyle={{
           paddingBottom: 40 + insets.bottom,
-          paddingTop: Math.max(insets.top, 20),
         }}
         showsVerticalScrollIndicator={false}
       >
         {/* ────── Header ────── */}
-        <View style={styles.header}>
-          <View style={styles.logoGlow}>
-            <Image
-              source={require("../../assets/images/favicon.png")}
-              style={styles.logo}
-            />
-          </View>
-          <Text style={styles.appTitle}>Swim Time Calculator</Text>
-          <Text style={styles.tagline}>Know swim times. Chase your goals.</Text>
-
-          {/* Version pills */}
-          <View style={styles.pillRow}>
-            <View style={styles.pill}>
-              <Text style={styles.pillText}>Version 0.3.0</Text>
+        <View style={[styles.headerBg, { paddingTop: Math.max(insets.top, 20) }]}>
+          <View style={styles.header}>
+            <View style={styles.logoGlow}>
+              <Image
+                source={require("../../assets/images/favicon.png")}
+                style={styles.logo}
+              />
             </View>
-            <View style={[styles.pill, styles.pillAccent]}>
-              <Text style={[styles.pillText, styles.pillAccentText]}>
-                Build 60404
-              </Text>
+            <Text style={styles.appTitle}>Swim Time Calculator</Text>
+            <Text style={styles.tagline}>Know swim times. Chase your goals.</Text>
+
+            {/* Version pills */}
+            <View style={styles.pillRow}>
+              <View style={styles.pill}>
+                <Text style={styles.pillText}>App Version 0.3.0</Text>
+              </View>
+              <View style={[styles.pill, styles.pillAccent]}>
+                <Text style={[styles.pillText, styles.pillAccentText]}>
+                  Build 60405
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -235,13 +233,9 @@ export default function AboutScreen() {
 
         {/* ────── Footer ────── */}
         <View style={styles.footer}>
-          <View style={styles.footerWaveRow}>
-            <Text style={styles.footerWave}>🏊‍♂️</Text>
-            <Text style={styles.footerWave}>🏊‍♀️</Text>
-            <Text style={styles.footerWave}>🏊</Text>
-          </View>
+          {/* Removed swimming emojis */}
           <Text style={styles.footerMotto}>
-            By teen swimmers, for teen swimmers!
+            Made by a high school swimmer
           </Text>
           <Text style={styles.footerCopy}>
             © 2026 Swim Time Calculator. All rights reserved.
@@ -261,11 +255,6 @@ const styles = StyleSheet.create({
 
   // Header background shape
   headerBg: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 260,
     backgroundColor: "#4f46e5",
     borderBottomLeftRadius: 40,
     borderBottomRightRadius: 40,
@@ -274,7 +263,6 @@ const styles = StyleSheet.create({
   // Header content
   header: {
     alignItems: "center",
-    paddingTop: 20,
     paddingBottom: 30,
     paddingHorizontal: 20,
   },
@@ -285,7 +273,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.15)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 6,
     // subtle shadow behind logo
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
@@ -447,14 +435,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingBottom: 10,
   },
-  footerWaveRow: {
-    flexDirection: "row",
-    gap: 6,
-    marginBottom: 10,
-  },
-  footerWave: {
-    fontSize: 22,
-  },
+
+
   footerMotto: {
     fontSize: 14,
     fontWeight: "600",

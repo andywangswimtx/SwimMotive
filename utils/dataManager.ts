@@ -21,9 +21,14 @@ export interface MotivationalStandards {
   AAAA: string;
 }
 
-export interface SectionalStandards {
-  Sectional_Standard: string;
-  Sectional_Bonus_Standard: string;
+export interface SingleStandard {
+  standard: string;
+  meet: string;
+}
+
+export interface SectionalsStandards {
+  Sectionals_Standard: string;
+  Sectionals_Bonus_Standard: string;
 }
 
 // Get events based on pool type
@@ -36,12 +41,16 @@ export function getEventsForPoolType(poolType: PoolType): string[] {
       "500_FR",
       "1000_FR",
       "1650_FR",
+      "50_BK",
       "100_BK",
       "200_BK",
+      "50_BR",
       "100_BR",
       "200_BR",
+      "50_FL",
       "100_FL",
       "200_FL",
+      "100_IM",
       "200_IM",
       "400_IM",
     ];
@@ -53,10 +62,13 @@ export function getEventsForPoolType(poolType: PoolType): string[] {
       "400_FR",
       "800_FR",
       "1500_FR",
+      "50_BK",
       "100_BK",
       "200_BK",
+      "50_BR",
       "100_BR",
       "200_BR",
+      "50_FL",
       "100_FL",
       "200_FL",
       "200_IM",
@@ -93,13 +105,15 @@ export function getMotivationalStandards(
   let data: any;
 
   if (poolType === "SCY") {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/SCY girls moti cuts.json")
-      : require("../assets/timeData/SCY boys moti cuts.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/SCY girls moti cuts.json")
+        : require("../assets/timeData/SCY boys moti cuts.json");
   } else {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/LCM girls moti cuts.json")
-      : require("../assets/timeData/LCM boys moti cuts.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/LCM girls moti cuts.json")
+        : require("../assets/timeData/LCM boys moti cuts.json");
   }
 
   const genderKey = gender === "Girl" ? "Girls" : "Boys";
@@ -166,21 +180,23 @@ export function getTSCStandards(
   gender: Gender,
   poolType: PoolType,
   event: string,
-): SectionalStandards | null {
+): SectionalsStandards | null {
   let data: any;
 
   if (poolType === "SCY") {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/TSC sectional SCY girls.json")
-      : require("../assets/timeData/TSC sectional SCY boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/TSC sectional SCY girls.json")
+        : require("../assets/timeData/TSC sectional SCY boys.json");
   } else {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/TSC sectional LCM girls.json")
-      : require("../assets/timeData/TSC sectional LCM boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/TSC sectional LCM girls.json")
+        : require("../assets/timeData/TSC sectional LCM boys.json");
   }
 
   const genderKey = gender === "Girl" ? "Women" : "Men";
-  const rootKey = `2024_TSC_${genderKey}_Sectional_Standards_${poolType}`;
+  const rootKey = `2024_TSC_${genderKey}_Sectionals_Standards_${poolType}`;
 
   // Convert event format from XX_FR to XX_FREE, etc.
   const tscEvent = event
@@ -210,13 +226,15 @@ export function getFuturesStandard(
 ): FuturesStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/futrures SCY girls.json")
-      : require("../assets/timeData/futrures SCY boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/futrures SCY girls.json")
+        : require("../assets/timeData/futrures SCY boys.json");
   } else {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/futrures LCM girls.json")
-      : require("../assets/timeData/futrures LCM boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/futrures LCM girls.json")
+        : require("../assets/timeData/futrures LCM boys.json");
   }
 
   // Map app event code (e.g. 500_FR) to JSON event name (e.g. "500 FR")
@@ -234,7 +252,7 @@ export function getFuturesStandard(
 
     return {
       standard,
-      meet: data.meet || "2026 TYR Futures Championships",
+      meet: data.meet || "2026 Futures Championships",
     };
   } catch {
     return null;
@@ -249,13 +267,15 @@ export function getNCSAStandard(
 ): FuturesStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/NCSA SCY girls.json")
-      : require("../assets/timeData/NCSA SCY boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/NCSA SCY girls.json")
+        : require("../assets/timeData/NCSA SCY boys.json");
   } else {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/NCSA LCM girls.json")
-      : require("../assets/timeData/NCSA LCM boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/NCSA LCM girls.json")
+        : require("../assets/timeData/NCSA LCM boys.json");
   }
 
   // Map app event code (e.g. 500_FR) to JSON event name (e.g. "500 FREE")
@@ -264,31 +284,20 @@ export function getNCSAStandard(
     .replace("_BK", " BACK")
     .replace("_BR", " BREAST")
     .replace("_FL", " FLY")
+    .replace("_IM", " IM")
     .replace("_", " ");
-
-  // Handle dual-distance labels in NCSA files (e.g. "400/500 FREE")
-  if (ncsaEvent === "500 FREE" || ncsaEvent === "400 FREE") {
-    if (data.standards?.find((s: any) => s.event === "400/500 FREE"))
-      ncsaEvent = "400/500 FREE";
-  } else if (ncsaEvent === "1000 FREE" || ncsaEvent === "800 FREE") {
-    if (data.standards?.find((s: any) => s.event === "800/1000 FREE"))
-      ncsaEvent = "800/1000 FREE";
-  } else if (ncsaEvent === "1650 FREE" || ncsaEvent === "1500 FREE") {
-    if (data.standards?.find((s: any) => s.event === "1500/1650 FREE"))
-      ncsaEvent = "1500/1650 FREE";
-  }
 
   try {
     const standardObj = data.standards?.find((s: any) => s.event === ncsaEvent);
     if (!standardObj) return null;
 
     const standard = standardObj.standard;
-    // Handle "100 Back Qualifying Time" or empty strings
-    if (!standard || !/^\d|:/.test(standard)) return null;
+    // Handle "100 Back Qualifying Time" or empty strings - ensure it's a time format
+    if (!standard || !/^\d+[:.]\d+/.test(standard)) return null;
 
     return {
       standard,
-      meet: data.meet || "2025 NCSA Spring Champs",
+      meet: data.meet || "2025 NCSA Spring Champ",
     };
   } catch {
     return null;
@@ -309,13 +318,15 @@ export function getWinterJrStandard(
 ): TwoStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/winter jr SCY girls.json")
-      : require("../assets/timeData/winter jr SCY boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/winter jr SCY girls.json")
+        : require("../assets/timeData/winter jr SCY boys.json");
   } else {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/winter jr LCM girls.json")
-      : require("../assets/timeData/winter jr LCM boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/winter jr LCM girls.json")
+        : require("../assets/timeData/winter jr LCM boys.json");
   }
 
   // Map app event code (50_FR) to JSON event name (50 FR)
@@ -330,7 +341,7 @@ export function getWinterJrStandard(
     return {
       standard: standardObj.qualifying_standard,
       bonus: standardObj.bonus_standard,
-      meet: data.meet || "2026 Winter Juniors",
+      meet: data.meet || "2026 Speedo Winter Junior",
     };
   } catch {
     return null;
@@ -345,13 +356,15 @@ export function getJrNationalStandard(
 ): TwoStandard | null {
   let data: any;
   if (poolType === "SCY") {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/Jr national SCY girls.json")
-      : require("../assets/timeData/Jr national SCY boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/Jr national SCY girls.json")
+        : require("../assets/timeData/Jr national SCY boys.json");
   } else {
-    data = gender === "Girl" 
-      ? require("../assets/timeData/Jr national LCM girls.json")
-      : require("../assets/timeData/Jr national LCM boys.json");
+    data =
+      gender === "Girl"
+        ? require("../assets/timeData/Jr national LCM girls.json")
+        : require("../assets/timeData/Jr national LCM boys.json");
   }
 
   // Map app event code (50_FR) to JSON event name (50 FR)
@@ -362,9 +375,13 @@ export function getJrNationalStandard(
     if (!standardObj) return null;
 
     return {
-      standard: standardObj.qualifying_standard || standardObj.qualifying,
+      standard:
+        standardObj.qualifying_standard ||
+        standardObj.qualifying ||
+        standardObj.standard,
       bonus: standardObj.bonus_standard || standardObj.bonus,
-      meet: data.championship || data.meet || "2026 Junior Nationals",
+      meet:
+        data.championship || data.meet || "2026 Speedo Junior National",
     };
   } catch {
     return null;
@@ -405,7 +422,77 @@ export function getOlympicTrialStandard(
 
     return {
       standard,
-      meet: olympicTrialLcm.competition || "2024 US Olympic Trials",
+      meet: olympicTrialLcm.competition || "2024 US Olympic Trial",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get TAGS standards (13-14 only)
+export function getTAGSStandard(
+  gender: Gender,
+  poolType: PoolType,
+  ageGroup: AgeGroup,
+  event: string,
+): SingleStandard | null {
+  if (ageGroup !== "13-14") return null;
+
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/TAGS SCY girls.json")
+        : require("../assets/timeData/TAGS SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/TAGS LCM girls.json")
+        : require("../assets/timeData/TAGS LCM boys.json");
+    }
+
+    const standard = poolType === "SCY" 
+      ? data.TAGS_Standards_SCY?.[ageGroup]?.[event]
+      : data.TAGS_Standards_LCM?.[ageGroup]?.[event];
+    if (!standard) return null;
+
+    return {
+      standard,
+      meet: "2025 TAGS Championships",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get Gulf standards (13-14 only)
+export function getGulfStandard(
+  gender: Gender,
+  poolType: PoolType,
+  ageGroup: AgeGroup,
+  event: string,
+): SingleStandard | null {
+  if (ageGroup !== "13-14") return null;
+
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/GULF SCY girls.json")
+        : require("../assets/timeData/GULF SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/GULF LCM girls.json")
+        : require("../assets/timeData/GULF LCM boys.json");
+    }
+
+    const standard = poolType === "SCY"
+      ? data.GULF_Standards_SCY?.[ageGroup]?.[event]
+      : data.GULF_Standards_LCM?.[ageGroup]?.[event];
+    if (!standard) return null;
+
+    return {
+      standard,
+      meet: "2025 Gulf Championships",
     };
   } catch {
     return null;

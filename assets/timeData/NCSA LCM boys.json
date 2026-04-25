@@ -21,16 +21,12 @@
       "standard": "4:09.79"
     },
     {
-      "event": "800/1000 FREE",
+      "event": "800 FREE",
       "standard": "8:40.79"
     },
     {
-      "event": "1500/1650 FREE",
+      "event": "1500 FREE",
       "standard": "16:41.69"
-    },
-    {
-      "event": "50 BACK",
-      "standard": "100 Back Qualifying Times"
     },
     {
       "event": "100 BACK",
@@ -41,20 +37,12 @@
       "standard": "2:12.39"
     },
     {
-      "event": "50 BREAST",
-      "standard": "100 Breast Qualifying Times"
-    },
-    {
       "event": "100 BREAST",
       "standard": "1:08.29"
     },
     {
       "event": "200 BREAST",
       "standard": "2:29.79"
-    },
-    {
-      "event": "50 FLY",
-      "standard": "100 Fly Qualifying Times"
     },
     {
       "event": "100 FLY",
@@ -71,26 +59,6 @@
     {
       "event": "400 IM",
       "standard": "4:43.89"
-    },
-    {
-      "event": "200 FREE RELAY",
-      "standard": "400 Free Relay Qualifying Time"
-    },
-    {
-      "event": "400 FREE RELAY",
-      "standard": "3:41.89"
-    },
-    {
-      "event": "800 FREE RELAY",
-      "standard": "8:07.49"
-    },
-    {
-      "event": "200 MEDLEY RELAY",
-      "standard": "400 Medley Relay Qualifying Time"
-    },
-    {
-      "event": "400 MEDLEY RELAY",
-      "standard": "4:08.89"
     }
   ]
 }

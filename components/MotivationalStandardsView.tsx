@@ -230,7 +230,7 @@ export default function MotivationalStandardsView({
               >
                 Cut
               </Text>
-              <Text style={styles.tableHeaderCell}>Standard</Text>
+              <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>Standard</Text>
               <Text style={styles.tableHeaderCell}>Time Drop Needed</Text>
               <Text style={styles.tableHeaderCell}>Per 50</Text>
             </View>
@@ -248,7 +248,7 @@ export default function MotivationalStandardsView({
                 >
                   {row.cut}
                 </Text>
-                <Text style={styles.tableCell}>{row.standardTime}</Text>
+                <Text style={[styles.tableCell, { flex: 1.2 }]}>{normalizeTimeDisplay(row.standardTime)}</Text>
                 {!hasUserTime ? (
                   <View style={styles.tableCell}>
                     <Ionicons
@@ -317,9 +317,9 @@ export default function MotivationalStandardsView({
                 >
                   Cut
                 </Text>
-                <Text style={styles.modalHeaderCell}>Standard</Text>
-                <Text style={[styles.modalHeaderCell, { textAlign: "center" }]}>
-                  % Improvement Needed
+                <Text style={[styles.modalHeaderCell, { flex: 1.2 }]}>Standard</Text>
+                <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
+                  % Imp. Needed
                 </Text>
                 <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
                 <Text style={styles.modalHeaderCell}>Per 50</Text>
@@ -344,10 +344,10 @@ export default function MotivationalStandardsView({
                     >
                       {row.cut}
                     </Text>
-                    <Text style={[styles.modalCell, { fontWeight: "700" }]}>
-                      {row.standardTime}
+                    <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2 }]}>
+                      {normalizeTimeDisplay(row.standardTime)}
                     </Text>
-                    <View style={[styles.modalCell, { alignItems: "center" }]}>
+                    <View style={[styles.modalCell, { alignItems: "flex-end" }]}>
                       {!hasUserTime ? (
                         <Ionicons name="remove" size={16} color="#94a3b8" />
                       ) : row.achieved ? (
@@ -356,7 +356,7 @@ export default function MotivationalStandardsView({
                         <Text
                           style={[
                             styles.modalValueText,
-                            { textAlign: "center" },
+                            { textAlign: "right" },
                           ]}
                         >
                           -{row.percentage.toFixed(2)}%

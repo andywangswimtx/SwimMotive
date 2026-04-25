@@ -1,5 +1,5 @@
 {
-  "championship": "2026 Junior Nationals",
+  "championship": "2026 Speedo Junior National",
   "category": "Men",
   "course": "SCY (Short Course Yards)",
   "qualifying_period": "June 1, 2025 through Entry Deadline",
@@ -7,72 +7,72 @@
     {
       "event": "50 FR",
       "qualifying_standard": "20.39",
-      "bonus_standard": "20.59"
+      "bonus_standard": "21.29"
     },
     {
       "event": "100 FR",
       "qualifying_standard": "44.39",
-      "bonus_standard": "44.99"
+      "bonus_standard": "46.39"
     },
     {
       "event": "200 FR",
       "qualifying_standard": "1:37.89",
-      "bonus_standard": "1:38.59"
+      "bonus_standard": "1:41.59"
     },
     {
       "event": "500 FR",
-      "qualifying_standard": "4:27.09",
-      "bonus_standard": "4:29.29"
+      "qualifying_standard": "4:25.59",
+      "bonus_standard": "4:37.09"
     },
     {
       "event": "1000 FR",
       "qualifying_standard": "9:13.19",
-      "bonus_standard": "9:24.29"
+      "bonus_standard": "9:34.29"
     },
     {
       "event": "1650 FR",
-      "qualifying_standard": "15:34.19",
-      "bonus_standard": "15:40.39"
+      "qualifying_standard": "15:31.39",
+      "bonus_standard": "16:05.49"
     },
     {
       "event": "100 BK",
       "qualifying_standard": "48.59",
-      "bonus_standard": "49.29"
+      "bonus_standard": "51.49"
     },
     {
       "event": "200 BK",
-      "qualifying_standard": "1:46.79",
-      "bonus_standard": "1:47.99"
+      "qualifying_standard": "1:46.49",
+      "bonus_standard": "1:52.79"
     },
     {
       "event": "100 BR",
-      "qualifying_standard": "55.09",
-      "bonus_standard": "55.69"
+      "qualifying_standard": "54.99",
+      "bonus_standard": "57.99"
     },
     {
       "event": "200 BR",
-      "qualifying_standard": "2:00.59",
-      "bonus_standard": "2:01.89"
+      "qualifying_standard": "2:00.39",
+      "bonus_standard": "2:07.99"
     },
     {
       "event": "100 FL",
-      "qualifying_standard": "48.29",
-      "bonus_standard": "48.79"
+      "qualifying_standard": "48.19",
+      "bonus_standard": "50.59"
     },
     {
       "event": "200 FL",
       "qualifying_standard": "1:47.89",
-      "bonus_standard": "1:49.29"
+      "bonus_standard": "1:53.89"
     },
     {
       "event": "200 IM",
-      "qualifying_standard": "1:48.79",
-      "bonus_standard": "1:49.79"
+      "qualifying_standard": "1:48.49",
+      "bonus_standard": "1:53.89"
     },
     {
       "event": "400 IM",
       "qualifying_standard": "3:52.69",
-      "bonus_standard": "3:56.99"
+      "bonus_standard": "4:06.99"
     }
   ]
 }

@@ -1,22 +1,22 @@
 {
   "expo": {
-    "name": "swimTimeRN",
+    "name": "SwimCalcRN",
     "slug": "swimTimeRN",
     "version": "0.3.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "swimtimern",
+    "scheme": "swimcalcrn",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.andywl.swimtimecalc",
+      "bundleIdentifier": "com.andywl.swimcalc",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.andywl.swimtimecalc",
+      "package": "com.andywl.swimcalc",
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -44,7 +44,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

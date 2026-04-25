@@ -15,6 +15,7 @@ import {
   calculateImprovement,
   getEventDistance,
   normalizeTimeDisplay,
+  secondsToTime,
   timeToSeconds,
 } from "../utils/timeConverter";
 
@@ -54,17 +55,48 @@ export default function SingleStandardView({
   const allTimes = hasUserTime ? [userSeconds!, standardTime] : [standardTime];
   const rawMax = Math.max(...allTimes);
   const rawMin = Math.min(...allTimes);
-  const padding = (rawMax - rawMin) * 0.25 || 5;
+  // Ensure minimum scale: 1s for every 50 distance
+  const eventDistance = getEventDistance(event);
+  const minRange = (eventDistance / 50.0) * 1.0;
+  
+  // Adjust range with deliberate buffers
+  const range = rawMax - rawMin;
+  const leftBuffer = Math.max(range * 0.15, minRange * 0.5);
+  const rightBuffer = Math.max(range * 0.04, minRange * 0.2); // 4% Zone for the right
+  
+  let maxTime = rawMax + leftBuffer;
+  let minTime = rawMin - rightBuffer;
 
-  const maxTime = rawMax + padding;
-  const minTime = rawMin - padding;
+  if (maxTime - minTime < minRange) {
+    const mid = (maxTime + minTime) / 2;
+    maxTime = mid + (minRange / 2);
+    minTime = mid - (minRange / 2);
+  }
   const totalRange = maxTime - minTime;
 
+  // Tick logic
+  let tickInterval = 0.5;
+  if (eventDistance >= 800) tickInterval = 5;
+  else if (eventDistance >= 400) tickInterval = 2;
+  else if (eventDistance >= 200) tickInterval = 1;
+
+  const ticks: number[] = [];
+  const startTick = Math.ceil(minTime / tickInterval) * tickInterval;
+  for (let t = startTick; t <= maxTime; t += tickInterval) {
+    ticks.push(t);
+  }
+  
   const getPosition = (time: number) => {
     return ((maxTime - time) / totalRange) * 100;
   };
 
-  const eventDistance = getEventDistance(event);
+  // Force extreme edges and filter overlaps
+  const finalTicks = ticks.filter(t => {
+    const pos = getPosition(t);
+    return pos > 5 && pos < 95; // Only keep middle ticks
+  });
+  finalTicks.push(maxTime, minTime);
+
   const improvement = hasUserTime
     ? calculateImprovement(userSeconds!, standardTime, eventDistance, poolType)
     : null;
@@ -144,62 +176,111 @@ export default function SingleStandardView({
             onPress={() => setShowPopup(true)}
           >
             <View style={styles.chartArea}>
-              {/* Slower zone */}
-              <View
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  width: `${standardPos}%`,
-                  height: 80,
-                  top: 5,
-                  backgroundColor: "#f3f4f6",
-                  borderTopLeftRadius: 4,
-                  borderBottomLeftRadius: 4,
-                }}
-              />
-
-              {/* Faster zone */}
-              <View
-                style={{
-                  position: "absolute",
-                  left: `${standardPos}%`,
-                  right: 0,
-                  height: 80,
-                  top: 5,
-                  backgroundColor: colors.zone,
-                  opacity: 0.3,
-                  borderTopRightRadius: 4,
-                  borderBottomRightRadius: 4,
-                }}
-              />
-
-              {/* Standard Line and Label */}
-              <View
-                style={[styles.cutLineWrapper, { left: `${standardPos}%` }]}
-              >
-                <View style={styles.cutLine} />
-                <Text style={styles.cutNameLabel}>{standardLabel}</Text>
-                <Text style={styles.cutTimeLabel}>{standard}</Text>
-              </View>
-
-              {/* User marker - only show if hasUserTime */}
-              {hasUserTime && (
+              {/* All elements share the same 8px inset coordinate system */}
+              <View style={{ position: "absolute", left: 8, right: 8, top: 0, bottom: 0 }}>
+                {/* Colored Segments (The Bar) - Anchored for perfect alignment */}
                 <View
-                  style={[
-                    styles.userMarkerLine,
-                    { left: `${userPos}%`, backgroundColor: colors.primary },
-                  ]}
+                  style={{
+                    position: "absolute",
+                    left: -8, // Overhang
+                    right: `${100 - Number(standardPos)}%`, // Anchor exactly to the cut line
+                    height: 80,
+                    top: 5,
+                    backgroundColor: "#f3f4f6", // Grey
+                    borderTopLeftRadius: 4,
+                    borderBottomLeftRadius: 4,
+                    zIndex: 1,
+                  }}
+                />
+                <View
+                  style={{
+                    position: "absolute",
+                    left: `${standardPos}%`, // Start at cut line
+                    right: -8, // Overhang
+                    height: 80,
+                    top: 5,
+                    backgroundColor: colors.zone, // Blue/Emerald
+                    opacity: 0.3,
+                    borderTopRightRadius: 4,
+                    borderBottomRightRadius: 4,
+                    zIndex: 0,
+                  }}
+                />
+
+                {/* Standard Line and Label */}
+                <View
+                  style={[styles.cutLineWrapper, { left: `${standardPos}%` }]}
                 >
+                  <View style={styles.cutLine} />
+                  <Text style={styles.cutNameLabel}>Cut</Text>
+                  <Text style={styles.cutTimeLabel}>{normalizeTimeDisplay(standard)}</Text>
+                </View>
+
+                {/* User marker */}
+                {hasUserTime && (
                   <View
                     style={[
-                      styles.userMarkerBadge,
-                      { backgroundColor: colors.primary },
+                      styles.userMarkerLine,
+                      { left: `${userPos}%`, backgroundColor: colors.primary, zIndex: 25 },
                     ]}
                   >
-                    <Text style={styles.userMarkerText}>YOU</Text>
+                    <View
+                      style={[
+                        styles.userMarkerBadge,
+                        { backgroundColor: colors.primary },
+                       ]}
+                    >
+                      <Text style={styles.userMarkerText}>YOU</Text>
+                    </View>
                   </View>
-                </View>
-              )}
+                )}
+
+                {/* Ticks */}
+                {(() => {
+                  return finalTicks.map((t) => {
+                    const pos = getPosition(t);
+                    const isLeftEdge = Math.abs(pos) < 0.1;
+                    const isRightEdge = Math.abs(pos - 100) < 0.1;
+                    const isEdge = isLeftEdge || isRightEdge;
+
+                    return (
+                      <View 
+                        key={t} 
+                        style={{ 
+                          position: "absolute", 
+                          left: `${pos}%`, 
+                          zIndex: 20, 
+                          width: 0, 
+                          overflow: 'visible',
+                          alignItems: isLeftEdge ? "flex-start" : isRightEdge ? "flex-end" : "center" 
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: 1.5,
+                            height: 12,
+                            top: 39,
+                            backgroundColor: "rgba(0,0,0,0.2)",
+                          }}
+                        />
+                        <Text 
+                          style={{ 
+                            position: "absolute", 
+                            top: isEdge ? 52 : 24, // Above for middle, below for edges
+                            fontSize: 8, 
+                            fontWeight: isEdge ? "900" : "600",
+                            color: isEdge ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.3)", 
+                            width: 60, 
+                            textAlign: isLeftEdge ? "left" : isRightEdge ? "right" : "center",
+                          }}
+                        >
+                          {secondsToTime(t)}
+                        </Text>
+                      </View>
+                    );
+                  });
+                })()}
+              </View>
             </View>
 
             <View style={styles.axisLabels}>
@@ -219,7 +300,7 @@ export default function SingleStandardView({
             <View style={styles.summaryCard}>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>{standardLabel} Time</Text>
-                <Text style={styles.summaryValue}>{standard}</Text>
+                <Text style={styles.summaryValue}>{normalizeTimeDisplay(standard)}</Text>
               </View>
 
               {!hasUserTime ? (
@@ -243,7 +324,7 @@ export default function SingleStandardView({
                 !improvement?.achieved && (
                   <View style={styles.improvementGrid}>
                     <View style={styles.gridItem}>
-                      <Text style={styles.gridLabel}>% Improvement Needed</Text>
+                      <Text style={styles.gridLabel}>% Imp. Needed</Text>
                       <Text
                         style={[styles.gridValue, { color: colors.primary }]}
                       >
@@ -299,9 +380,9 @@ export default function SingleStandardView({
                 >
                   Cut
                 </Text>
-                <Text style={styles.modalHeaderCell}>Standard</Text>
-                <Text style={[styles.modalHeaderCell, { textAlign: "center" }]}>
-                  % Improvement Needed
+                <Text style={[styles.modalHeaderCell, { flex: 1.2 }]}>Standard</Text>
+                <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
+                  % Imp. Needed
                 </Text>
                 <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
                 <Text style={styles.modalHeaderCell}>Per 50</Text>
@@ -323,10 +404,10 @@ export default function SingleStandardView({
                 >
                   {standardLabel}
                 </Text>
-                <Text style={[styles.modalCell, { fontWeight: "700" }]}>
-                  {standard}
+                <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2 }]}>
+                  {normalizeTimeDisplay(standard)}
                 </Text>
-                <View style={[styles.modalCell, { alignItems: "center" }]}>
+                <View style={[styles.modalCell, { alignItems: "flex-end" }]}>
                   {!hasUserTime ? (
                     <Ionicons name="remove" size={16} color="#94a3b8" />
                   ) : improvement?.achieved ? (
@@ -338,7 +419,7 @@ export default function SingleStandardView({
                         {
                           color: colors.primary,
                           fontWeight: "700",
-                          textAlign: "center",
+                          textAlign: "right",
                         },
                       ]}
                     >
@@ -455,17 +536,17 @@ const styles = StyleSheet.create({
   },
   cutNameLabel: {
     position: "absolute",
-    top: -20,
+    top: -11,
     fontSize: 10,
-    fontWeight: "800",
-    color: "#374151",
+    fontWeight: "900",
+    color: "#1f2937",
   },
   cutTimeLabel: {
     position: "absolute",
-    bottom: -20,
-    fontSize: 9,
-    fontWeight: "600",
-    color: "#6b7280",
+    bottom: -19,
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#4b5563",
   },
   userMarkerLine: {
     position: "absolute",
@@ -477,16 +558,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   userMarkerBadge: {
-    paddingHorizontal: 4,
+    paddingHorizontal: 3,
     paddingVertical: 2,
     borderRadius: 4,
-    minWidth: 32,
+    minWidth: 24,
     alignItems: "center",
     justifyContent: "center",
   },
   userMarkerText: {
     color: "white",
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: "900",
   },
 

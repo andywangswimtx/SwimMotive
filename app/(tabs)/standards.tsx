@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ResultsView from '../../components/ResultsView';

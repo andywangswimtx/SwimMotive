@@ -1,5 +1,5 @@
 {
-  "meet": "2026 Junior Nationals",
+  "meet": "2026 Speedo Junior National",
   "category": "Women",
   "course": "SCY",
   "qualifying_period": "June 1, 2025 through Entry Deadline",
@@ -7,72 +7,72 @@
     {
       "event": "50 FR",
       "qualifying": "22.99",
-      "bonus": "23.29"
+      "bonus": "23.89"
     },
     {
       "event": "100 FR",
       "qualifying": "49.99",
-      "bonus": "50.39"
+      "bonus": "51.89"
     },
     {
       "event": "200 FR",
-      "qualifying": "1:48.29",
-      "bonus": "1:49.09"
+      "qualifying": "1:48.19",
+      "bonus": "1:52.29"
     },
     {
       "event": "500 FR",
-      "qualifying": "4:50.09",
-      "bonus": "4:53.59"
+      "qualifying": "4:49.99",
+      "bonus": "5:02.59"
     },
     {
       "event": "1000 FR",
-      "qualifying": "10:04.99",
-      "bonus": "10:11.49"
+      "qualifying": "10:04.69",
+      "bonus": "10:20.49"
     },
     {
       "event": "1650 FR",
-      "qualifying": "16:51.49",
-      "bonus": "17:02.19"
+      "qualifying": "16:50.99",
+      "bonus": "17:14.39"
     },
     {
       "event": "100 BK",
       "qualifying": "54.39",
-      "bonus": "55.09"
+      "bonus": "57.09"
     },
     {
       "event": "200 BK",
-      "qualifying": "1:58.29",
-      "bonus": "1:59.39"
+      "qualifying": "1:58.19",
+      "bonus": "2:04.19"
     },
     {
       "event": "100 BR",
-      "qualifying": "1:02.49",
-      "bonus": "1:03.49"
+      "qualifying": "1:02.39",
+      "bonus": "1:05.49"
     },
     {
       "event": "200 BR",
-      "qualifying": "2:15.59",
-      "bonus": "2:17.19"
+      "qualifying": "2:15.39",
+      "bonus": "2:22.69"
     },
     {
       "event": "100 FL",
-      "qualifying": "54.19",
-      "bonus": "54.69"
+      "qualifying": "54.09",
+      "bonus": "56.59"
     },
     {
       "event": "200 FL",
-      "qualifying": "2:00.59",
-      "bonus": "2:01.69"
+      "qualifying": "2:00.49",
+      "bonus": "2:05.39"
     },
     {
       "event": "200 IM",
-      "qualifying": "2:01.19",
-      "bonus": "2:02.19"
+      "qualifying": "2:01.09",
+      "bonus": "2:06.39"
     },
     {
       "event": "400 IM",
-      "qualifying": "4:18.99",
-      "bonus": "4:21.69"
+      "qualifying": "4:18.79",
+      "bonus": "4:30.69"
     }
   ]
 }

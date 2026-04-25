@@ -15,6 +15,7 @@ import {
   calculateImprovement,
   getEventDistance,
   normalizeTimeDisplay,
+  secondsToTime,
   timeToSeconds,
 } from "../utils/timeConverter";
 
@@ -61,17 +62,48 @@ export default function TwoStandardView({
     : [standardTime, bonusTime];
   const rawMax = Math.max(...allTimes);
   const rawMin = Math.min(...allTimes);
-  const padding = (rawMax - rawMin) * 0.15 || 5; // Default padding if only standards
+  
+  // Ensure minimum scale: 1s for every 50 distance
+  const eventDistance = getEventDistance(event);
+  const minRange = (eventDistance / 50.0) * 1.0;
 
-  const maxTime = rawMax + padding;
-  const minTime = rawMin - padding;
+  // Adjust range with deliberate buffers
+  const range = rawMax - rawMin;
+  const leftBuffer = Math.max(range * 0.15, minRange * 0.5);
+  const rightBuffer = Math.max(range * 0.04, minRange * 0.2); // 4% Zone for the right
+  
+  let maxTime = rawMax + leftBuffer;
+  let minTime = rawMin - rightBuffer;
+
+  if (maxTime - minTime < minRange) {
+    const mid = (maxTime + minTime) / 2;
+    maxTime = mid + (minRange / 2);
+    minTime = mid - (minRange / 2);
+  }
   const totalRange = maxTime - minTime;
 
+  // Tick logic
+  let tickInterval = 0.5;
+  if (eventDistance >= 800) tickInterval = 5;
+  else if (eventDistance >= 400) tickInterval = 2;
+  else if (eventDistance >= 200) tickInterval = 1;
+
+  const ticks: number[] = [];
+  const startTick = Math.ceil(minTime / tickInterval) * tickInterval;
+  for (let t = startTick; t <= maxTime; t += tickInterval) {
+    ticks.push(t);
+  }
+  
   const getPosition = (time: number) => {
     return ((maxTime - time) / totalRange) * 100;
   };
 
-  const eventDistance = getEventDistance(event);
+  // Force extreme edges and filter overlaps
+  const finalTicks = ticks.filter(t => {
+    const pos = getPosition(t);
+    return pos > 5 && pos < 95; // Only keep middle ticks
+  });
+  finalTicks.push(maxTime, minTime);
 
   const standardImprovement = hasUserTime
     ? calculateImprovement(userSeconds!, standardTime, eventDistance, poolType)
@@ -83,7 +115,7 @@ export default function TwoStandardView({
 
   const bonusPos = getPosition(bonusTime);
   const standardPos = getPosition(standardTime);
-  const userPos = hasUserTime ? getPosition(userSeconds!) : -100; // Hide off-screen if no time
+  const userPos = hasUserTime ? getPosition(userSeconds!) : -100;
 
   // Color mapping
   const isPurple = colorClass === "purple";
@@ -148,7 +180,7 @@ export default function TwoStandardView({
         ) : improvement ? (
           <View style={styles.improvementGrid}>
             <View style={styles.gridItem}>
-              <Text style={styles.gridLabel}>% Improvement Needed</Text>
+              <Text style={styles.gridLabel}>% Imp. Needed</Text>
               <Text style={[styles.gridValue, { color: valColor }]}>
                 -{improvement.percentage.toFixed(2)}%
               </Text>
@@ -234,82 +266,130 @@ export default function TwoStandardView({
             onPress={() => setShowPopup(true)}
           >
             <View style={styles.chartArea}>
-              {/* Slower zone */}
-              <View
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  width: `${bonusPos}%`,
-                  height: 80,
-                  top: 5,
-                  backgroundColor: "#f3f4f6",
-                  borderTopLeftRadius: 4,
-                  borderBottomLeftRadius: 4,
-                }}
-              />
-
-              {/* Mid zone */}
-              <View
-                style={{
-                  position: "absolute",
-                  left: `${bonusPos}%`,
-                  width: `${standardPos - bonusPos}%`,
-                  height: 80,
-                  top: 5,
-                  backgroundColor: colors.midZone,
-                  opacity: 0.3,
-                }}
-              />
-
-              {/* Faster zone */}
-              <View
-                style={{
-                  position: "absolute",
-                  left: `${standardPos}%`,
-                  right: 0,
-                  height: 80,
-                  top: 5,
-                  backgroundColor: colors.fastZone,
-                  opacity: 0.8,
-                  borderTopRightRadius: 4,
-                  borderBottomRightRadius: 4,
-                }}
-              />
-
-              {/* Bonus Line and Label */}
-              <View style={[styles.cutLineWrapper, { left: `${bonusPos}%` }]}>
-                <View style={styles.cutLine} />
-                <Text style={styles.cutNameLabel}>{bonusLabel}</Text>
-                <Text style={styles.cutTimeLabel}>{bonusStandard}</Text>
-              </View>
-
-              {/* Standard Line and Label */}
-              <View
-                style={[styles.cutLineWrapper, { left: `${standardPos}%` }]}
-              >
-                <View style={styles.cutLine} />
-                <Text style={styles.cutNameLabel}>{standardLabel}</Text>
-                <Text style={styles.cutTimeLabel}>{standard}</Text>
-              </View>
-
-              {/* User marker - only show if hasUserTime */}
-              {hasUserTime && (
+              {/* All elements now share the same 8px inset coordinate system */}
+              <View style={{ position: "absolute", left: 8, right: 8, top: 0, bottom: 0 }}>
+                {/* Colored Segments (The Bar) - Anchored for perfect alignment */}
                 <View
-                  style={[
-                    styles.userMarkerLine,
-                    { left: `${userPos}%`, backgroundColor: colors.user },
-                  ]}
+                  style={{
+                    position: "absolute",
+                    left: -8, // Overhang
+                    right: `${100 - Number(bonusPos)}%`, // Anchor exactly to the bonus line
+                    height: 80,
+                    top: 5,
+                    backgroundColor: "#f3f4f6", // Grey
+                    borderTopLeftRadius: 4,
+                    borderBottomLeftRadius: 4,
+                    zIndex: 1,
+                  }}
+                />
+                <View
+                  style={{
+                    position: "absolute",
+                    left: `${bonusPos}%`, // Start at bonus line
+                    right: `${100 - Number(standardPos)}%`, // Anchor exactly to the standard line
+                    height: 80,
+                    top: 5,
+                    backgroundColor: colors.midZone, // Purple
+                    opacity: 0.3,
+                    zIndex: 2,
+                  }}
+                />
+                <View
+                  style={{
+                    position: "absolute",
+                    left: `${standardPos}%`, // Start at standard line
+                    right: -8, // Overhang
+                    height: 80,
+                    top: 5,
+                    backgroundColor: colors.fastZone, // Green
+                    opacity: 0.8,
+                    borderTopRightRadius: 4,
+                    borderBottomRightRadius: 4,
+                    zIndex: 0,
+                  }}
+                />
+
+                {/* Bonus Line and Label */}
+                <View style={[styles.cutLineWrapper, { left: `${bonusPos}%` }]}>
+                  <View style={styles.cutLine} />
+                  <Text style={styles.cutNameLabel}>Bonus</Text>
+                  <Text style={styles.cutTimeLabel}>{normalizeTimeDisplay(bonusStandard)}</Text>
+                </View>
+
+                {/* Standard Line and Label */}
+                <View
+                  style={[styles.cutLineWrapper, { left: `${standardPos}%` }]}
                 >
+                  <View style={styles.cutLine} />
+                  <Text style={styles.cutNameLabel}>Cut</Text>
+                  <Text style={styles.cutTimeLabel}>{normalizeTimeDisplay(standard)}</Text>
+                </View>
+
+                {/* User marker */}
+                {hasUserTime && (
                   <View
                     style={[
-                      styles.userMarkerBadge,
-                      { backgroundColor: colors.user },
+                      styles.userMarkerLine,
+                      { left: `${userPos}%`, backgroundColor: colors.user, zIndex: 25 },
                     ]}
                   >
-                    <Text style={styles.userMarkerText}>YOU</Text>
+                    <View
+                      style={[
+                        styles.userMarkerBadge,
+                        { backgroundColor: colors.user },
+                      ]}
+                    >
+                      <Text style={styles.userMarkerText}>YOU</Text>
+                    </View>
                   </View>
-                </View>
-              )}
+                )}
+
+                {/* Ticks */}
+                {(() => {
+                  return finalTicks.map((t) => {
+                    const pos = getPosition(t);
+                    const isLeftEdge = Math.abs(pos) < 0.1;
+                    const isRightEdge = Math.abs(pos - 100) < 0.1;
+                    const isEdge = isLeftEdge || isRightEdge;
+
+                    return (
+                      <View 
+                        key={t} 
+                        style={{ 
+                          position: "absolute", 
+                          left: `${pos}%`, 
+                          zIndex: 20, 
+                          width: 0, 
+                          overflow: 'visible',
+                          alignItems: isLeftEdge ? "flex-start" : isRightEdge ? "flex-end" : "center" 
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: 1.5,
+                            height: 12,
+                            top: 39,
+                            backgroundColor: "rgba(0,0,0,0.2)",
+                          }}
+                        />
+                        <Text 
+                          style={{ 
+                            position: "absolute", 
+                            top: isEdge ? 52 : 24, // Above for middle, below for edges
+                            fontSize: 8, 
+                            fontWeight: isEdge ? "900" : "600",
+                            color: isEdge ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.3)", 
+                            width: 60, 
+                            textAlign: isLeftEdge ? "left" : isRightEdge ? "right" : "center",
+                          }}
+                        >
+                          {secondsToTime(t)}
+                        </Text>
+                      </View>
+                    );
+                  });
+                })()}
+              </View>
             </View>
 
             <View style={styles.axisLabels}>
@@ -329,7 +409,7 @@ export default function TwoStandardView({
             <View style={styles.summaryContainer}>
               {renderSummaryItem(
                 bonusLabel,
-                bonusStandard,
+                normalizeTimeDisplay(bonusStandard),
                 bonusImprovement || {
                   achieved: false,
                   percentage: 0,
@@ -342,7 +422,7 @@ export default function TwoStandardView({
               )}
               {renderSummaryItem(
                 standardLabel,
-                standard,
+                normalizeTimeDisplay(standard),
                 standardImprovement || {
                   achieved: false,
                   percentage: 0,
@@ -383,9 +463,9 @@ export default function TwoStandardView({
                 >
                   Cut
                 </Text>
-                <Text style={styles.modalHeaderCell}>Standard</Text>
-                <Text style={[styles.modalHeaderCell, { textAlign: "center" }]}>
-                  % Improvement Needed
+                <Text style={[styles.modalHeaderCell, { flex: 1.2 }]}>Standard</Text>
+                <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
+                  % Imp. Needed
                 </Text>
                 <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
                 <Text style={styles.modalHeaderCell}>Per 50</Text>
@@ -394,13 +474,13 @@ export default function TwoStandardView({
               {[
                 {
                   label: bonusLabel,
-                  time: bonusStandard,
+                  time: normalizeTimeDisplay(bonusStandard),
                   imp: bonusImprovement,
                   color: "#c2410c",
                 },
                 {
                   label: standardLabel,
-                  time: standard,
+                  time: normalizeTimeDisplay(standard),
                   imp: standardImprovement,
                   color: "#be123c",
                 },
@@ -420,10 +500,10 @@ export default function TwoStandardView({
                   >
                     {row.label}
                   </Text>
-                  <Text style={[styles.modalCell, { fontWeight: "700" }]}>
+                  <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2 }]}>
                     {row.time}
                   </Text>
-                  <View style={[styles.modalCell, { alignItems: "center" }]}>
+                  <View style={[styles.modalCell, { alignItems: "flex-end" }]}>
                     {!hasUserTime ? (
                       <Ionicons name="remove" size={16} color="#94a3b8" />
                     ) : row.imp?.achieved ? (
@@ -435,7 +515,7 @@ export default function TwoStandardView({
                           {
                             color: row.color,
                             fontWeight: "700",
-                            textAlign: "center",
+                            textAlign: "right",
                           },
                         ]}
                       >
@@ -548,17 +628,17 @@ const styles = StyleSheet.create({
   },
   cutNameLabel: {
     position: "absolute",
-    top: -20,
+    top: -11,
     fontSize: 10,
-    fontWeight: "800",
-    color: "#374151",
+    fontWeight: "900",
+    color: "#1f2937",
   },
   cutTimeLabel: {
     position: "absolute",
-    bottom: -20,
-    fontSize: 9,
-    fontWeight: "600",
-    color: "#6b7280",
+    bottom: -19,
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#4b5563",
   },
   userMarkerLine: {
     position: "absolute",
@@ -570,16 +650,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   userMarkerBadge: {
-    paddingHorizontal: 4,
+    paddingHorizontal: 3,
     paddingVertical: 2,
     borderRadius: 4,
-    minWidth: 32,
+    minWidth: 24,
     alignItems: "center",
     justifyContent: "center",
   },
   userMarkerText: {
     color: "white",
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: "900",
   },
 
