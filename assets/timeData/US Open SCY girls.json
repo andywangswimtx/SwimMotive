@@ -1,0 +1,24 @@
+{
+  "meet": "2026 Toyota U.S. Open Championships",
+  "gender": "Women",
+  "course": "SCY",
+  "standards": [
+    {"event": "50 FR", "standard": "22.49", "bonus": "22.99"},
+    {"event": "100 FR", "standard": "48.99", "bonus": "49.99"},
+    {"event": "200 FR", "standard": "1:45.99", "bonus": "1:48.19"},
+    {"event": "500 FR", "standard": "4:44.49", "bonus": "4:49.99"},
+    {"event": "1000 FR", "standard": "9:53.19", "bonus": "10:04.69"},
+    {"event": "1650 FR", "standard": "16:24.29", "bonus": "16:50.99"},
+    {"event": "50 BK", "standard": "24.39", "bonus": "25.09"},
+    {"event": "100 BK", "standard": "52.99", "bonus": "54.39"},
+    {"event": "200 BK", "standard": "1:55.39", "bonus": "1:58.19"},
+    {"event": "50 BR", "standard": "27.99", "bonus": "28.49"},
+    {"event": "100 BR", "standard": "1:00.79", "bonus": "1:02.39"},
+    {"event": "200 BR", "standard": "2:11.99", "bonus": "2:15.39"},
+    {"event": "50 FL", "standard": "24.09", "bonus": "24.69"},
+    {"event": "100 FL", "standard": "52.79", "bonus": "53.29"},
+    {"event": "200 FL", "standard": "1:57.49", "bonus": "2:00.49"},
+    {"event": "200 IM", "standard": "1:58.39", "bonus": "2:01.09"},
+    {"event": "400 IM", "standard": "4:13.69", "bonus": "4:18.79"}
+  ]
+}

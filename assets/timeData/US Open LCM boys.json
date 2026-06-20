@@ -1,0 +1,24 @@
+{
+  "meet": "2026 Toyota U.S. Open Championships",
+  "gender": "Men",
+  "course": "LCM",
+  "standards": [
+    {"event": "50 FR", "standard": "23.29", "bonus": "23.79"},
+    {"event": "100 FR", "standard": "50.89", "bonus": "51.99"},
+    {"event": "200 FR", "standard": "1:51.99", "bonus": "1:54.09"},
+    {"event": "400 FR", "standard": "3:59.09", "bonus": "4:02.19"},
+    {"event": "800 FR", "standard": "8:15.39", "bonus": "8:23.09"},
+    {"event": "1500 FR", "standard": "15:51.39", "bonus": "16:05.09"},
+    {"event": "50 BK", "standard": "26.09", "bonus": "26.69"},
+    {"event": "100 BK", "standard": "56.89", "bonus": "58.19"},
+    {"event": "200 BK", "standard": "2:04.59", "bonus": "2:06.99"},
+    {"event": "50 BR", "standard": "29.19", "bonus": "29.59"},
+    {"event": "100 BR", "standard": "1:03.69", "bonus": "1:05.09"},
+    {"event": "200 BR", "standard": "2:19.39", "bonus": "2:22.39"},
+    {"event": "50 FL", "standard": "24.89", "bonus": "25.39"},
+    {"event": "100 FL", "standard": "54.69", "bonus": "55.89"},
+    {"event": "200 FL", "standard": "2:02.99", "bonus": "2:05.09"},
+    {"event": "200 IM", "standard": "2:05.49", "bonus": "2:07.99"},
+    {"event": "400 IM", "standard": "4:28.89", "bonus": "4:33.09"}
+  ]
+}

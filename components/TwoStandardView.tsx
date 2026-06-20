@@ -82,11 +82,16 @@ export default function TwoStandardView({
   }
   const totalRange = maxTime - minTime;
 
-  // Tick logic
-  let tickInterval = 0.5;
-  if (eventDistance >= 800) tickInterval = 5;
-  else if (eventDistance >= 400) tickInterval = 2;
-  else if (eventDistance >= 200) tickInterval = 1;
+  // Dynamic tick interval based on the total time range shown
+  let tickInterval = 1.0;
+  if (totalRange >= 400) tickInterval = 60;
+  else if (totalRange >= 200) tickInterval = 30;
+  else if (totalRange >= 100) tickInterval = 15;
+  else if (totalRange >= 40) tickInterval = 10;
+  else if (totalRange >= 16) tickInterval = 5;
+  else if (totalRange >= 8) tickInterval = 2;
+  else if (totalRange >= 4) tickInterval = 1;
+  else tickInterval = 0.5;
 
   const ticks: number[] = [];
   const startTick = Math.ceil(minTime / tickInterval) * tickInterval;
@@ -277,8 +282,8 @@ export default function TwoStandardView({
                     height: 80,
                     top: 5,
                     backgroundColor: "#f3f4f6", // Grey
-                    borderTopLeftRadius: 4,
-                    borderBottomLeftRadius: 4,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
                     zIndex: 1,
                   }}
                 />
@@ -303,18 +308,25 @@ export default function TwoStandardView({
                     top: 5,
                     backgroundColor: colors.fastZone, // Green
                     opacity: 0.8,
-                    borderTopRightRadius: 4,
-                    borderBottomRightRadius: 4,
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
                     zIndex: 0,
                   }}
                 />
 
                 {/* Bonus Line and Label */}
-                <View style={[styles.cutLineWrapper, { left: `${bonusPos}%` }]}>
-                  <View style={styles.cutLine} />
-                  <Text style={styles.cutNameLabel}>Bonus</Text>
-                  <Text style={styles.cutTimeLabel}>{normalizeTimeDisplay(bonusStandard)}</Text>
-                </View>
+                {(() => {
+                  const isOverlapping = Math.abs(bonusPos - standardPos) < 14;
+                  return (
+                    <View style={[styles.cutLineWrapper, { left: `${bonusPos}%` }]}>
+                      <View style={styles.cutLine} />
+                      <Text style={[styles.cutNameLabel, isOverlapping && { top: -24 }]}>Bonus</Text>
+                      <Text style={[styles.cutTimeLabel, isOverlapping && { bottom: -32 }]}>
+                        {normalizeTimeDisplay(bonusStandard)}
+                      </Text>
+                    </View>
+                  );
+                })()}
 
                 {/* Standard Line and Label */}
                 <View
@@ -375,8 +387,9 @@ export default function TwoStandardView({
                         <Text 
                           style={{ 
                             position: "absolute", 
-                            top: isEdge ? 52 : 24, // Above for middle, below for edges
-                            fontSize: 8, 
+                            top: isEdge ? 53 : 27, // Farther for edges, closer for middle
+                            fontSize: isEdge ? 8 : 7, 
+                            fontFamily: isEdge ? "PublicSans-Black" : "PublicSans-SemiBold",
                             fontWeight: isEdge ? "900" : "600",
                             color: isEdge ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.3)", 
                             width: 60, 
@@ -548,13 +561,14 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
     padding: 24,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   backButton: { marginBottom: 16 },
   backText: { color: "rgba(255,255,255,0.7)", fontSize: 14, fontWeight: "600" },
   title: {
     color: "white",
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     fontSize: 24,
     letterSpacing: -0.5,
@@ -563,6 +577,7 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.8)",
     fontSize: 13,
     marginTop: 4,
+    fontFamily: "PublicSans-Medium",
     fontWeight: "500",
   },
 
@@ -570,7 +585,7 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: "white",
-    borderRadius: 24,
+    borderRadius: 0,
     padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -583,10 +598,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24,
   },
-  smallLabel: { fontSize: 14, color: "#6b7280", fontWeight: "600" },
-  time: { fontSize: 36, fontWeight: "900", letterSpacing: -1 },
+  smallLabel: { fontSize: 14, color: "#6b7280", fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
+  time: { fontSize: 36, fontFamily: "PublicSans-Black", fontWeight: "900", letterSpacing: -1 },
   greenAchievement: {
     color: "#059669",
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     marginTop: 4,
     fontSize: 15,
@@ -599,6 +615,7 @@ const styles = StyleSheet.create({
   },
   orangeAchievement: {
     color: "#d97706",
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     marginTop: 4,
     fontSize: 15,
@@ -630,6 +647,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -11,
     fontSize: 10,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     color: "#1f2937",
   },
@@ -637,6 +655,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -19,
     fontSize: 10,
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     color: "#4b5563",
   },
@@ -652,7 +671,7 @@ const styles = StyleSheet.create({
   userMarkerBadge: {
     paddingHorizontal: 3,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: 0,
     minWidth: 24,
     alignItems: "center",
     justifyContent: "center",
@@ -660,6 +679,7 @@ const styles = StyleSheet.create({
   userMarkerText: {
     color: "white",
     fontSize: 8,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
   },
 
@@ -668,13 +688,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 4,
   },
-  axisText: { fontSize: 11, color: "#9ca3af", fontWeight: "600" },
+  axisText: { fontSize: 11, color: "#9ca3af", fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
 
   hint: {
     textAlign: "center",
     fontSize: 12,
     color: "#9ca3af",
     marginTop: 12,
+    fontFamily: "PublicSans-Medium",
     fontWeight: "500",
   },
 
@@ -688,6 +709,7 @@ const styles = StyleSheet.create({
   tableSection: {},
   sectionTitle: {
     fontSize: 18,
+    fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
     color: "#1f2937",
     marginBottom: 16,
@@ -696,7 +718,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   summaryCard: {
-    borderRadius: 16,
+    borderRadius: 0,
     padding: 16,
     borderWidth: 1,
   },
@@ -743,7 +765,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: "white",
-    borderRadius: 24,
+    borderRadius: 0,
     overflow: "hidden",
   },
   modalHeader: {
@@ -763,6 +785,7 @@ const styles = StyleSheet.create({
   modalHeaderCell: {
     flex: 1,
     fontSize: 11,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     color: "#374151",
     textAlign: "right",
@@ -783,11 +806,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     color: "#4b5563",
+    fontFamily: "PublicSans-Medium",
+    fontWeight: "500",
     textAlign: "right",
     paddingHorizontal: 2,
     justifyContent: "center",
   },
   modalValueText: {
     fontSize: 12,
-  },
-});
+  },});
+

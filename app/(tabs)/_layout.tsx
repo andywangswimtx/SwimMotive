@@ -18,26 +18,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Input",
+          title: "Swim Calc",
           tabBarIcon: ({ color, focused }) => (
             <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
               <Ionicons
                 name={focused ? "timer" : "timer-outline"}
-                size={22}
-                color={color}
-              />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="standards"
-        options={{
-          title: "Standards View",
-          tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-              <Ionicons
-                name={focused ? "trophy" : "trophy-outline"}
                 size={22}
                 color={color}
               />
@@ -87,8 +72,8 @@ const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: "#fff",
     borderTopWidth: 0,
-    height: Platform.OS === "ios" ? 88 : 64,
-    paddingBottom: Platform.OS === "ios" ? 28 : 8,
+    height: Platform.OS === "ios" ? 94 : 72,
+    paddingBottom: Platform.OS === "ios" ? 32 : 12,
     paddingTop: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
@@ -101,13 +86,14 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontSize: 11,
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     letterSpacing: 0.1,
   },
   iconWrap: {
     width: 36,
     height: 36,
-    borderRadius: 12,
+    borderRadius: 0,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -115,3 +101,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#eef2ff",
   },
 });
+

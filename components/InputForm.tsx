@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginHorizontal: 16,
     marginTop: 24,
-    borderRadius: 24,
+    borderRadius: 0,
     padding: 22,
     paddingTop: 14,
     shadowColor: "#000",
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   segmentedContainer: {
     flexDirection: "row",
     backgroundColor: "#f1f5f9",
-    borderRadius: 14,
+    borderRadius: 0,
     padding: 4,
   },
   segmentedButton: {
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 11,
+    borderRadius: 0,
   },
   segmentedButtonActive: {
     shadowColor: "#000",
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f5f9",
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 0,
     borderWidth: 1,
     borderColor: "#e2e8f0",
   },
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f5f9",
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 0,
     borderWidth: 1,
     borderColor: "#e2e8f0",
   },
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
   dropdownTrigger: {
     borderWidth: 1.5,
     borderColor: "#e2e8f0",
-    borderRadius: 14,
+    borderRadius: 0,
     backgroundColor: "#fff",
     paddingVertical: 14,
     paddingHorizontal: 16,
@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
   pickerWrapper: {
     borderWidth: 1.5,
     borderColor: "#e2e8f0",
-    borderRadius: 14,
+    borderRadius: 0,
     overflow: "hidden",
     backgroundColor: "#fff",
   },
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1.5,
     borderColor: "#e2e8f0",
-    borderRadius: 14,
+    borderRadius: 0,
     paddingVertical: 14,
     paddingHorizontal: 16,
     fontSize: 16,
@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: "#4f46e5",
     paddingVertical: 18,
-    borderRadius: 16,
+    borderRadius: 0,
     marginTop: 28,
     flexDirection: "row",
     alignItems: "center",
@@ -611,14 +611,14 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "#fff",
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
     paddingBottom: 40,
   },
   modalHandle: {
     width: 36,
     height: 4,
-    borderRadius: 2,
+    borderRadius: 0,
     backgroundColor: "#d1d5db",
     alignSelf: "center",
     marginTop: 10,
@@ -644,3 +644,4 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
+

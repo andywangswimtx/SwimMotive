@@ -74,11 +74,16 @@ export default function SingleStandardView({
   }
   const totalRange = maxTime - minTime;
 
-  // Tick logic
-  let tickInterval = 0.5;
-  if (eventDistance >= 800) tickInterval = 5;
-  else if (eventDistance >= 400) tickInterval = 2;
-  else if (eventDistance >= 200) tickInterval = 1;
+  // Dynamic tick interval based on the total time range shown
+  let tickInterval = 1.0;
+  if (totalRange >= 400) tickInterval = 60;
+  else if (totalRange >= 200) tickInterval = 30;
+  else if (totalRange >= 100) tickInterval = 15;
+  else if (totalRange >= 40) tickInterval = 10;
+  else if (totalRange >= 16) tickInterval = 5;
+  else if (totalRange >= 8) tickInterval = 2;
+  else if (totalRange >= 4) tickInterval = 1;
+  else tickInterval = 0.5;
 
   const ticks: number[] = [];
   const startTick = Math.ceil(minTime / tickInterval) * tickInterval;
@@ -187,8 +192,8 @@ export default function SingleStandardView({
                     height: 80,
                     top: 5,
                     backgroundColor: "#f3f4f6", // Grey
-                    borderTopLeftRadius: 4,
-                    borderBottomLeftRadius: 4,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
                     zIndex: 1,
                   }}
                 />
@@ -201,8 +206,8 @@ export default function SingleStandardView({
                     top: 5,
                     backgroundColor: colors.zone, // Blue/Emerald
                     opacity: 0.3,
-                    borderTopRightRadius: 4,
-                    borderBottomRightRadius: 4,
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
                     zIndex: 0,
                   }}
                 />
@@ -266,8 +271,9 @@ export default function SingleStandardView({
                         <Text 
                           style={{ 
                             position: "absolute", 
-                            top: isEdge ? 52 : 24, // Above for middle, below for edges
-                            fontSize: 8, 
+                            top: isEdge ? 53 : 27, // Farther for edges, closer for middle
+                            fontSize: isEdge ? 8 : 7, 
+                            fontFamily: isEdge ? "PublicSans-Black" : "PublicSans-SemiBold",
                             fontWeight: isEdge ? "900" : "600",
                             color: isEdge ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.3)", 
                             width: 60, 
@@ -453,13 +459,14 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
     padding: 24,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   backButton: { marginBottom: 16 },
   backText: { color: "rgba(255,255,255,0.7)", fontSize: 14, fontWeight: "600" },
   title: {
     color: "white",
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     fontSize: 24,
     letterSpacing: -0.5,
@@ -468,6 +475,7 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.8)",
     fontSize: 13,
     marginTop: 4,
+    fontFamily: "PublicSans-Medium",
     fontWeight: "500",
   },
 
@@ -475,7 +483,7 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: "white",
-    borderRadius: 24,
+    borderRadius: 0,
     padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -488,16 +496,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24,
   },
-  smallLabel: { fontSize: 14, color: "#6b7280", fontWeight: "600" },
-  time: { fontSize: 36, fontWeight: "900", letterSpacing: -1 },
+  smallLabel: { fontSize: 14, color: "#6b7280", fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
+  time: { fontSize: 36, fontFamily: "PublicSans-Black", fontWeight: "900", letterSpacing: -1 },
   greenAchievement: {
     color: "#059669",
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     marginTop: 4,
     fontSize: 15,
   },
   orangeAchievement: {
     color: "#d97706",
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     marginTop: 4,
     fontSize: 15,
@@ -509,7 +519,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingVertical: 8,
     backgroundColor: "#f8fafc",
-    borderRadius: 12,
+    borderRadius: 0,
   },
 
   chartWrapper: {
@@ -538,6 +548,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -11,
     fontSize: 10,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     color: "#1f2937",
   },
@@ -545,6 +556,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -19,
     fontSize: 10,
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     color: "#4b5563",
   },
@@ -560,7 +572,7 @@ const styles = StyleSheet.create({
   userMarkerBadge: {
     paddingHorizontal: 3,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: 0,
     minWidth: 24,
     alignItems: "center",
     justifyContent: "center",
@@ -568,6 +580,7 @@ const styles = StyleSheet.create({
   userMarkerText: {
     color: "white",
     fontSize: 8,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
   },
 
@@ -576,13 +589,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 4,
   },
-  axisText: { fontSize: 11, color: "#9ca3af", fontWeight: "600" },
+  axisText: { fontSize: 11, color: "#9ca3af", fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
 
   hint: {
     textAlign: "center",
     fontSize: 12,
     color: "#9ca3af",
     marginTop: 12,
+    fontFamily: "PublicSans-Medium",
     fontWeight: "500",
   },
 
@@ -596,13 +610,14 @@ const styles = StyleSheet.create({
   tableSection: {},
   sectionTitle: {
     fontSize: 18,
+    fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
     color: "#1f2937",
     marginBottom: 16,
   },
   summaryCard: {
     backgroundColor: "#f8fafc",
-    borderRadius: 16,
+    borderRadius: 0,
     padding: 16,
     borderWidth: 1,
     borderColor: "#e2e8f0",
@@ -613,8 +628,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  summaryLabel: { color: "#64748b", fontWeight: "600", fontSize: 14 },
-  summaryValue: { color: "#1e293b", fontWeight: "800", fontSize: 18 },
+  summaryLabel: { color: "#64748b", fontFamily: "PublicSans-SemiBold", fontWeight: "600", fontSize: 14 },
+  summaryValue: { color: "#1e293b", fontFamily: "PublicSans-ExtraBold", fontWeight: "800", fontSize: 18 },
 
   improvementGrid: {
     flexDirection: "row",
@@ -626,10 +641,11 @@ const styles = StyleSheet.create({
   gridLabel: {
     fontSize: 10,
     color: "#64748b",
+    fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
     marginBottom: 2,
   },
-  gridValue: { fontSize: 13, fontWeight: "700", color: "#334155" },
+  gridValue: { fontSize: 13, fontFamily: "PublicSans-Bold", fontWeight: "700", color: "#334155" },
 
   modalOverlay: {
     flex: 1,
@@ -639,7 +655,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: "white",
-    borderRadius: 24,
+    borderRadius: 0,
     overflow: "hidden",
   },
   modalHeader: {
@@ -659,6 +675,7 @@ const styles = StyleSheet.create({
   modalHeaderCell: {
     flex: 1,
     fontSize: 11,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     color: "#374151",
     textAlign: "right",
@@ -679,11 +696,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     color: "#4b5563",
+    fontFamily: "PublicSans-Medium",
+    fontWeight: "500",
     textAlign: "right",
     paddingHorizontal: 2,
     justifyContent: "center",
   },
   modalValueText: {
     fontSize: 12,
-  },
-});
+  },});
+

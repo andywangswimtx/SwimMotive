@@ -8,13 +8,6 @@ export default function ComingSoon() {
       <Text style={styles.sectionLabel}>COMING SOON</Text>
       <View style={styles.bubblesContainer}>
         <View style={styles.comingSoon}>
-          <Ionicons name="time-outline" size={18} color="#94a3b8" />
-          <Text style={styles.comingSoonText}>
-            More standards being added...
-          </Text>
-        </View>
-
-        <View style={styles.comingSoon}>
           <Ionicons name="location-outline" size={18} color="#94a3b8" />
           <Text style={styles.comingSoonText}>
             Texas only for now, more states will be added...
@@ -35,6 +28,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 12,
+    fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
     color: "#94a3b8",
     letterSpacing: 1.2,
@@ -48,7 +42,7 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: "#f8fafc",
     padding: 16,
-    borderRadius: 18,
+    borderRadius: 0,
     borderWidth: 1,
     borderColor: "#e2e8f0",
     borderStyle: "dashed",
@@ -56,8 +50,10 @@ const styles = StyleSheet.create({
   comingSoonText: {
     fontSize: 13,
     color: "#94a3b8",
+    fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
     textAlign: "center",
     flex: 1,
   },
 });
+

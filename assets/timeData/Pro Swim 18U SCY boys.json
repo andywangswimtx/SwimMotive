@@ -1,0 +1,24 @@
+{
+  "meet": "2026 TYR Pro Swim Series (18 & Under)",
+  "gender": "Men",
+  "course": "SCY",
+  "standards": [
+    {"event": "50 FR", "standard": "20.49"},
+    {"event": "100 FR", "standard": "44.89"},
+    {"event": "200 FR", "standard": "1:38.39"},
+    {"event": "500 FR", "standard": "4:28.19"},
+    {"event": "1000 FR", "standard": "9:22.69"},
+    {"event": "1650 FR", "standard": "15:40.39"},
+    {"event": "50 BK", "standard": "22.49"},
+    {"event": "100 BK", "standard": "49.19"},
+    {"event": "200 BK", "standard": "1:47.79"},
+    {"event": "50 BR", "standard": "25.29"},
+    {"event": "100 BR", "standard": "55.49"},
+    {"event": "200 BR", "standard": "2:01.59"},
+    {"event": "50 FL", "standard": "21.99"},
+    {"event": "100 FL", "standard": "48.69"},
+    {"event": "200 FL", "standard": "1:49.09"},
+    {"event": "200 IM", "standard": "1:49.59"},
+    {"event": "400 IM", "standard": "3:56.49"}
+  ]
+}

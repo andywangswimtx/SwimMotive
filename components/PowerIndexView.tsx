@@ -294,7 +294,7 @@ export default function PowerIndexView({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 24,
+    borderRadius: 0,
     padding: 20,
     borderWidth: 2,
     backgroundColor: "white",
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     backgroundColor: "#f3f4f6",
     padding: 8,
-    borderRadius: 12,
+    borderRadius: 0,
   },
   scoreRow: {
     flexDirection: "row",
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   },
   progressBg: {
     height: 6,
-    borderRadius: 3,
+    borderRadius: 0,
     backgroundColor: "#f3f4f6",
     overflow: "hidden",
     marginTop: 8,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   empty: {
     backgroundColor: "#f9fafb",
     padding: 20,
-    borderRadius: 24,
+    borderRadius: 0,
     borderWidth: 1,
     borderColor: "#e5e7eb",
   },
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "white",
-    borderRadius: 24,
+    borderRadius: 0,
     maxHeight: "85%",
     overflow: "hidden",
   },
@@ -440,3 +440,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
+

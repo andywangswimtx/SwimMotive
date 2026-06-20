@@ -15,8 +15,11 @@ import {
   getMotivationalStandards,
   getNCSAStandard,
   getOlympicTrialStandard,
+  getProSwim19OStandard,
   getTAGSStandard,
   getTSCStandards,
+  getToyotaNational18UStandard,
+  getUSOpenStandard,
   getWinterJrStandard,
   mapEventToPowerIndex,
   PoolType,
@@ -50,7 +53,10 @@ type ViewMode =
   | "jrNational"
   | "olympicTrial"
   | "tags"
-  | "gulf";
+  | "gulf"
+  | "toyotaNational18U"
+  | "usOpen"
+  | "proSwim19O";
 
 // ─── Button config ──────────────────────────────────────
 interface StandardButtonConfig {
@@ -62,6 +68,7 @@ interface StandardButtonConfig {
   label: string;
   subtitle: string;
   available: boolean;
+  notAvailableReason?: string;
 }
 
 // ─── Standard Card Component ────────────────────────────
@@ -91,7 +98,7 @@ function StandardCard({
           {config.label}
         </Text>
         <Text style={[styles.cardSub, !config.available && { color: "#cbd5e1" }]}>
-          {config.available ? config.subtitle : "Not available for this event"}
+          {config.available ? config.subtitle : (config.notAvailableReason || "Not available for this event")}
         </Text>
       </View>
 
@@ -163,6 +170,9 @@ export default function ResultsView({
     olympicTrialStandard,
     tagsStandard,
     gulfStandard,
+    toyotaNational18UStandard,
+    usOpenStandard,
+    proSwim19OStandard,
     powerIndexEvent,
   } = React.useMemo(
     () => ({
@@ -180,6 +190,9 @@ export default function ResultsView({
       olympicTrialStandard: getOlympicTrialStandard(gender, poolType, event),
       tagsStandard: getTAGSStandard(gender, poolType, ageGroup, event),
       gulfStandard: getGulfStandard(gender, poolType, ageGroup, event),
+      toyotaNational18UStandard: getToyotaNational18UStandard(gender, poolType, event),
+      usOpenStandard: getUSOpenStandard(gender, poolType, event),
+      proSwim19OStandard: getProSwim19OStandard(gender, poolType, event),
       powerIndexEvent: mapEventToPowerIndex(
         poolType,
         event,
@@ -379,6 +392,63 @@ export default function ResultsView({
     );
   }
 
+  if (viewMode === "toyotaNational18U" && toyotaNational18UStandard) {
+    return (
+      <SwipeBackWrapper onSwipeBack={goBack}>
+        <SingleStandardView
+          standard={toyotaNational18UStandard.standard}
+          meetName={toyotaNational18UStandard.meet}
+          standardLabel="National Cut"
+          userTime={userTime}
+          event={event}
+          gender={gender}
+          ageGroup={ageGroup}
+          poolType={poolType}
+          colorClass="orange"
+          onBack={goBack}
+        />
+      </SwipeBackWrapper>
+    );
+  }
+
+  if (viewMode === "usOpen" && usOpenStandard) {
+    return (
+      <SwipeBackWrapper onSwipeBack={goBack}>
+        <SingleStandardView
+          standard={usOpenStandard.standard}
+          meetName={usOpenStandard.meet}
+          standardLabel="U.S. Open Cut"
+          userTime={userTime}
+          event={event}
+          gender={gender}
+          ageGroup={ageGroup}
+          poolType={poolType}
+          colorClass="indigo"
+          onBack={goBack}
+        />
+      </SwipeBackWrapper>
+    );
+  }
+
+  if (viewMode === "proSwim19O" && proSwim19OStandard) {
+    return (
+      <SwipeBackWrapper onSwipeBack={goBack}>
+        <SingleStandardView
+          standard={proSwim19OStandard.standard}
+          meetName={proSwim19OStandard.meet}
+          standardLabel="Pro Swim Cut"
+          userTime={userTime}
+          event={event}
+          gender={gender}
+          ageGroup={ageGroup}
+          poolType={poolType}
+          colorClass="emerald"
+          onBack={goBack}
+        />
+      </SwipeBackWrapper>
+    );
+  }
+
   // ===== Build button configs =====
   const buttons: StandardButtonConfig[] = [
     {
@@ -448,8 +518,39 @@ export default function ResultsView({
       color: "#be123c",
       iconBg: "#fff1f2",
       label: "Olympic Trials",
-      subtitle: "2024 US Olympic Trials · LCM only",
+      subtitle: "2024 US Olympic Trials Standards",
       available: !!olympicTrialStandard,
+      notAvailableReason: poolType === "SCY" ? "LCM Only" : "Not available for this event",
+    },
+    {
+      id: "usOpen",
+      icon: "shield-checkmark",
+      iconLib: "Ionicons",
+      color: "#4338ca",
+      iconBg: "#e0e7ff",
+      label: "U.S. Open",
+      subtitle: "2026 Toyota U.S. Open Championships",
+      available: !!usOpenStandard,
+    },
+    {
+      id: "toyotaNational18U",
+      icon: "trophy",
+      iconLib: "Ionicons",
+      color: "#ea580c",
+      iconBg: "#fff7ed",
+      label: "National Championships (18U)",
+      subtitle: "2026 Toyota National Championships (18&U)",
+      available: !!toyotaNational18UStandard,
+    },
+    {
+      id: "proSwim19O",
+      icon: "flame",
+      iconLib: "Ionicons",
+      color: "#059669",
+      iconBg: "#ecfdf5",
+      label: "Pro Swim Series (19+)",
+      subtitle: "2026 TYR Pro Swim Series (19 & Over)",
+      available: !!proSwim19OStandard,
     },
   ];
 
@@ -488,8 +589,16 @@ export default function ResultsView({
     <View style={styles.container}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: Math.max(insets.top, 14) }]}>
-        <Text style={styles.headerTitle}>Swim Standards</Text>
-        <Text style={styles.headerSubtitle}>Choose a standard to view</Text>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.headerTitle}>Swim Standards</Text>
+            <Text style={styles.headerSubtitle}>Choose a standard or swipe right</Text>
+          </View>
+          <Pressable onPress={onBackToInput} style={styles.headerBackBtn}>
+            <Ionicons name="chevron-back" size={20} color="#fff" />
+            <Text style={styles.headerBackText}>Input</Text>
+          </Pressable>
+        </View>
 
         {/* Context pills */}
         <View style={styles.pillRow}>
@@ -566,10 +675,10 @@ const styles = StyleSheet.create({
   // ── Header ──
   header: {
     backgroundColor: "#4f46e5",
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
     paddingBottom: 16,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     shadowColor: "#4f46e5",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.2,
@@ -577,9 +686,30 @@ const styles = StyleSheet.create({
     elevation: 10,
     zIndex: 10,
   },
+  headerTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerBackBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 0,
+    gap: 2,
+  },
+  headerBackText: {
+    color: "#fff",
+    fontSize: 13,
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+  },
   headerTitle: {
     color: "#fff",
     fontSize: 26,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     letterSpacing: -0.5,
     marginLeft: 4,
@@ -588,6 +718,7 @@ const styles = StyleSheet.create({
     color: "#c7d2fe",
     fontSize: 14,
     marginTop: 4,
+    fontFamily: "PublicSans-Medium",
     fontWeight: "500",
     marginLeft: 4,
   },
@@ -606,10 +737,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.15)",
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 100,
+    borderRadius: 0,
   },
   pillText: {
     fontSize: 12,
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     color: "#e0e7ff",
   },
@@ -627,6 +759,7 @@ const styles = StyleSheet.create({
   // ── Section labels ──
   sectionLabel: {
     fontSize: 12,
+    fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
     color: "#94a3b8",
     letterSpacing: 1.2,
@@ -641,7 +774,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     padding: 14,
-    borderRadius: 18,
+    borderRadius: 0,
     marginBottom: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -664,7 +797,7 @@ const styles = StyleSheet.create({
   iconBubble: {
     width: 42,
     height: 42,
-    borderRadius: 14,
+    borderRadius: 0,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 14,
@@ -674,11 +807,13 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 15,
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     color: "#1e293b",
   },
   cardSub: {
     fontSize: 11,
+    fontFamily: "PublicSans-Medium",
     fontWeight: "500",
     color: "#94a3b8",
     marginTop: 2,
@@ -686,7 +821,7 @@ const styles = StyleSheet.create({
   arrowBubble: {
     width: 28,
     height: 28,
-    borderRadius: 10,
+    borderRadius: 0,
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 8,
@@ -700,7 +835,7 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: "#f8fafc",
     padding: 16,
-    borderRadius: 18,
+    borderRadius: 0,
     marginBottom: 8,
     borderWidth: 1,
     borderColor: "#e2e8f0",
@@ -709,6 +844,7 @@ const styles = StyleSheet.create({
   piUnavailableText: {
     fontSize: 13,
     color: "#94a3b8",
+    fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
   },
 
@@ -720,7 +856,7 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: "#f8fafc",
     padding: 18,
-    borderRadius: 18,
+    borderRadius: 0,
     borderWidth: 1,
     borderColor: "#e2e8f0",
     borderStyle: "dashed",
@@ -728,6 +864,7 @@ const styles = StyleSheet.create({
   comingSoonText: {
     fontSize: 13,
     color: "#94a3b8",
+    fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
-  },
-});
+  },});
+

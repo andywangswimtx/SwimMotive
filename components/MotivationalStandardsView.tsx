@@ -18,6 +18,7 @@ import {
   calculateImprovement,
   getEventDistance,
   normalizeTimeDisplay,
+  secondsToTime,
   timeToSeconds,
 } from "../utils/timeConverter";
 
@@ -59,18 +60,55 @@ export default function MotivationalStandardsView({
     : Object.values(cutTimes);
   const rawMax = Math.max(...allTimes);
   const rawMin = Math.min(...allTimes);
-  const padding = (rawMax - rawMin) * 0.1 || 5;
+  
+  // Ensure minimum scale: 1s for every 50 distance
+  const eventDistance = getEventDistance(event);
+  const minRange = (eventDistance / 50.0) * 1.5; // Slightly larger for motivational as there are many cuts
 
-  const maxTime = rawMax + padding;
-  const minTime = rawMin - padding;
+  let maxTime = rawMax;
+  let minTime = rawMin;
+
+  if (maxTime - minTime < minRange) {
+    const mid = (maxTime + minTime) / 2;
+    maxTime = mid + minRange / 2;
+    minTime = mid - minRange / 2;
+  } else {
+    // Add 10% padding
+    const padding = (maxTime - minTime) * 0.1 || 5;
+    maxTime += padding;
+    minTime -= padding;
+  }
+
   const totalRange = maxTime - minTime;
+
+  // Dynamic tick interval based on the total time range shown
+  let tickInterval = 1.0;
+  if (totalRange >= 400) tickInterval = 60;
+  else if (totalRange >= 200) tickInterval = 30;
+  else if (totalRange >= 100) tickInterval = 15;
+  else if (totalRange >= 40) tickInterval = 10;
+  else if (totalRange >= 16) tickInterval = 5;
+  else if (totalRange >= 8) tickInterval = 2;
+  else if (totalRange >= 4) tickInterval = 1;
+  else tickInterval = 0.5;
+
+  const ticks: number[] = [];
+  const startTick = Math.ceil(minTime / tickInterval) * tickInterval;
+  for (let t = startTick; t <= maxTime; t += tickInterval) {
+    ticks.push(t);
+  }
 
   const getPosition = (time: number) => {
     return ((maxTime - time) / totalRange) * 100;
   };
 
+  // Force extreme edges and filter overlaps
+  const finalTicks = ticks.filter(t => {
+    const pos = getPosition(t);
+    return pos >= 0 && pos <= 100;
+  });
+
   const userPos = hasUserTime ? getPosition(userSeconds!) : -100;
-  const eventDistance = getEventDistance(event);
 
   const userCutLabel = (() => {
     if (!hasUserTime) return null;
@@ -182,19 +220,27 @@ export default function MotivationalStandardsView({
               </View>
 
               {/* Cut Lines and Labels */}
-              {cuts.map((cut) => (
-                <View
-                  key={`line-${cut}`}
-                  style={[
-                    styles.cutLineWrapper,
-                    { left: `${getPosition(cutTimes[cut])}%` },
-                  ]}
-                >
-                  <View style={styles.cutLine} />
-                  <Text style={styles.cutNameLabel}>{cut}</Text>
-                  <Text style={styles.cutTimeLabel}>{standards[cut]}</Text>
-                </View>
-              ))}
+              {cuts.map((cut, idx) => {
+                const pos = getPosition(cutTimes[cut]);
+                const isOdd = idx % 2 !== 0;
+                return (
+                  <View
+                    key={`line-${cut}`}
+                    style={[
+                      styles.cutLineWrapper,
+                      { left: `${pos}%` },
+                    ]}
+                  >
+                    <View style={styles.cutLine} />
+                    <Text style={[styles.cutNameLabel, isOdd && { top: -24 }]}>
+                      {cut}
+                    </Text>
+                    <Text style={[styles.cutTimeLabel, isOdd && { bottom: -32 }]}>
+                      {standards[cut]}
+                    </Text>
+                  </View>
+                );
+              })}
 
               {/* YOU marker */}
               {hasUserTime && (
@@ -204,6 +250,53 @@ export default function MotivationalStandardsView({
                   </View>
                 </View>
               )}
+
+              {/* Ticks */}
+              {(() => {
+                return finalTicks.map((t) => {
+                  const pos = getPosition(t);
+                  const isLeftEdge = Math.abs(pos) < 0.1;
+                  const isRightEdge = Math.abs(pos - 100) < 0.1;
+                  const isEdge = isLeftEdge || isRightEdge;
+
+                  return (
+                    <View 
+                      key={t} 
+                      style={{ 
+                        position: "absolute", 
+                        left: `${pos}%`, 
+                        zIndex: 20, 
+                        width: 0, 
+                        overflow: 'visible',
+                        alignItems: isLeftEdge ? "flex-start" : isRightEdge ? "flex-end" : "center" 
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 1.5,
+                          height: 12,
+                          top: 39,
+                          backgroundColor: "rgba(0,0,0,0.2)",
+                        }}
+                      />
+                      <Text 
+                        style={{ 
+                          position: "absolute", 
+                          top: isEdge ? 53 : 27, 
+                          fontSize: isEdge ? 8 : 7, 
+                          fontFamily: isEdge ? "PublicSans-Black" : "PublicSans-SemiBold",
+                          fontWeight: isEdge ? "900" : "600",
+                          color: isEdge ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.3)", 
+                          width: 60, 
+                          textAlign: isLeftEdge ? "left" : isRightEdge ? "right" : "center",
+                        }}
+                      >
+                        {secondsToTime(t)}
+                      </Text>
+                    </View>
+                  );
+                });
+              })()}
             </View>
 
             {/* Axis Labels */}
@@ -389,13 +482,14 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#2563eb",
     padding: 24,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   backButton: { marginBottom: 16 },
   backText: { color: "#bfdbfe", fontSize: 14, fontWeight: "600" },
   title: {
     color: "white",
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     fontSize: 24,
     letterSpacing: -0.5,
@@ -406,7 +500,7 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: "white",
-    borderRadius: 24,
+    borderRadius: 0,
     padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -422,18 +516,21 @@ const styles = StyleSheet.create({
   smallLabel: { fontSize: 14, color: "#6b7280", fontWeight: "600" },
   time: {
     fontSize: 36,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     color: "#2563eb",
     letterSpacing: -1,
   },
   greenAchievement: {
     color: "#059669",
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     marginTop: 4,
     fontSize: 15,
   },
   orangeAchievement: {
     color: "#d97706",
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     marginTop: 4,
     fontSize: 15,
@@ -451,7 +548,7 @@ const styles = StyleSheet.create({
   segmentsRow: {
     height: 80,
     width: "100%",
-    borderRadius: 4,
+    borderRadius: 0,
     overflow: "hidden",
     position: "absolute",
     top: 5,
@@ -473,6 +570,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -20,
     fontSize: 10,
+    fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
     color: "#374151",
   },
@@ -480,6 +578,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -20,
     fontSize: 9,
+    fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
     color: "#6b7280",
   },
@@ -497,7 +596,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ef4444",
     paddingHorizontal: 4,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: 0,
     minWidth: 32,
     alignItems: "center",
     justifyContent: "center",
@@ -505,6 +604,7 @@ const styles = StyleSheet.create({
   userMarkerText: {
     color: "white",
     fontSize: 10,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
   },
 
@@ -513,7 +613,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 4,
   },
-  axisText: { fontSize: 11, color: "#9ca3af", fontWeight: "600" },
+  axisText: { fontSize: 11, color: "#9ca3af", fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
 
   hint: {
     textAlign: "center",
@@ -533,6 +633,7 @@ const styles = StyleSheet.create({
   tableSection: {},
   sectionTitle: {
     fontSize: 18,
+    fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
     color: "#1f2937",
     marginBottom: 16,
@@ -547,6 +648,7 @@ const styles = StyleSheet.create({
   tableHeaderCell: {
     flex: 1,
     fontSize: 12,
+    fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     color: "#9ca3af",
     textAlign: "right",
@@ -562,7 +664,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0fdf4",
     marginHorizontal: -10,
     paddingHorizontal: 10,
-    borderRadius: 8,
+    borderRadius: 0,
   },
   tableCell: {
     flex: 1,
@@ -575,7 +677,7 @@ const styles = StyleSheet.create({
   emptyGrid: {
     backgroundColor: "#f8fafc",
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -597,7 +699,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: "white",
-    borderRadius: 24,
+    borderRadius: 0,
     maxHeight: "80%",
     overflow: "hidden",
   },
@@ -619,6 +721,7 @@ const styles = StyleSheet.create({
   modalHeaderCell: {
     flex: 1,
     fontSize: 11,
+    fontFamily: "PublicSans-Black",
     fontWeight: "900",
     color: "#374151",
     textAlign: "right",
@@ -648,3 +751,4 @@ const styles = StyleSheet.create({
     color: "#374151",
   },
 });
+

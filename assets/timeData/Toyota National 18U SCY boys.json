@@ -1,0 +1,24 @@
+{
+  "meet": "2026 Toyota National Championships (18 & Under)",
+  "gender": "Men",
+  "course": "SCY",
+  "standards": [
+    {"event": "50 FR", "standard": "20.09"},
+    {"event": "100 FR", "standard": "43.69"},
+    {"event": "200 FR", "standard": "1:36.19"},
+    {"event": "500 FR", "standard": "4:23.99"},
+    {"event": "1000 FR", "standard": "9:07.59"},
+    {"event": "1650 FR", "standard": "15:21.49"},
+    {"event": "50 BK", "standard": "22.39"},
+    {"event": "100 BK", "standard": "47.89"},
+    {"event": "200 BK", "standard": "1:44.79"},
+    {"event": "50 BR", "standard": "25.19"},
+    {"event": "100 BR", "standard": "53.99"},
+    {"event": "200 BR", "standard": "1:57.99"},
+    {"event": "50 FL", "standard": "21.89"},
+    {"event": "100 FL", "standard": "47.49"},
+    {"event": "200 FL", "standard": "1:45.89"},
+    {"event": "200 IM", "standard": "1:46.79"},
+    {"event": "400 IM", "standard": "3:49.79"}
+  ]
+}

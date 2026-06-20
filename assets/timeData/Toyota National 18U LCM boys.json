@@ -1,0 +1,24 @@
+{
+  "meet": "2026 Toyota National Championships (18 & Under)",
+  "gender": "Men",
+  "course": "LCM",
+  "standards": [
+    {"event": "50 FR", "standard": "23.19"},
+    {"event": "100 FR", "standard": "51.09"},
+    {"event": "200 FR", "standard": "1:52.09"},
+    {"event": "400 FR", "standard": "3:58.39"},
+    {"event": "800 FR", "standard": "8:16.99"},
+    {"event": "1500 FR", "standard": "15:52.69"},
+    {"event": "50 BK", "standard": "26.39"},
+    {"event": "100 BK", "standard": "56.89"},
+    {"event": "200 BK", "standard": "2:03.59"},
+    {"event": "50 BR", "standard": "29.19"},
+    {"event": "100 BR", "standard": "1:03.29"},
+    {"event": "200 BR", "standard": "2:18.09"},
+    {"event": "50 FL", "standard": "24.99"},
+    {"event": "100 FL", "standard": "54.69"},
+    {"event": "200 FL", "standard": "2:02.89"},
+    {"event": "200 IM", "standard": "2:04.69"},
+    {"event": "400 IM", "standard": "4:25.39"}
+  ]
+}

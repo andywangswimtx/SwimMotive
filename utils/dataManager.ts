@@ -10,7 +10,7 @@
 
 export type Gender = "Boy" | "Girl";
 export type PoolType = "SCY" | "LCM";
-export type AgeGroup = "13-14" | "15-16" | "17-18";
+export type AgeGroup = "13-14" | "15-16" | "17-18" | "19 & Over";
 
 export interface MotivationalStandards {
   B: string;
@@ -196,7 +196,7 @@ export function getTSCStandards(
   }
 
   const genderKey = gender === "Girl" ? "Women" : "Men";
-  const rootKey = `2024_TSC_${genderKey}_Sectionals_Standards_${poolType}`;
+  const rootKey = `2026_TSC_${genderKey}_Sectionals_Standards_${poolType}`;
 
   // Convert event format from XX_FR to XX_FREE, etc.
   const tscEvent = event
@@ -218,46 +218,8 @@ export interface FuturesStandard {
   meet: string;
 }
 
-// Get Futures standards
-export function getFuturesStandard(
-  gender: Gender,
-  poolType: PoolType,
-  event: string,
-): FuturesStandard | null {
-  let data: any;
-  if (poolType === "SCY") {
-    data =
-      gender === "Girl"
-        ? require("../assets/timeData/futrures SCY girls.json")
-        : require("../assets/timeData/futrures SCY boys.json");
-  } else {
-    data =
-      gender === "Girl"
-        ? require("../assets/timeData/futrures LCM girls.json")
-        : require("../assets/timeData/futrures LCM boys.json");
-  }
-
-  // Map app event code (e.g. 500_FR) to JSON event name (e.g. "500 FR")
-  let futuresEvent = event.replace("_", " ");
-
-  try {
-    const standardObj = data.standards?.find(
-      (s: any) => s.event === futuresEvent,
-    );
-    if (!standardObj) return null;
-
-    // SCY files use "standard", LCM Women uses "time"
-    const standard = standardObj.standard || standardObj.time;
-    if (!standard) return null;
-
-    return {
-      standard,
-      meet: data.meet || "2026 Futures Championships",
-    };
-  } catch {
-    return null;
-  }
-}
+// Legacy alias for compatibility (defaults to 18U)
+export const getFuturesStandard = getFutures18UStandard;
 
 // Get NCSA standards
 export function getNCSAStandard(
@@ -394,8 +356,6 @@ export function getOlympicTrialStandard(
   poolType: PoolType,
   event: string,
 ): FuturesStandard | null {
-  if (poolType !== "LCM") return null;
-
   // Map app event code (50_FR) to JSON event name (50 Freestyle)
   const strokeNames: Record<string, string> = {
     FR: "Freestyle",
@@ -405,8 +365,12 @@ export function getOlympicTrialStandard(
     IM: "Individual Medley",
   };
 
-  const distance = event.split("_")[0];
+  let distance = event.split("_")[0];
   const stroke = event.split("_")[1];
+
+  // 2024 US Olympic Trials are LCM only.
+  if (poolType === "SCY") return null;
+
   const olympicEvent = `${distance} ${strokeNames[stroke] || stroke}`;
 
   try {
@@ -498,3 +462,224 @@ export function getGulfStandard(
     return null;
   }
 }
+
+// Get Toyota National 18U standards
+export function getToyotaNational18UStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): FuturesStandard | null {
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Toyota National 18U SCY girls.json")
+        : require("../assets/timeData/Toyota National 18U SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Toyota National 18U LCM girls.json")
+        : require("../assets/timeData/Toyota National 18U LCM boys.json");
+    }
+
+    const standardEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === standardEvent);
+    if (!standardObj) return null;
+
+    return {
+      standard: standardObj.standard,
+      meet: data.meet || "2026 Toyota National Championships (18 & Under)",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get Toyota National 19O standards
+export function getToyotaNational19OStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): FuturesStandard | null {
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Toyota National 19O SCY girls.json")
+        : require("../assets/timeData/Toyota National 19O SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Toyota National 19O LCM girls.json")
+        : require("../assets/timeData/Toyota National 19O LCM boys.json");
+    }
+
+    const standardEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === standardEvent);
+    if (!standardObj) return null;
+
+    return {
+      standard: standardObj.standard,
+      meet: data.meet || "2026 Toyota National Championships (19 & Over)",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get US Open standards
+export function getUSOpenStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): TwoStandard | null {
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/US Open SCY girls.json")
+        : require("../assets/timeData/US Open SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/US Open LCM girls.json")
+        : require("../assets/timeData/US Open LCM boys.json");
+    }
+
+    const standardEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === standardEvent);
+    if (!standardObj) return null;
+
+    return {
+      standard: standardObj.standard,
+      bonus: standardObj.bonus || "",
+      meet: data.meet || "2026 Toyota U.S. Open Championships",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get Pro Swim 19O standards
+export function getProSwim19OStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): FuturesStandard | null {
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Pro Swim 19O SCY girls.json")
+        : require("../assets/timeData/Pro Swim 19O SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Pro Swim 19O LCM girls.json")
+        : require("../assets/timeData/Pro Swim 19O LCM boys.json");
+    }
+
+    const standardEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === standardEvent);
+    if (!standardObj) return null;
+
+    return {
+      standard: standardObj.standard,
+      meet: data.meet || "2026 TYR Pro Swim Series (19 & Over)",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get Pro Swim 18U standards
+export function getProSwim18UStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): FuturesStandard | null {
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Pro Swim 18U SCY girls.json")
+        : require("../assets/timeData/Pro Swim 18U SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Pro Swim 18U LCM girls.json")
+        : require("../assets/timeData/Pro Swim 18U LCM boys.json");
+    }
+
+    const standardEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === standardEvent);
+    if (!standardObj) return null;
+
+    return {
+      standard: standardObj.standard,
+      meet: data.meet || "2026 TYR Pro Swim Series (18 & Under)",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get Futures 18U standards
+export function getFutures18UStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): FuturesStandard | null {
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/futrures SCY girls.json")
+        : require("../assets/timeData/futrures SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/futrures LCM girls.json")
+        : require("../assets/timeData/futrures LCM boys.json");
+    }
+
+    const standardEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === standardEvent);
+    if (!standardObj) return null;
+
+    return {
+      standard: standardObj.standard,
+      meet: data.meet || "2026 TYR Futures Championships (18 & Under)",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get Futures 19O standards
+export function getFutures19OStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): FuturesStandard | null {
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Futures 19O SCY girls.json")
+        : require("../assets/timeData/Futures 19O SCY boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Futures 19O LCM girls.json")
+        : require("../assets/timeData/Futures 19O LCM boys.json");
+    }
+
+    const standardEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === standardEvent);
+    if (!standardObj) return null;
+
+    return {
+      standard: standardObj.standard,
+      meet: data.meet || "2026 TYR Futures Championships (19 & Over)",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Legacy alias for compatibility (defaults to 18U)
+
