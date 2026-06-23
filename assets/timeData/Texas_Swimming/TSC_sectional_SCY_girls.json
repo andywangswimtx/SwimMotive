@@ -1,0 +1,60 @@
+{
+  "2026_TSC_Women_Sectional_Standards_SCY": {
+    "50_FREE": {
+      "Sectional_Standard": "24.79",
+      "Sectional_Bonus_Standard": "25.49"
+    },
+    "100_FREE": {
+      "Sectional_Standard": "53.09",
+      "Sectional_Bonus_Standard": "53.99"
+    },
+    "200_FREE": {
+      "Sectional_Standard": "1:54.09",
+      "Sectional_Bonus_Standard": "1:55.79"
+    },
+    "500_FREE": {
+      "Sectional_Standard": "5:06.19",
+      "Sectional_Bonus_Standard": "5:09.39"
+    },
+    "1000_FREE": {
+      "Sectional_Standard": "10:28.79",
+      "Sectional_Bonus_Standard": "10:35.89"
+    },
+    "1650_FREE": {
+      "Sectional_Standard": "17:48.29",
+      "Sectional_Bonus_Standard": "17:58.19"
+    },
+    "100_BACK": {
+      "Sectional_Standard": "58.99",
+      "Sectional_Bonus_Standard": "1:00.49"
+    },
+    "200_BACK": {
+      "Sectional_Standard": "2:07.19",
+      "Sectional_Bonus_Standard": "2:09.29"
+    },
+    "100_BREAST": {
+      "Sectional_Standard": "1:08.79",
+      "Sectional_Bonus_Standard": "1:09.69"
+    },
+    "200_BREAST": {
+      "Sectional_Standard": "2:28.09",
+      "Sectional_Bonus_Standard": "2:31.39"
+    },
+    "100_FLY": {
+      "Sectional_Standard": "58.29",
+      "Sectional_Bonus_Standard": "59.69"
+    },
+    "200_FLY": {
+      "Sectional_Standard": "2:10.59",
+      "Sectional_Bonus_Standard": "2:13.69"
+    },
+    "200_IM": {
+      "Sectional_Standard": "2:10.19",
+      "Sectional_Bonus_Standard": "2:13.09"
+    },
+    "400_IM": {
+      "Sectional_Standard": "4:36.49",
+      "Sectional_Bonus_Standard": "4:41.99"
+    }
+  }
+}

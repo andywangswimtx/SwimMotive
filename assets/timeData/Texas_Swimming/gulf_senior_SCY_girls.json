@@ -1,0 +1,65 @@
+{
+  "meet": "Gulf Senior Championship",
+  "category": "Senior Standards",
+  "gender": "Women",
+  "course": "SCY",
+  "qualifying_period": "2025-2026",
+  "standards": [
+    {
+      "event": "50 FR",
+      "standard": "25.99"
+    },
+    {
+      "event": "100 FR",
+      "standard": "55.99"
+    },
+    {
+      "event": "200 FR",
+      "standard": "2:01.99"
+    },
+    {
+      "event": "500 FR",
+      "standard": "5:19.99"
+    },
+    {
+      "event": "1000 FR",
+      "standard": "11:18.99"
+    },
+    {
+      "event": "1650 FR",
+      "standard": "18:55.99"
+    },
+    {
+      "event": "100 BK",
+      "standard": "1:02.99"
+    },
+    {
+      "event": "200 BK",
+      "standard": "2:16.99"
+    },
+    {
+      "event": "100 BR",
+      "standard": "1:17.69"
+    },
+    {
+      "event": "200 BR",
+      "standard": "2:43.99"
+    },
+    {
+      "event": "100 FL",
+      "standard": "1:02.99"
+    },
+    {
+      "event": "200 FL",
+      "standard": "2:23.99"
+    },
+    {
+      "event": "200 IM",
+      "standard": "2:17.99"
+    },
+    {
+      "event": "400 IM",
+      "standard": "5:03.99"
+    }
+  ]
+}

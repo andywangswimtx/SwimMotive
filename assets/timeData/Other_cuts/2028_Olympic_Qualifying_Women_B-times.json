@@ -1,0 +1,25 @@
+{
+  "meet": "2028 Olympic Games",
+  "gender": "Women",
+  "course": "LCM",
+  "standardType": "B",
+  "standards": [
+    { "event": "50 FR", "standard": "24.81" },
+    { "event": "100 FR", "standard": "54.14" },
+    { "event": "200 FR", "standard": "1:57.59" },
+    { "event": "400 FR", "standard": "4:08.73" },
+    { "event": "800 FR", "standard": "8:31.78" },
+    { "event": "1500 FR", "standard": "16:18.34" },
+	  { "event": "50 BK", "standard": "28.59" },
+    { "event": "100 BK", "standard": "1:00.08" },
+    { "event": "200 BK", "standard": "2:10.24" },
+	  { "event": "50 BR", "standard": "31.33" },
+    { "event": "100 BR", "standard": "1:06.76" },
+    { "event": "200 BR", "standard": "2:24.92" },
+	  { "event": "50 FL", "standard": "26.57" },
+    { "event": "100 FL", "standard": "57.95" },
+    { "event": "200 FL", "standard": "2:09.43" },
+    { "event": "200 IM", "standard": "2:11.20" },
+    { "event": "400 IM", "standard": "4:40.10" }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "2026_TAGS_Boys_13-14_Standards_LCM": {
+    "50_FREE": {
+      "Standard": "26.49",
+      "Bonus_Standard": "26.69"
+    },
+    "100_FREE": {
+      "Standard": "57.59",
+      "Bonus_Standard": "57.89"
+    },
+    "200_FREE": {
+      "Standard": "2:05.19",
+      "Bonus_Standard": "2:05.89"
+    },
+    "400_FREE": {
+      "Standard": "4:28.19",
+      "Bonus_Standard": "4:29.59"
+    },
+    "800_FREE": {
+      "Standard": "9:20.59",
+      "Bonus_Standard": "9:23.39"
+    },
+    "1500_FREE": {
+      "Standard": "18:06.59",
+      "Bonus_Standard": "18:12.09"
+    },
+    "100_BACK": {
+      "Standard": "1:05.89",
+      "Bonus_Standard": "1:06.29"
+    },
+    "200_BACK": {
+      "Standard": "2:22.59",
+      "Bonus_Standard": "2:23.29"
+    },
+    "100_BREAST": {
+      "Standard": "1:13.89",
+      "Bonus_Standard": "1:14.29"
+    },
+    "200_BREAST": {
+      "Standard": "2:41.09",
+      "Bonus_Standard": "2:41.89"
+    },
+    "100_FLY": {
+      "Standard": "1:03.29",
+      "Bonus_Standard": "1:03.59"
+    },
+    "200_FLY": {
+      "Standard": "2:22.79",
+      "Bonus_Standard": "2:23.49"
+    },
+    "200_IM": {
+      "Standard": "2:20.99",
+      "Bonus_Standard": "2:21.69"
+    },
+    "400_IM": {
+      "Standard": "5:06.09",
+      "Bonus_Standard": "5:07.69"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { Alert, Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import {
   calculatePowerIndex,
   EventName,
@@ -10,6 +10,7 @@ import {
   interpretScore,
   parseTimeString,
   SCORE_HEADERS,
+  JSON_SCORE_HEADERS,
 } from "../utils/PowerIndex";
 import type { Gender } from "../utils/dataManager";
 import { calculateImprovement, getEventDistance, normalizeTimeDisplay } from "../utils/timeConverter";
@@ -112,7 +113,7 @@ export default function PowerIndexView({
     const poolType = powerIndexEvent.includes("SCY") ? "SCY" : "LCM";
 
     return SCORE_HEADERS.map((score) => {
-      const targetSec = interpolateTimeFromScore(score, SCORE_HEADERS, referenceTimes);
+      const targetSec = interpolateTimeFromScore(score, JSON_SCORE_HEADERS, referenceTimes);
       const imp = parsedSeconds
         ? calculateImprovement(parsedSeconds, targetSec, eventDistance, poolType)
         : null;
@@ -159,7 +160,11 @@ export default function PowerIndexView({
             flexWrap: "wrap",
           }}
         >
-          <Text style={styles.label}>SwimCloud POWER INDEX</Text>
+          <Text style={styles.label}>
+            Swimcloud
+            <Text style={{ fontSize: 11, position: "relative", top: Platform.OS === "ios" ? -2 : 0, verticalAlign: "top" }}>®</Text>
+            {" POWER INDEX"}
+          </Text>
           <Text style={styles.subLabel}> (1 = elite, 100 = base) </Text>
         </View>
         <View style={styles.iconContainer}>
@@ -221,7 +226,11 @@ export default function PowerIndexView({
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={[styles.modalHeader, { backgroundColor: style.border }]}>
-              <Text style={styles.modalTitle}>Power Index Milestones</Text>
+              <Text style={styles.modalTitle}>
+                Swimcloud
+                <Text style={{ fontSize: 11, position: "relative", top: Platform.OS === "ios" ? -2 : 0, verticalAlign: "top" }}>®</Text>
+                {" Power Index Milestones"}
+              </Text>
               <Pressable
                 onPress={() => setModalVisible(false)}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -237,53 +246,63 @@ export default function PowerIndexView({
             </View>
 
             <ScrollView contentContainerStyle={styles.modalScroll}>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderCell, { textAlign: "left", flex: 0.6 }]}>Index</Text>
-                <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>Time</Text>
-                <Text style={styles.tableHeaderCell}>% Imp.</Text>
-                <Text style={styles.tableHeaderCell}>Drop</Text>
-                <Text style={styles.tableHeaderCell}>Per 50</Text>
-              </View>
-
-              {benchmarks.map((row: any) => (
-                <View
-                  key={row.score}
-                  style={[
-                    styles.tableRow,
-                    row.improvement?.achieved && styles.rowAchieved,
-                  ]}
-                >
-                  <Text style={[styles.tableCell, { textAlign: "left", flex: 0.6, fontWeight: "800" }]}>
-                    {row.score}
-                  </Text>
-                  <Text style={[styles.tableCell, { flex: 1.2, fontWeight: "700" }]}>
-                    {normalizeTimeDisplay(row.timeStr)}
-                  </Text>
-
-                  <View style={[styles.tableCell, { alignItems: "flex-end" }]}>
-                    {!parsedSeconds ? (
-                      <Ionicons name="remove" size={16} color="#94a3b8" />
-                    ) : row.improvement?.achieved ? (
-                      <Ionicons name="checkmark" size={16} color="#059669" />
-                    ) : (
-                      <Text style={[styles.tableCellText, { color: style.text, textAlign: "right", fontWeight: "700" }]}>
-                        -{row.improvement?.percentage.toFixed(2)}%
-                      </Text>
-                    )}
-                  </View>
-
-                  <Text style={styles.tableCell}>
-                    {!parsedSeconds || row.improvement?.achieved
-                      ? "--"
-                      : `-${row.improvement?.totalSeconds.toFixed(2)}s`}
-                  </Text>
-                  <Text style={styles.tableCell}>
-                    {!parsedSeconds || row.improvement?.achieved
-                      ? "--"
-                      : `-${row.improvement?.per50.toFixed(2)}s`}
-                  </Text>
+              <View style={styles.table}>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableHeaderCell, { textAlign: "left", flex: 0.6 }]}>Index</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1.2, textAlign: "left" }]}>Time</Text>
+                  <Text style={styles.tableHeaderCell}>% Imp.</Text>
+                  <Text style={styles.tableHeaderCell}>Drop</Text>
+                  <Text style={[styles.tableHeaderCell, { borderRightWidth: 0, paddingRight: 8 }]}>Per 50</Text>
                 </View>
-              ))}
+
+                {benchmarks.map((row: any, idx: number) => {
+                  const isLast = idx === benchmarks.length - 1;
+                  return (
+                    <View
+                      key={row.score}
+                      style={[
+                        styles.tableRow,
+                        isLast && { borderBottomWidth: 0 },
+                        row.improvement?.achieved && styles.rowAchieved,
+                      ]}
+                    >
+                      <Text style={[styles.tableCell, { textAlign: "left", flex: 0.6, fontWeight: "800", fontFamily: "PublicSans-Black" }]}>
+                        {row.score}
+                      </Text>
+                      <Text style={[styles.tableCell, { flex: 1.2, fontWeight: "700", fontFamily: "PublicSans-Bold", textAlign: "left" }]}>
+                        {normalizeTimeDisplay(row.timeStr)}
+                      </Text>
+
+                      <View style={[styles.tableCell, { alignItems: "flex-end", justifyContent: "center" }]}>
+                        {!parsedSeconds ? (
+                          <Ionicons name="remove" size={16} color="#94a3b8" />
+                        ) : row.improvement?.achieved ? (
+                          <Ionicons name="checkmark" size={16} color="#059669" />
+                        ) : (
+                          <Text style={[styles.tableCellText, { color: "#000000", textAlign: "right", fontWeight: "700", fontFamily: "PublicSans-Bold" }]}>
+                            -{row.improvement?.percentage.toFixed(2)}%
+                          </Text>
+                        )}
+                      </View>
+
+                      <Text style={[styles.tableCell, row.improvement?.achieved && { color: "#059669" }, { justifyContent: "center" }]}>
+                        {!parsedSeconds
+                          ? "--"
+                          : row.improvement?.achieved
+                            ? `+${Math.abs(row.improvement.totalSeconds).toFixed(2)}s`
+                            : `-${row.improvement.totalSeconds.toFixed(2)}s`}
+                      </Text>
+                      <Text style={[styles.tableCell, { borderRightWidth: 0, paddingRight: 8 }, row.improvement?.achieved && { color: "#059669" }, { justifyContent: "center" }]}>
+                        {!parsedSeconds
+                          ? "--"
+                          : row.improvement?.achieved
+                            ? `+${Math.abs(row.improvement.per50).toFixed(2)}s`
+                            : `-${row.improvement.per50.toFixed(2)}s`}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -395,7 +414,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: "#f8fafc",
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#f1f5f9",
   },
   modalEventText: {
     fontSize: 13,
@@ -405,39 +424,63 @@ const styles = StyleSheet.create({
   modalScroll: {
     paddingBottom: 20,
   },
+  table: {
+    backgroundColor: "white",
+    borderWidth: 1.5,
+    borderColor: "#cbd5e1",
+    borderRadius: 8,
+    overflow: "hidden",
+    marginHorizontal: 16,
+    marginVertical: 12,
+  },
   tableHeader: {
     flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    backgroundColor: "#f8fafc",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
   },
   tableHeaderCell: {
     flex: 1,
-    fontSize: 11,
+    fontSize: 9.5,
     fontWeight: "900",
+    fontFamily: "PublicSans-Black",
     color: "#475569",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
+    justifyContent: "center",
   },
   tableRow: {
     flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
-    alignItems: "center",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
+    backgroundColor: "white",
   },
   rowAchieved: {
     backgroundColor: "#f0fdf4",
   },
   tableCell: {
     flex: 1,
-    fontSize: 12,
-    color: "#1e293b",
+    fontSize: 10.5,
+    color: "#000000",
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
+    justifyContent: "center",
   },
   tableCellText: {
-    fontSize: 12,
+    fontSize: 10.5,
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    color: "#000000",
   },
 });
 

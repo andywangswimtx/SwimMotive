@@ -52,34 +52,24 @@ export function normalizeTimeDisplay(timeStr: string): string {
   return match ? match[1] : trimmed;
 }
 
-// Calculate improvement metrics
 export function calculateImprovement(
   userTime: number,
   targetTime: number,
   eventDistance: number,
   poolType: "SCY" | "LCM",
 ) {
-  if (userTime <= targetTime) {
-    return {
-      percentage: 0,
-      totalSeconds: 0,
-      per50: 0,
-      achieved: true,
-    };
-  }
-
+  const achieved = userTime <= targetTime;
   const improvement = userTime - targetTime;
   const percentage = (improvement / userTime) * 100;
 
   // Calculate per 50 yards/meters
-  const unitsPer50 = poolType === "SCY" ? 50 : 50; // yards or meters
-  const per50 = (improvement / eventDistance) * unitsPer50;
+  const per50 = (improvement / eventDistance) * 50;
 
   return {
     percentage,
     totalSeconds: improvement,
     per50,
-    achieved: false,
+    achieved,
   };
 }
 

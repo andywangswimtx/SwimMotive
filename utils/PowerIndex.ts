@@ -3,9 +3,13 @@
 export type Gender = "Boy" | "Girl";
 
 export const SCORE_HEADERS = [
-  1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
+  1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100,
 ] as const;
 export type ScoreHeader = (typeof SCORE_HEADERS)[number];
+
+export const JSON_SCORE_HEADERS = [
+  1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
+] as const;
 
 export type EventName =
   // SCY Events
@@ -127,10 +131,10 @@ let cachedSwimData: Record<Gender, SwimData> | null = null;
 
 export function getSwimData(gender: Gender): SwimData {
   if (!cachedSwimData) {
-    const scyBoys = require("../assets/timeData/Power Index vs time SCY boys.json");
-    const lcmBoys = require("../assets/timeData/Power Index vs times LCM boys.json");
-    const scyGirls = require("../assets/timeData/Power Index vs time SCY girls.json");
-    const lcmGirls = require("../assets/timeData/Power Index vs time LCM girls.json");
+    const scyBoys = require("../assets/timeData/Power_Index/Power_Index_vs_time_SCY_boys.json");
+    const lcmBoys = require("../assets/timeData/Power_Index/Power_Index_vs_times_LCM_boys.json");
+    const scyGirls = require("../assets/timeData/Power_Index/Power_Index_vs_time_SCY_girls.json");
+    const lcmGirls = require("../assets/timeData/Power_Index/Power_Index_vs_time_LCM_girls.json");
 
     cachedSwimData = {
       Boy: { ...parseSwimData(scyBoys), ...parseSwimData(lcmBoys) } as SwimData,
@@ -321,7 +325,7 @@ export function calculatePowerIndex(
   timeSeconds: number,
 ): { score: number; exactMatch: boolean } {
   const referenceTimes = getSwimData(gender)[eventName];
-  return interpolateScore(timeSeconds, referenceTimes, SCORE_HEADERS);
+  return interpolateScore(timeSeconds, referenceTimes, JSON_SCORE_HEADERS);
 }
 
 export function splitPer50ForScore(
@@ -331,7 +335,7 @@ export function splitPer50ForScore(
 ): number {
   const time = interpolateTimeFromScore(
     targetScore,
-    SCORE_HEADERS,
+    JSON_SCORE_HEADERS,
     getSwimData(gender)[eventName],
   );
   const distance = parseEventDistance(eventName);

@@ -1,0 +1,93 @@
+{
+  "meet": "2026 Speedo Junior National",
+  "category": "Women",
+  "course": "SCY",
+  "qualifying_period": "June 1, 2025 through Entry Deadline",
+  "standards": [
+    {
+      "event": "50 FR",
+      "qualifying": "22.99",
+      "bonus": "23.89"
+    },
+    {
+      "event": "100 FR",
+      "qualifying": "49.99",
+      "bonus": "51.89"
+    },
+    {
+      "event": "200 FR",
+      "qualifying": "1:48.19",
+      "bonus": "1:52.29"
+    },
+    {
+      "event": "500 FR",
+      "qualifying": "4:49.99",
+      "bonus": "5:02.59"
+    },
+    {
+      "event": "1000 FR",
+      "qualifying": "10:04.69",
+      "bonus": "10:20.49"
+    },
+    {
+      "event": "1650 FR",
+      "qualifying": "16:50.99",
+      "bonus": "17:14.39"
+    },
+    {
+      "event": "50 BK",
+      "qualifying": "25.19",
+      "bonus": "26.29"
+    },
+    {
+      "event": "100 BK",
+      "qualifying": "54.39",
+      "bonus": "57.09"
+    },
+    {
+      "event": "200 BK",
+      "qualifying": "1:58.19",
+      "bonus": "2:04.19"
+    },
+    {
+      "event": "50 BR",
+      "qualifying": "28.79",
+      "bonus": "29.79"
+    },
+    {
+      "event": "100 BR",
+      "qualifying": "1:02.39",
+      "bonus": "1:05.49"
+    },
+    {
+      "event": "200 BR",
+      "qualifying": "2:15.39",
+      "bonus": "2:22.69"
+    },
+    {
+      "event": "50 FL",
+      "qualifying": "24.69",
+      "bonus": "25.69"
+    },
+    {
+      "event": "100 FL",
+      "qualifying": "54.09",
+      "bonus": "56.59"
+    },
+    {
+      "event": "200 FL",
+      "qualifying": "2:00.49",
+      "bonus": "2:05.39"
+    },
+    {
+      "event": "200 IM",
+      "qualifying": "2:01.09",
+      "bonus": "2:06.39"
+    },
+    {
+      "event": "400 IM",
+      "qualifying": "4:18.79",
+      "bonus": "4:30.69"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "meet": "Gulf Senior Championship",
+  "category": "Senior Standards",
+  "gender": "Women",
+  "course": "LCM",
+  "qualifying_period": "2025-2026",
+  "standards": [
+    {
+      "event": "50 FR",
+      "standard": "29.59"
+    },
+    {
+      "event": "100 FR",
+      "standard": "1:03.69"
+    },
+    {
+      "event": "200 FR",
+      "standard": "2:18.59"
+    },
+    {
+      "event": "400 FR",
+      "standard": "4:45.59"
+    },
+    {
+      "event": "800 FR",
+      "standard": "10:05.99"
+    },
+    {
+      "event": "1500 FR",
+      "standard": "19:18.69"
+    },
+    {
+      "event": "100 BK",
+      "standard": "1:12.19"
+    },
+    {
+      "event": "200 BK",
+      "standard": "2:36.29"
+    },
+    {
+      "event": "100 BR",
+      "standard": "1:28.29"
+    },
+    {
+      "event": "200 BR",
+      "standard": "3:05.99"
+    },
+    {
+      "event": "100 FL",
+      "standard": "1:11.29"
+    },
+    {
+      "event": "200 FL",
+      "standard": "2:42.39"
+    },
+    {
+      "event": "200 IM",
+      "standard": "2:37.39"
+    },
+    {
+      "event": "400 IM",
+      "standard": "5:47.09"
+    }
+  ]
+}

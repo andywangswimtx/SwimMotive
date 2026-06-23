@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -11,6 +11,7 @@ import {
   Text,
   TextInput,
   View,
+  DeviceEventEmitter,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUserContext } from "../../context/UserContext";
@@ -36,8 +37,7 @@ const STROKES = [
 
 export default function InputScreen() {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const { setParams } = useUserContext();
 
   const [gender, setGender] = useState<Gender>("Boy");
@@ -79,12 +79,17 @@ export default function InputScreen() {
     );
   }, [gender, poolType, ageGroup, selectedStroke, selectedDistance]);
 
-  // Reset view on tab press
   useEffect(() => {
     const unsubscribe = navigation.addListener("tabPress", () => {
       setShowResults(false);
     });
-    return unsubscribe;
+    const sub = DeviceEventEmitter.addListener("reset-index-tab", () => {
+      setShowResults(false);
+    });
+    return () => {
+      unsubscribe();
+      sub.remove();
+    };
   }, [navigation]);
 
   const handleCompare = () => {
@@ -109,10 +114,14 @@ export default function InputScreen() {
 
   // Ensure selectedDistance is valid when stroke/pool changes
   useEffect(() => {
-    if (!distancesForStroke.includes(selectedDistance)) {
-      setSelectedDistance(distancesForStroke[0] || "");
+    const availableDistances = getEventsForPoolType(poolType)
+      .filter(evt => evt.endsWith(`_${selectedStroke}`))
+      .map(evt => evt.split("_")[0]);
+
+    if (!availableDistances.includes(selectedDistance)) {
+      setSelectedDistance(availableDistances[0] || "");
     }
-  }, [selectedStroke, poolType]);
+  }, [selectedStroke, poolType, selectedDistance]);
 
   const handleTimeChange = (text: string) => {
     isInternalUpdate.current = true;
@@ -240,12 +249,12 @@ export default function InputScreen() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Header with Filters */}
-        <View style={[styles.header, { paddingTop: Math.max(insets.top, 20) }]}>
-          <Text style={styles.title}>Swim Calculator [v2]</Text>
-          <Text style={styles.subtitle}>Configure your race and enter your time</Text>
+        <View style={[styles.header, { paddingTop: Math.max(insets.top, 18) }]}>
+          <Text style={styles.title}>Swim Calculator</Text>
+          <Text style={styles.subtitle}>Select your race and enter your time</Text>
 
           <View style={styles.filterBar}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+            <View style={styles.filterRow}>
               <View style={styles.filterGroup}>
                 <FilterPill active={gender === "Boy"} label="Boy" onPress={() => setGender("Boy")} />
                 <FilterPill active={gender === "Girl"} label="Girl" onPress={() => setGender("Girl")} />
@@ -254,12 +263,14 @@ export default function InputScreen() {
                 <FilterPill active={poolType === "SCY"} label="SCY" onPress={() => setPoolType("SCY")} />
                 <FilterPill active={poolType === "LCM"} label="LCM" onPress={() => setPoolType("LCM")} />
               </View>
+            </View>
+            <View style={[styles.filterRow, { marginTop: 10 }]}>
               <View style={styles.filterGroup}>
                 {["13-14", "15-16", "17-18", "19+"].map((age) => (
                   <FilterPill key={age} active={ageGroup === (age === "19+" ? "19 & Over" : age)} label={age} onPress={() => setAgeGroup(age === "19+" ? "19 & Over" : age as AgeGroup)} />
                 ))}
               </View>
-            </ScrollView>
+            </View>
           </View>
         </View>
 
@@ -286,24 +297,26 @@ export default function InputScreen() {
 
             {/* Distance Selector */}
             <Text style={styles.sectionLabel}>SELECT DISTANCE</Text>
-            <View style={styles.categoryWrap}>
-              {distancesForStroke.map((d) => (
-                <Pressable
-                  key={d}
-                  onPress={() => setSelectedDistance(d)}
-                  style={[styles.distanceBtn, selectedDistance === d && styles.distanceBtnActive]}
-                >
-                  <Text style={[styles.distanceText, selectedDistance === d && styles.distanceTextActive]}>
-                    {d}
-                  </Text>
-                </Pressable>
-              ))}
+            <View style={styles.distancesContainer}>
+              <View style={styles.distancesRow}>
+                {distancesForStroke.map((d) => (
+                  <Pressable
+                    key={d}
+                    onPress={() => setSelectedDistance(d)}
+                    style={[styles.distanceBtn, selectedDistance === d && styles.distanceBtnActive]}
+                  >
+                    <Text style={[styles.distanceText, selectedDistance === d && styles.distanceTextActive]}>
+                      {d}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
             </View>
 
             {/* Time Input Area */}
             <View style={styles.inputCard}>
               <View style={styles.inputHeader}>
-                <Ionicons name="stopwatch-outline" size={20} color="#4f46e5" />
+                <Ionicons name="stopwatch-outline" size={18} color="#0044ee" />
                 <Text style={styles.inputActionLabel}>ENTER YOUR TIME</Text>
               </View>
               
@@ -327,7 +340,11 @@ export default function InputScreen() {
 
               {timeError ? (
                 <Text style={styles.errorText}>{timeError}</Text>
-              ) : null}
+              ) : (
+                <Text style={styles.inputHelperText}>
+                  {"ex: type \"4855\" → 48.55, type \"170288\" → 17:02.88"}
+                </Text>
+              )}
 
               <Pressable
                 onPress={handleCompare}
@@ -339,7 +356,7 @@ export default function InputScreen() {
                 disabled={!userTime.trim() || !!timeError}
               >
                 <Text style={styles.compareBtnText}>Analyze Performance</Text>
-                <Ionicons name="sparkles" size={20} color="#fff" />
+                <Ionicons name="sparkles" size={16} color="#fff" />
               </Pressable>
             </View>
 
@@ -360,30 +377,31 @@ function FilterPill({ active, label, onPress }: { active: boolean; label: string
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
+  container: { flex: 1, backgroundColor: "#f1f5f9" },
   header: {
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0044ee",
     paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingBottom: 22,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
   title: { fontSize: 28, fontFamily: "PublicSans-Black", fontWeight: "900", color: "white", letterSpacing: -0.5 },
   subtitle: { fontSize: 13, color: "#c7d2fe", marginTop: 4, fontFamily: "PublicSans-Medium", fontWeight: "500" },
-  filterBar: { marginTop: 20 },
-  filterScroll: { gap: 4 },
-  filterGroup: { flexDirection: "row", gap: 2, backgroundColor: "rgba(0,0,0,0.1)", padding: 3, borderRadius: 0, marginRight: 4 },
-  filterBtn: { paddingHorizontal: 8, paddingVertical: 6, borderRadius: 0 },
+  filterBar: { marginTop: 20, width: "100%" },
+  filterRow: { flexDirection: "row", gap: 8, width: "100%" },
+  filterGroup: { flex: 1, flexDirection: "row", gap: 2, backgroundColor: "rgba(0,0,0,0.1)", padding: 3, borderRadius: 0 },
+  filterBtn: { flex: 1, paddingVertical: 8, borderRadius: 0, alignItems: "center", justifyContent: "center" },
   filterBtnActive: { backgroundColor: "white" },
-  filterBtnText: { color: "#c7d2fe", fontSize: 11, fontFamily: "PublicSans-Bold", fontWeight: "700" },
-  filterBtnTextActive: { color: "#4f46e5" },
+  filterBtnText: { color: "#c7d2fe", fontSize: 13, fontFamily: "PublicSans-Bold", fontWeight: "700" },
+  filterBtnTextActive: { color: "#0044ee" },
 
-  mainContent: { padding: 16 },
+  mainContent: { paddingHorizontal: 16, paddingBottom: 16, paddingTop: 14 },
   sectionLabel: { fontSize: 11, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: "#94a3b8", letterSpacing: 1.2, marginBottom: 10, marginTop: 4 },
   
   // Scrollers -> Now Grids
-  strokesContainer: { width: "100%" },
-  categoryWrap: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+  strokesContainer: { width: "100%", marginBottom: 16 },
+  distancesContainer: { width: "100%" },
+  distancesRow: { flexDirection: "row", flexWrap: "nowrap", gap: 4, justifyContent: "space-between" },
   strokesRow: { flexDirection: "row", flexWrap: "nowrap", gap: 4, justifyContent: "space-between" },
   selectorBtn: {
     flex: 1,
@@ -391,35 +409,38 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     paddingHorizontal: 2,
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderRadius: 0,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
   },
-  selectorBtnActive: { backgroundColor: "#4f46e5", borderColor: "#4f46e5" },
-  selectorText: { fontSize: 13, fontFamily: "PublicSans-Bold", fontWeight: "700", color: "#64748b" },
+  selectorBtnActive: { backgroundColor: "#0044ee", borderColor: "#0044ee" },
+  selectorText: { fontSize: 15, fontFamily: "PublicSans-Bold", fontWeight: "700", color: "#64748b" },
   selectorTextActive: { color: "white" },
 
   distanceBtn: {
-    minWidth: 50,
+    flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "white",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 2,
+    paddingVertical: 9,
     borderRadius: 0,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
   },
-  distanceBtnActive: { backgroundColor: "#4f46e5", borderColor: "#4f46e5" },
-  distanceText: { fontSize: 13, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: "#64748b" },
+  distanceBtnActive: { backgroundColor: "#0044ee", borderColor: "#0044ee" },
+  distanceText: { fontSize: 14, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: "#64748b" },
   distanceTextActive: { color: "white" },
 
   // Input Card
   inputCard: {
     backgroundColor: "white",
     borderRadius: 0,
-    padding: 24,
-    marginTop: 20,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 18,
+    marginTop: 30,
     borderWidth: 1,
     borderColor: "#f1f5f9",
     shadowColor: "#000",
@@ -428,26 +449,26 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     elevation: 5,
   },
-  inputHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 16 },
-  inputActionLabel: { fontSize: 12, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: "#4f46e5", letterSpacing: 1 },
+  inputHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 },
+  inputActionLabel: { fontSize: 11, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: "#0044ee", letterSpacing: 1 },
   timeInput: {
-    fontSize: 56,
+    fontSize: 48,
     fontFamily: "PublicSans-Black",
     fontWeight: "900",
     color: "#1e293b",
     textAlign: "center",
-    paddingVertical: 10,
-    marginBottom: 20,
+    paddingVertical: 4,
+    marginBottom: 21,
   },
   compareBtn: {
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0044ee",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    paddingVertical: 18,
+    gap: 8,
+    paddingVertical: 14,
     borderRadius: 0,
-    shadowColor: "#4f46e5",
+    shadowColor: "#0044ee",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 15,
@@ -459,10 +480,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
-    marginTop: -10,
-    marginBottom: 15,
+    marginTop: -4,
+    marginBottom: 16,
     marginLeft: 4,
   },
+  inputHelperText: {
+    color: "#64748b",
+    fontSize: 9,
+    fontFamily: "PublicSans-Medium",
+    fontWeight: "500",
+    textAlign: "center",
+    marginTop: -4,
+    marginBottom: 16,
+    opacity: 0.7,
+  },
   compareBtnPressed: { transform: [{ scale: 0.98 }] },
-  compareBtnText: { color: "white", fontSize: 16, fontFamily: "PublicSans-ExtraBold", fontWeight: "800" },});
+  compareBtnText: { color: "white", fontSize: 14, fontFamily: "PublicSans-ExtraBold", fontWeight: "800" },});
 

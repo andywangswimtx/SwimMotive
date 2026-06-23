@@ -161,7 +161,7 @@ export default function MotivationalStandardsView({
             <Text
               style={[
                 styles.time,
-                { color: hasUserTime ? "#4f46e5" : "#9ca3af" },
+                { color: hasUserTime ? "#000000" : "#9ca3af" },
               ]}
             >
               {hasUserTime ? normalizeTimeDisplay(userTime) : "--:--.--"}
@@ -305,7 +305,7 @@ export default function MotivationalStandardsView({
               <Text style={styles.axisText}>Faster →</Text>
             </View>
 
-            <Text style={styles.hint}>Tap chart for improvement details</Text>
+            <Text style={styles.hint}>Tap chart for details</Text>
           </Pressable>
 
           <View style={styles.divider} />
@@ -314,75 +314,69 @@ export default function MotivationalStandardsView({
           <View style={styles.tableSection}>
             <Text style={styles.sectionTitle}>How much to improve</Text>
 
-            <View style={styles.tableHeader}>
-              <Text
-                style={[
-                  styles.tableHeaderCell,
-                  { textAlign: "left", flex: 0.8 },
-                ]}
-              >
-                Cut
-              </Text>
-              <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>Standard</Text>
-              <Text style={styles.tableHeaderCell}>Time Drop Needed</Text>
-              <Text style={styles.tableHeaderCell}>Per 50</Text>
-            </View>
-
-            {improvements.map((row) => (
-              <View
-                key={row.cut}
-                style={[styles.tableRow, row.achieved && styles.rowAchieved]}
-              >
+            <View style={styles.table}>
+              <View style={styles.tableHeader}>
                 <Text
                   style={[
-                    styles.tableCell,
-                    { textAlign: "left", flex: 0.8, fontWeight: "800" },
+                    styles.tableHeaderCell,
+                    { textAlign: "left", flex: 0.8 },
                   ]}
                 >
-                  {row.cut}
+                  Cut
                 </Text>
-                <Text style={[styles.tableCell, { flex: 1.2 }]}>{normalizeTimeDisplay(row.standardTime)}</Text>
-                {!hasUserTime ? (
-                  <View style={styles.tableCell}>
-                    <Ionicons
-                      name="remove"
-                      size={16}
-                      color="#94a3b8"
-                      style={{ alignSelf: "flex-end" }}
-                    />
-                  </View>
-                ) : row.achieved ? (
-                  <View style={styles.tableCell}>
-                    <Ionicons
-                      name="checkmark"
-                      size={18}
-                      color="#059669"
-                      style={{ alignSelf: "flex-end" }}
-                    />
-                  </View>
-                ) : (
-                  <Text style={[styles.tableCell, styles.redText]}>
-                    -{row.totalSeconds.toFixed(2)}s
-                  </Text>
-                )}
-
-                {!hasUserTime || row.achieved ? (
-                  <Text
-                    style={[
-                      styles.tableCell,
-                      styles.orangeText,
-                      { color: "#94a3b8" },
-                    ]}
-                  >
-                    --
-                  </Text>
-                ) : (
-                  <Text style={[styles.tableCell, styles.orangeText]}>
-                    -{row.per50.toFixed(2)}s
-                  </Text>
-                )}
+                <Text style={[styles.tableHeaderCell, { flex: 1.2, textAlign: "left" }]}>Standard</Text>
+                <Text style={styles.tableHeaderCell}>Time Drop Needed</Text>
+                <Text style={[styles.tableHeaderCell, { borderRightWidth: 0, paddingRight: 8 }]}>Per 50</Text>
               </View>
-            ))}
+
+              {improvements.map((row, idx) => {
+                const isLast = idx === improvements.length - 1;
+                return (
+                  <View
+                    key={row.cut}
+                    style={[styles.tableRow, isLast && { borderBottomWidth: 0 }, row.achieved && styles.rowAchieved]}
+                  >
+                    <Text
+                      style={[
+                        styles.tableCell,
+                        { textAlign: "left", flex: 0.8, fontWeight: "800", fontFamily: "PublicSans-Black" },
+                      ]}
+                    >
+                      {row.cut}
+                    </Text>
+                    <Text style={[styles.tableCell, { flex: 1.2, textAlign: "left" }]}>
+                      {normalizeTimeDisplay(row.standardTime)}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableCell,
+                        { justifyContent: "center" },
+                        row.achieved ? { color: "#059669", fontWeight: "700" } : styles.redText,
+                      ]}
+                    >
+                      {!hasUserTime
+                        ? "--"
+                        : row.achieved
+                          ? `+${Math.abs(row.totalSeconds).toFixed(2)}s`
+                          : `-${row.totalSeconds.toFixed(2)}s`}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableCell,
+                        { borderRightWidth: 0, paddingRight: 8, justifyContent: "center" },
+                        row.achieved ? { color: "#059669", fontWeight: "700" } : styles.orangeText,
+                      ]}
+                    >
+                      {!hasUserTime
+                        ? "--"
+                        : row.achieved
+                          ? `+${Math.abs(row.per50).toFixed(2)}s`
+                          : `-${row.per50.toFixed(2)}s`}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -400,74 +394,84 @@ export default function MotivationalStandardsView({
               </Pressable>
             </View>
 
-            <ScrollView style={{ padding: 12 }}>
-              <View style={styles.modalTableHeader}>
-                <Text
-                  style={[
-                    styles.modalHeaderCell,
-                    { textAlign: "left", flex: 0.6 },
-                  ]}
-                >
-                  Cut
-                </Text>
-                <Text style={[styles.modalHeaderCell, { flex: 1.2 }]}>Standard</Text>
-                <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
-                  % Imp. Needed
-                </Text>
-                <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
-                <Text style={styles.modalHeaderCell}>Per 50</Text>
-              </View>
-
-              {improvements
-                .slice()
-                .reverse()
-                .map((row) => (
-                  <View
-                    key={row.cut}
+            <ScrollView contentContainerStyle={{ padding: 16 }}>
+              <View style={styles.modalTable}>
+                <View style={styles.modalTableHeader}>
+                  <Text
                     style={[
-                      styles.modalRow,
-                      row.achieved && styles.modalRowAchieved,
+                      styles.modalHeaderCell,
+                      { textAlign: "left", flex: 0.6 },
                     ]}
                   >
-                    <Text
-                      style={[
-                        styles.modalCell,
-                        { textAlign: "left", flex: 0.6, fontWeight: "800" },
-                      ]}
-                    >
-                      {row.cut}
-                    </Text>
-                    <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2 }]}>
-                      {normalizeTimeDisplay(row.standardTime)}
-                    </Text>
-                    <View style={[styles.modalCell, { alignItems: "flex-end" }]}>
-                      {!hasUserTime ? (
-                        <Ionicons name="remove" size={16} color="#94a3b8" />
-                      ) : row.achieved ? (
-                        <Ionicons name="checkmark" size={16} color="#059669" />
-                      ) : (
+                    Cut
+                  </Text>
+                  <Text style={[styles.modalHeaderCell, { flex: 1.2, textAlign: "left" }]}>Standard</Text>
+                  <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
+                    % Imp. Needed
+                  </Text>
+                  <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
+                  <Text style={[styles.modalHeaderCell, { paddingRight: 8, borderRightWidth: 0 }]}>Per 50</Text>
+                </View>
+
+                {improvements
+                  .slice()
+                  .reverse()
+                  .map((row, idx) => {
+                    const isLast = idx === improvements.length - 1;
+                    return (
+                      <View
+                        key={row.cut}
+                        style={[
+                          styles.modalRow,
+                          isLast && { borderBottomWidth: 0 },
+                          row.achieved && styles.modalRowAchieved,
+                        ]}
+                      >
                         <Text
                           style={[
-                            styles.modalValueText,
-                            { textAlign: "right" },
+                            styles.modalCell,
+                            { textAlign: "left", flex: 0.6, fontWeight: "800", fontFamily: "PublicSans-Black" },
                           ]}
                         >
-                          -{row.percentage.toFixed(2)}%
+                          {row.cut}
                         </Text>
-                      )}
-                    </View>
-                    <Text style={styles.modalCell}>
-                      {!hasUserTime || row.achieved
-                        ? "--"
-                        : `-${row.totalSeconds.toFixed(2)}s`}
-                    </Text>
-                    <Text style={styles.modalCell}>
-                      {!hasUserTime || row.achieved
-                        ? "--"
-                        : `-${row.per50.toFixed(2)}s`}
-                    </Text>
-                  </View>
-                ))}
+                        <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2, textAlign: "left" }]}>
+                          {normalizeTimeDisplay(row.standardTime)}
+                        </Text>
+                        <View style={[styles.modalCell, { alignItems: "flex-end", justifyContent: "center" }]}>
+                          {!hasUserTime ? (
+                            <Ionicons name="remove" size={16} color="#94a3b8" />
+                          ) : row.achieved ? (
+                            <Ionicons name="checkmark" size={16} color="#059669" />
+                          ) : (
+                            <Text
+                              style={[
+                                styles.modalValueText,
+                                { textAlign: "right" },
+                              ]}
+                            >
+                              -{row.percentage.toFixed(2)}%
+                            </Text>
+                          )}
+                        </View>
+                        <Text style={[styles.modalCell, row.achieved && { color: "#059669" }, { justifyContent: "center" }]}>
+                          {!hasUserTime
+                            ? "--"
+                            : row.achieved
+                              ? `+${Math.abs(row.totalSeconds).toFixed(2)}s`
+                              : `-${row.totalSeconds.toFixed(2)}s`}
+                        </Text>
+                        <Text style={[styles.modalCell, { paddingRight: 8, borderRightWidth: 0, justifyContent: "center" }, row.achieved && { color: "#059669" }]}>
+                          {!hasUserTime
+                            ? "--"
+                            : row.achieved
+                              ? `+${Math.abs(row.per50).toFixed(2)}s`
+                              : `-${row.per50.toFixed(2)}s`}
+                        </Text>
+                      </View>
+                    );
+                  })}
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -477,10 +481,10 @@ export default function MotivationalStandardsView({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f0f7ff" },
+  container: { flex: 1, backgroundColor: "#f1f5f9" },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
-    backgroundColor: "#2563eb",
+    backgroundColor: "#0044ee",
     padding: 24,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
@@ -638,42 +642,58 @@ const styles = StyleSheet.create({
     color: "#1f2937",
     marginBottom: 16,
   },
+  table: {
+    backgroundColor: "white",
+    borderWidth: 1.5,
+    borderColor: "#cbd5e1",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
   tableHeader: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#f3f4f6",
-    paddingBottom: 8,
-    marginBottom: 8,
+    backgroundColor: "#f8fafc",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
   },
   tableHeaderCell: {
     flex: 1,
-    fontSize: 12,
-    fontFamily: "PublicSans-Bold",
-    fontWeight: "700",
-    color: "#9ca3af",
+    fontSize: 9.5,
+    fontWeight: "900",
+    fontFamily: "PublicSans-Black",
+    color: "#475569",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
+    justifyContent: "center",
   },
   tableRow: {
     flexDirection: "row",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderColor: "#f8fafc",
-    alignItems: "center",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
+    backgroundColor: "white",
   },
   rowAchieved: {
     backgroundColor: "#f0fdf4",
-    marginHorizontal: -10,
-    paddingHorizontal: 10,
-    borderRadius: 0,
   },
   tableCell: {
     flex: 1,
-    fontSize: 13,
-    color: "#374151",
+    fontSize: 10.5,
+    color: "#000000",
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
+    justifyContent: "center",
   },
-  redText: { color: "#ef4444", fontWeight: "700" },
-  orangeText: { color: "#f97316", fontWeight: "600" },
+  redText: { color: "#000000", fontFamily: "PublicSans-Bold", fontWeight: "700" },
+  orangeText: { color: "#000000", fontFamily: "PublicSans-Bold", fontWeight: "700" },
   emptyGrid: {
     backgroundColor: "#f8fafc",
     padding: 16,
@@ -683,7 +703,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
   },
   emptyGridText: {
     color: "#64748b",
@@ -704,51 +724,67 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   modalHeader: {
-    backgroundColor: "#2563eb",
+    backgroundColor: "#0044ee",
     padding: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  modalTable: {
+    backgroundColor: "white",
+    borderWidth: 1.5,
+    borderColor: "#cbd5e1",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
   modalTableHeader: {
     flexDirection: "row",
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
-    marginBottom: 5,
-    paddingHorizontal: 12,
+    backgroundColor: "#f8fafc",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
   },
   modalHeaderCell: {
     flex: 1,
-    fontSize: 11,
-    fontFamily: "PublicSans-Black",
+    fontSize: 9.5,
     fontWeight: "900",
-    color: "#374151",
+    fontFamily: "PublicSans-Black",
+    color: "#475569",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
-    paddingHorizontal: 2,
+    justifyContent: "center",
   },
   modalRow: {
     flexDirection: "row",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: "#f1f5f9",
-    alignItems: "center",
-    paddingHorizontal: 12,
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
+    backgroundColor: "white",
   },
   modalRowAchieved: {
     backgroundColor: "#f0fdf4",
   },
   modalCell: {
     flex: 1,
-    fontSize: 12,
-    color: "#374151",
+    fontSize: 10.5,
+    color: "#000000",
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
-    paddingHorizontal: 2,
     justifyContent: "center",
   },
   modalValueText: {
-    fontSize: 12,
-    color: "#374151",
+    fontSize: 10.5,
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    color: "#000000",
   },
 });
 

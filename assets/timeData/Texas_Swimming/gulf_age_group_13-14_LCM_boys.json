@@ -1,0 +1,65 @@
+{
+  "meet": "Gulf Age Group Championship",
+  "category": "13-14 Standards",
+  "gender": "Men",
+  "course": "LCM",
+  "qualifying_period": "2025-2026",
+  "standards": [
+    {
+      "event": "50 FR",
+      "standard": "27.99"
+    },
+    {
+      "event": "100 FR",
+      "standard": "1:00.99"
+    },
+    {
+      "event": "200 FR",
+      "standard": "2:14.99"
+    },
+    {
+      "event": "400 FR",
+      "standard": "4:48.49"
+    },
+    {
+      "event": "800 FR",
+      "standard": "9:55.99"
+    },
+    {
+      "event": "1500 FR",
+      "standard": "19:25.39"
+    },
+    {
+      "event": "100 BK",
+      "standard": "1:11.59"
+    },
+    {
+      "event": "200 BK",
+      "standard": "2:37.59"
+    },
+    {
+      "event": "100 BR",
+      "standard": "1:22.29"
+    },
+    {
+      "event": "200 BR",
+      "standard": "2:57.29"
+    },
+    {
+      "event": "100 FL",
+      "standard": "1:08.69"
+    },
+    {
+      "event": "200 FL",
+      "standard": "2:35.89"
+    },
+    {
+      "event": "200 IM",
+      "standard": "2:32.79"
+    },
+    {
+      "event": "400 IM",
+      "standard": "5:30.19"
+    }
+  ]
+}

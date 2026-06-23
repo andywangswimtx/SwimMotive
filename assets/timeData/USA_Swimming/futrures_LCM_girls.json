@@ -1,0 +1,77 @@
+{
+  "meet": "2026 TYR Futures Championships",
+  "category": "18 & Under Standards",
+  "gender": "Women",
+  "course": "LCM",
+  "qualifying_period": "June 1, 2025 through Entry Deadline",
+  "standards": [
+    {
+      "event": "50 FR",
+      "standard": "27.39"
+    },
+    {
+      "event": "100 FR",
+      "standard": "59.29"
+    },
+    {
+      "event": "200 FR",
+      "standard": "2:07.79"
+    },
+    {
+      "event": "400 FR",
+      "standard": "4:28.79"
+    },
+    {
+      "event": "800 FR",
+      "standard": "9:13.79"
+    },
+    {
+      "event": "1500 FR",
+      "standard": "17:40.19"
+    },
+    {
+      "event": "50 BK",
+      "standard": "30.89"
+    },
+    {
+      "event": "100 BK",
+      "standard": "1:06.79"
+    },
+    {
+      "event": "200 BK",
+      "standard": "2:23.99"
+    },
+    {
+      "event": "50 BR",
+      "standard": "34.79"
+    },
+    {
+      "event": "100 BR",
+      "standard": "1:15.99"
+    },
+    {
+      "event": "200 BR",
+      "standard": "2:43.39"
+    },
+    {
+      "event": "50 FL",
+      "standard": "29.49"
+    },
+    {
+      "event": "100 FL",
+      "standard": "1:04.69"
+    },
+    {
+      "event": "200 FL",
+      "standard": "2:21.89"
+    },
+    {
+      "event": "200 IM",
+      "standard": "2:26.19"
+    },
+    {
+      "event": "400 IM",
+      "standard": "5:07.29"
+    }
+  ]
+}

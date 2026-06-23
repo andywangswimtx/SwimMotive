@@ -30,7 +30,7 @@ interface Props {
   gender: string;
   ageGroup: string;
   poolType: "SCY" | "LCM";
-  colorClass: string;
+  themeColor: string;
   onBack: () => void;
 }
 
@@ -45,7 +45,7 @@ export default function TwoStandardView({
   gender,
   ageGroup,
   poolType,
-  colorClass,
+  themeColor,
   onBack,
 }: Props) {
   const insets = useSafeAreaInsets();
@@ -123,21 +123,31 @@ export default function TwoStandardView({
   const userPos = hasUserTime ? getPosition(userSeconds!) : -100;
 
   // Color mapping
-  const isPurple = colorClass === "purple";
+  const hexToRgba = (hex: string, alpha: number): string => {
+    const cleanHex = hex.replace("#", "");
+    let r = 0, g = 0, b = 0;
+    if (cleanHex.length === 3) {
+      r = parseInt(cleanHex[0] + cleanHex[0], 16);
+      g = parseInt(cleanHex[1] + cleanHex[1], 16);
+      b = parseInt(cleanHex[2] + cleanHex[2], 16);
+    } else if (cleanHex.length === 6) {
+      r = parseInt(cleanHex.substring(0, 2), 16);
+      g = parseInt(cleanHex.substring(2, 4), 16);
+      b = parseInt(cleanHex.substring(4, 6), 16);
+    }
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
 
   const colors = {
-    header:
-      colorClass === "rose" ? "#e11d48" : isPurple ? "#7c3aed" : "#e11d48",
-    primary:
-      colorClass === "rose" ? "#e11d48" : isPurple ? "#7c3aed" : "#e11d48",
-    midZone:
-      colorClass === "rose" ? "#fecaca" : isPurple ? "#c084fc" : "#fb7185",
-    fastZone: "#bbf7d0",
+    header: "#0044ee",
+    primary: themeColor,
+    midZone: themeColor,
+    fastZone: themeColor,
     user: "#ef4444",
-    bonusCard: "#fff7ed",
-    bonusBorder: "#fed7aa",
-    standardCard: "#fff1f2",
-    standardBorder: "#fecaca",
+    bonusCard: hexToRgba(themeColor, 0.05),
+    bonusBorder: hexToRgba(themeColor, 0.18),
+    standardCard: hexToRgba(themeColor, 0.09),
+    standardBorder: hexToRgba(themeColor, 0.28),
   };
 
   const renderSummaryItem = (
@@ -159,7 +169,7 @@ export default function TwoStandardView({
           <Text
             style={[styles.summaryLabel, { fontSize: 18, color: "#111827" }]}
           >
-            {label} Cut
+            {label.toLowerCase().includes("cut") ? label : `${label} Cut`}
           </Text>
           <Text style={[styles.summaryValue, { color: "#4b5563" }]}>
             {time}
@@ -240,7 +250,7 @@ export default function TwoStandardView({
             <Text
               style={[
                 styles.time,
-                { color: hasUserTime ? colors.header : "#9ca3af" },
+                { color: hasUserTime ? "#000000" : "#9ca3af" },
               ]}
             >
               {hasUserTime ? normalizeTimeDisplay(userTime) : "--:--.--"}
@@ -248,11 +258,11 @@ export default function TwoStandardView({
 
             {hasUserTime && standardImprovement?.achieved ? (
               <Text style={styles.greenAchievement}>
-                ✓ {standardLabel} cut achieved!
+                ✓ {standardLabel.toLowerCase().includes("cut") ? standardLabel : `${standardLabel} cut`} achieved!
               </Text>
             ) : hasUserTime && bonusImprovement?.achieved ? (
               <Text style={styles.blueAchievement}>
-                ✓ {bonusLabel} cut achieved
+                ✓ {bonusLabel.toLowerCase().includes("cut") ? bonusLabel : `${bonusLabel} cut`} achieved
               </Text>
             ) : hasUserTime ? (
               <Text style={[styles.orangeAchievement, { color: "#f97316" }]}>
@@ -307,7 +317,7 @@ export default function TwoStandardView({
                     height: 80,
                     top: 5,
                     backgroundColor: colors.fastZone, // Green
-                    opacity: 0.8,
+                    opacity: 0.55,
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                     zIndex: 0,
@@ -317,10 +327,13 @@ export default function TwoStandardView({
                 {/* Bonus Line and Label */}
                 {(() => {
                   const isOverlapping = Math.abs(bonusPos - standardPos) < 14;
+                  const isOlympic = meetName === "LA28 Olympic Games";
                   return (
                     <View style={[styles.cutLineWrapper, { left: `${bonusPos}%` }]}>
                       <View style={styles.cutLine} />
-                      <Text style={[styles.cutNameLabel, isOverlapping && { top: -24 }]}>Bonus</Text>
+                      <Text style={[styles.cutNameLabel, isOverlapping && { top: -24 }]}>
+                        {isOlympic ? "B cut" : (bonusLabel === "18U Bonus" ? "18U Bonus" : "Bonus")}
+                      </Text>
                       <Text style={[styles.cutTimeLabel, isOverlapping && { bottom: -32 }]}>
                         {normalizeTimeDisplay(bonusStandard)}
                       </Text>
@@ -333,7 +346,9 @@ export default function TwoStandardView({
                   style={[styles.cutLineWrapper, { left: `${standardPos}%` }]}
                 >
                   <View style={styles.cutLine} />
-                  <Text style={styles.cutNameLabel}>Cut</Text>
+                  <Text style={styles.cutNameLabel}>
+                    {meetName === "LA28 Olympic Games" ? "A cut" : "Cut"}
+                  </Text>
                   <Text style={styles.cutTimeLabel}>{normalizeTimeDisplay(standard)}</Text>
                 </View>
 
@@ -410,7 +425,7 @@ export default function TwoStandardView({
               <Text style={styles.axisText}>Faster →</Text>
             </View>
 
-            <Text style={styles.hint}>Tap chart for improvement details</Text>
+            <Text style={styles.hint}>Tap chart for details</Text>
           </Pressable>
 
           <View style={styles.divider} />
@@ -431,7 +446,7 @@ export default function TwoStandardView({
                 },
                 colors.bonusCard,
                 colors.bonusBorder,
-                "#c2410c",
+                themeColor,
               )}
               {renderSummaryItem(
                 standardLabel,
@@ -444,7 +459,7 @@ export default function TwoStandardView({
                 },
                 colors.standardCard,
                 colors.standardBorder,
-                "#be123c",
+                themeColor,
               )}
             </View>
           </View>
@@ -466,89 +481,100 @@ export default function TwoStandardView({
               </Pressable>
             </View>
 
-            <ScrollView style={{ padding: 12 }}>
-              <View style={styles.modalTableHeader}>
-                <Text
-                  style={[
-                    styles.modalHeaderCell,
-                    { textAlign: "left", flex: 0.8 },
-                  ]}
-                >
-                  Cut
-                </Text>
-                <Text style={[styles.modalHeaderCell, { flex: 1.2 }]}>Standard</Text>
-                <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
-                  % Imp. Needed
-                </Text>
-                <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
-                <Text style={styles.modalHeaderCell}>Per 50</Text>
-              </View>
-
-              {[
-                {
-                  label: bonusLabel,
-                  time: normalizeTimeDisplay(bonusStandard),
-                  imp: bonusImprovement,
-                  color: "#c2410c",
-                },
-                {
-                  label: standardLabel,
-                  time: normalizeTimeDisplay(standard),
-                  imp: standardImprovement,
-                  color: "#be123c",
-                },
-              ].map((row) => (
-                <View
-                  key={row.label}
-                  style={[
-                    styles.modalRow,
-                    row.imp?.achieved && styles.modalRowAchieved,
-                  ]}
-                >
+            <View style={{ padding: 16 }}>
+              <View style={styles.modalTable}>
+                <View style={styles.modalTableHeader}>
                   <Text
                     style={[
-                      styles.modalCell,
-                      { textAlign: "left", flex: 0.8, fontWeight: "800" },
+                      styles.modalHeaderCell,
+                      { textAlign: "left", flex: 0.8 },
                     ]}
                   >
-                    {row.label}
+                    Cut
                   </Text>
-                  <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2 }]}>
-                    {row.time}
+                  <Text style={[styles.modalHeaderCell, { flex: 1.2, textAlign: "left" }]}>Standard</Text>
+                  <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
+                    % Imp. Needed
                   </Text>
-                  <View style={[styles.modalCell, { alignItems: "flex-end" }]}>
-                    {!hasUserTime ? (
-                      <Ionicons name="remove" size={16} color="#94a3b8" />
-                    ) : row.imp?.achieved ? (
-                      <Ionicons name="checkmark" size={16} color="#059669" />
-                    ) : (
+                  <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
+                  <Text style={[styles.modalHeaderCell, { paddingRight: 8, borderRightWidth: 0 }]}>Per 50</Text>
+                </View>
+
+                {[
+                  {
+                    label: bonusLabel,
+                    time: normalizeTimeDisplay(bonusStandard),
+                    imp: bonusImprovement,
+                    color: themeColor,
+                  },
+                  {
+                    label: standardLabel,
+                    time: normalizeTimeDisplay(standard),
+                    imp: standardImprovement,
+                    color: themeColor,
+                  },
+                ].map((row, idx) => {
+                  const isLast = idx === 1;
+                  return (
+                    <View
+                      key={row.label}
+                      style={[
+                        styles.modalRow,
+                        isLast && { borderBottomWidth: 0 },
+                        row.imp?.achieved && styles.modalRowAchieved,
+                      ]}
+                    >
                       <Text
                         style={[
-                          styles.modalValueText,
-                          {
-                            color: row.color,
-                            fontWeight: "700",
-                            textAlign: "right",
-                          },
+                          styles.modalCell,
+                          { textAlign: "left", flex: 0.8, fontWeight: "800", fontFamily: "PublicSans-Black" },
                         ]}
                       >
-                        {row.imp ? `-${row.imp.percentage.toFixed(2)}%` : "--"}
+                        {row.label}
                       </Text>
-                    )}
-                  </View>
-                  <Text style={styles.modalCell}>
-                    {!hasUserTime || row.imp?.achieved
-                      ? "--"
-                      : `-${row.imp?.totalSeconds.toFixed(2)}s`}
-                  </Text>
-                  <Text style={styles.modalCell}>
-                    {!hasUserTime || row.imp?.achieved
-                      ? "--"
-                      : `-${row.imp?.per50.toFixed(2)}s`}
-                  </Text>
-                </View>
-              ))}
-            </ScrollView>
+                      <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2, textAlign: "left" }]}>
+                        {row.time}
+                      </Text>
+                      <View style={[styles.modalCell, { alignItems: "flex-end", justifyContent: "center" }]}>
+                        {!hasUserTime ? (
+                          <Ionicons name="remove" size={16} color="#94a3b8" />
+                        ) : row.imp?.achieved ? (
+                          <Ionicons name="checkmark" size={16} color="#059669" />
+                        ) : (
+                          <Text
+                            style={[
+                              styles.modalValueText,
+                              {
+                                color: "#000000",
+                                fontWeight: "700",
+                                fontFamily: "PublicSans-Bold",
+                                textAlign: "right",
+                              },
+                            ]}
+                          >
+                            {row.imp ? `-${row.imp.percentage.toFixed(2)}%` : "--"}
+                          </Text>
+                        )}
+                      </View>
+                      <Text style={[styles.modalCell, { justifyContent: "center" }, row.imp?.achieved && { color: "#059669" }]}>
+                        {!hasUserTime || !row.imp
+                          ? "--"
+                          : row.imp.achieved
+                            ? `+${Math.abs(row.imp.totalSeconds).toFixed(2)}s`
+                            : `-${row.imp.totalSeconds.toFixed(2)}s`}
+                      </Text>
+                      <Text style={[styles.modalCell, { paddingRight: 8, borderRightWidth: 0, justifyContent: "center" }, row.imp?.achieved && { color: "#059669" }]}>
+                        {!hasUserTime || !row.imp
+                          ? "--"
+                          : row.imp.achieved
+                            ? `+${Math.abs(row.imp.per50).toFixed(2)}s`
+                            : `-${row.imp.per50.toFixed(2)}s`}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
           </View>
         </View>
       </Modal>
@@ -557,7 +583,7 @@ export default function TwoStandardView({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f0f7ff" },
+  container: { flex: 1, backgroundColor: "#f1f5f9" },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
     padding: 24,
@@ -774,45 +800,60 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  modalTable: {
+    backgroundColor: "white",
+    borderWidth: 1.5,
+    borderColor: "#cbd5e1",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
   modalTableHeader: {
     flexDirection: "row",
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
-    marginBottom: 5,
-    paddingHorizontal: 12,
+    backgroundColor: "#f8fafc",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
   },
   modalHeaderCell: {
     flex: 1,
-    fontSize: 11,
-    fontFamily: "PublicSans-Black",
+    fontSize: 9.5,
     fontWeight: "900",
-    color: "#374151",
+    fontFamily: "PublicSans-Black",
+    color: "#475569",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
-    paddingHorizontal: 2,
+    justifyContent: "center",
   },
   modalRow: {
     flexDirection: "row",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: "#f1f5f9",
-    alignItems: "center",
-    paddingHorizontal: 12,
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
+    backgroundColor: "white",
   },
   modalRowAchieved: {
     backgroundColor: "#f0fdf4",
   },
   modalCell: {
     flex: 1,
-    fontSize: 12,
-    color: "#4b5563",
-    fontFamily: "PublicSans-Medium",
-    fontWeight: "500",
+    fontSize: 10.5,
+    color: "#000000",
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
-    paddingHorizontal: 2,
     justifyContent: "center",
   },
   modalValueText: {
-    fontSize: 12,
+    fontSize: 10.5,
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    color: "#000000",
   },});
 

@@ -18,7 +18,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   AgeGroup,
   Gender,
-  getEventDisplayName,
   getEventsForPoolType,
   PoolType,
 } from "../utils/dataManager";
@@ -136,10 +135,14 @@ export default function InputForm({ onSubmit }: InputFormProps) {
 
   // Ensure selectedDistance is valid when stroke changes
   React.useEffect(() => {
-    if (!distancesForStroke.includes(selectedDistance)) {
-      setSelectedDistance(distancesForStroke[0] || "");
+    const availableDistances = getEventsForPoolType(poolType)
+      .filter(evt => evt.endsWith(`_${selectedStroke}`))
+      .map(evt => evt.split("_")[0]);
+
+    if (!availableDistances.includes(selectedDistance)) {
+      setSelectedDistance(availableDistances[0] || "");
     }
-  }, [selectedStroke, poolType]);
+  }, [selectedStroke, poolType, selectedDistance]);
 
   const STROKES = [
     { id: "FR", label: "Freestyle", icon: "water" as const },
@@ -357,36 +360,6 @@ export default function InputForm({ onSubmit }: InputFormProps) {
         </Pressable>
       </Modal>
 
-      {/* ────── iOS Event Picker Modal ────── */}
-      <Modal visible={showEventPicker} transparent animationType="slide">
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setShowEventPicker(false)}
-        >
-          <Pressable style={styles.modalContent}>
-            <View style={styles.modalHandle} />
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Swim Event</Text>
-              <Pressable onPress={() => setShowEventPicker(false)} hitSlop={12}>
-                <Text style={styles.doneButton}>Done</Text>
-              </Pressable>
-            </View>
-            <Picker
-              selectedValue={event}
-              onValueChange={(value) => setEvent(value)}
-              itemStyle={{ color: "#1f2937" }}
-            >
-              {events.map((evt) => (
-                <Picker.Item
-                  key={evt}
-                  label={formatEventName(evt)}
-                  value={evt}
-                />
-              ))}
-            </Picker>
-          </Pressable>
-        </Pressable>
-      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -395,19 +368,19 @@ export default function InputForm({ onSubmit }: InputFormProps) {
 const styles = StyleSheet.create({
   scroll: {
     flex: 1,
-    backgroundColor: "#f0f4ff",
+    backgroundColor: "#f1f5f9",
   },
 
   // ── Header ──
   headerBg: {
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0044ee",
     paddingHorizontal: 24,
     paddingTop: 30,
     paddingBottom: 28,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
     alignItems: "center",
-    shadowColor: "#4f46e5",
+    shadowColor: "#0044ee",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.2,
     shadowRadius: 20,
@@ -505,9 +478,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 0,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
   },
-  selectorBtnActive: { backgroundColor: "#6366f1", borderColor: "#4f46e5" },
+  selectorBtnActive: { backgroundColor: "#0044ee", borderColor: "#0044ee" },
   selectorText: { fontSize: 13, fontWeight: "700", color: "#64748b" },
   selectorTextActive: { color: "#fff" },
 
@@ -519,16 +492,16 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 0,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
   },
-  distanceBtnActive: { backgroundColor: "#6366f1", borderColor: "#4f46e5" },
+  distanceBtnActive: { backgroundColor: "#0044ee", borderColor: "#0044ee" },
   distanceText: { fontSize: 13, fontWeight: "800", color: "#64748b" },
   distanceTextActive: { color: "#fff" },
 
   // ── Dropdowns ──
   dropdownTrigger: {
     borderWidth: 1.5,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
     borderRadius: 0,
     backgroundColor: "#fff",
     paddingVertical: 14,
@@ -545,7 +518,7 @@ const styles = StyleSheet.create({
 
   pickerWrapper: {
     borderWidth: 1.5,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
     borderRadius: 0,
     overflow: "hidden",
     backgroundColor: "#fff",
@@ -561,7 +534,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1.5,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
     borderRadius: 0,
     paddingVertical: 14,
     paddingHorizontal: 16,
@@ -579,14 +552,14 @@ const styles = StyleSheet.create({
 
   // ── Submit ──
   submitButton: {
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0044ee",
     paddingVertical: 18,
     borderRadius: 0,
     marginTop: 28,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#4f46e5",
+    shadowColor: "#0044ee",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.35,
     shadowRadius: 12,
@@ -639,7 +612,7 @@ const styles = StyleSheet.create({
     color: "#1e293b",
   },
   doneButton: {
-    color: "#6366f1",
+    color: "#0044ee",
     fontSize: 16,
     fontWeight: "700",
   },

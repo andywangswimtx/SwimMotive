@@ -1,0 +1,77 @@
+{
+  "meet": "2026 TYR Futures Championships",
+  "category": "18 & Under",
+  "gender": "Women",
+  "course": "SCY",
+  "qualifying_period": "June 1, 2025 through Entry Deadline",
+  "standards": [
+    {
+      "event": "50 FR",
+      "standard": "23.89"
+    },
+    {
+      "event": "100 FR",
+      "standard": "51.89"
+    },
+    {
+      "event": "200 FR",
+      "standard": "1:52.29"
+    },
+    {
+      "event": "500 FR",
+      "standard": "5:02.59"
+    },
+    {
+      "event": "1000 FR",
+      "standard": "10:20.49"
+    },
+    {
+      "event": "1650 FR",
+      "standard": "17:14.39"
+    },
+    {
+      "event": "50 BK",
+      "standard": "26.29"
+    },
+    {
+      "event": "100 BK",
+      "standard": "57.09"
+    },
+    {
+      "event": "200 BK",
+      "standard": "2:04.19"
+    },
+    {
+      "event": "50 BR",
+      "standard": "29.79"
+    },
+    {
+      "event": "100 BR",
+      "standard": "1:05.49"
+    },
+    {
+      "event": "200 BR",
+      "standard": "2:22.69"
+    },
+    {
+      "event": "50 FL",
+      "standard": "25.69"
+    },
+    {
+      "event": "100 FL",
+      "standard": "56.59"
+    },
+    {
+      "event": "200 FL",
+      "standard": "2:05.39"
+    },
+    {
+      "event": "200 IM",
+      "standard": "2:06.39"
+    },
+    {
+      "event": "400 IM",
+      "standard": "4:30.69"
+    }
+  ]
+}

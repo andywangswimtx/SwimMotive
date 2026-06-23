@@ -1,14 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View, DeviceEventEmitter } from "react-native";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#4f46e5",
+        tabBarActiveTintColor: "#0044ee",
         tabBarInactiveTintColor: "#94a3b8",
         tabBarLabelStyle: styles.tabLabel,
         tabBarStyle: styles.tabBar,
@@ -29,6 +29,11 @@ export default function TabLayout() {
             </View>
           ),
         }}
+        listeners={() => ({
+          tabPress: () => {
+            DeviceEventEmitter.emit("reset-index-tab");
+          },
+        })}
       />
       <Tabs.Screen
         name="all-standards"
@@ -44,6 +49,11 @@ export default function TabLayout() {
             </View>
           ),
         }}
+        listeners={() => ({
+          tabPress: () => {
+            DeviceEventEmitter.emit("reset-standards-tab");
+          },
+        })}
       />
       <Tabs.Screen
         name="about"
@@ -82,7 +92,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   tabItem: {
-    gap: 4,
+    gap: 10,
   },
   tabLabel: {
     fontSize: 11,
@@ -91,8 +101,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
   },
   iconWrap: {
-    width: 36,
-    height: 36,
+    width: 32,
+    height: 32,
     borderRadius: 0,
     justifyContent: "center",
     alignItems: "center",

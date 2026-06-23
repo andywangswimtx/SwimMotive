@@ -28,7 +28,7 @@ interface Props {
   gender: string;
   ageGroup: string;
   poolType: "SCY" | "LCM";
-  colorClass: string;
+  themeColor: string;
   onBack: () => void;
 }
 
@@ -41,7 +41,7 @@ export default function SingleStandardView({
   gender,
   ageGroup,
   poolType,
-  colorClass,
+  themeColor,
   onBack,
 }: Props) {
   const insets = useSafeAreaInsets();
@@ -110,15 +110,28 @@ export default function SingleStandardView({
   const userPos = hasUserTime ? getPosition(userSeconds!) : -100;
 
   // Color mapping
-  const isEmerald = colorClass === "emerald";
+  const hexToRgba = (hex: string, alpha: number): string => {
+    const cleanHex = hex.replace("#", "");
+    let r = 0, g = 0, b = 0;
+    if (cleanHex.length === 3) {
+      r = parseInt(cleanHex[0] + cleanHex[0], 16);
+      g = parseInt(cleanHex[1] + cleanHex[1], 16);
+      b = parseInt(cleanHex[2] + cleanHex[2], 16);
+    } else if (cleanHex.length === 6) {
+      r = parseInt(cleanHex.substring(0, 2), 16);
+      g = parseInt(cleanHex.substring(2, 4), 16);
+      b = parseInt(cleanHex.substring(4, 6), 16);
+    }
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
 
   const colors = {
-    header: isEmerald ? "#059669" : "#0284c7",
-    primary: isEmerald ? "#059669" : "#0284c7",
-    zone: isEmerald ? "#6ee7b7" : "#7dd3fc",
-    marker: isEmerald ? "#059669" : "#0284c7",
-    cardBorder: isEmerald ? "#a7f3d0" : "#bae6fd",
-    cardBg: isEmerald ? "#ecfdf5" : "#f0f9ff",
+    header: "#0044ee",
+    primary: themeColor,
+    zone: themeColor,
+    marker: themeColor,
+    cardBg: hexToRgba(themeColor, 0.06),
+    cardBorder: hexToRgba(themeColor, 0.22),
   };
 
   return (
@@ -154,7 +167,7 @@ export default function SingleStandardView({
             <Text
               style={[
                 styles.time,
-                { color: hasUserTime ? colors.primary : "#9ca3af" },
+                { color: hasUserTime ? "#000000" : "#9ca3af" },
               ]}
             >
               {hasUserTime ? normalizeTimeDisplay(userTime) : "--:--.--"}
@@ -205,7 +218,7 @@ export default function SingleStandardView({
                     height: 80,
                     top: 5,
                     backgroundColor: colors.zone, // Blue/Emerald
-                    opacity: 0.3,
+                    opacity: 0.55,
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                     zIndex: 0,
@@ -294,7 +307,7 @@ export default function SingleStandardView({
               <Text style={styles.axisText}>Faster →</Text>
             </View>
 
-            <Text style={styles.hint}>Tap chart for qualifying details</Text>
+            <Text style={styles.hint}>Tap chart for details</Text>
           </Pressable>
 
           <View style={styles.divider} />
@@ -303,7 +316,7 @@ export default function SingleStandardView({
           <View style={styles.tableSection}>
             <Text style={styles.sectionTitle}>Qualifying Summary</Text>
 
-            <View style={styles.summaryCard}>
+            <View style={[styles.summaryCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>{standardLabel} Time</Text>
                 <Text style={styles.summaryValue}>{normalizeTimeDisplay(standard)}</Text>
@@ -376,75 +389,83 @@ export default function SingleStandardView({
               </Pressable>
             </View>
 
-            <View style={{ padding: 12 }}>
-              <View style={styles.modalTableHeader}>
-                <Text
-                  style={[
-                    styles.modalHeaderCell,
-                    { textAlign: "left", flex: 0.8 },
-                  ]}
-                >
-                  Cut
-                </Text>
-                <Text style={[styles.modalHeaderCell, { flex: 1.2 }]}>Standard</Text>
-                <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
-                  % Imp. Needed
-                </Text>
-                <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
-                <Text style={styles.modalHeaderCell}>Per 50</Text>
-              </View>
-
-              <View
-                style={[
-                  styles.modalRow,
-                  hasUserTime &&
-                    improvement?.achieved &&
-                    styles.modalRowAchieved,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.modalCell,
-                    { textAlign: "left", flex: 0.8, fontWeight: "800" },
-                  ]}
-                >
-                  {standardLabel}
-                </Text>
-                <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2 }]}>
-                  {normalizeTimeDisplay(standard)}
-                </Text>
-                <View style={[styles.modalCell, { alignItems: "flex-end" }]}>
-                  {!hasUserTime ? (
-                    <Ionicons name="remove" size={16} color="#94a3b8" />
-                  ) : improvement?.achieved ? (
-                    <Ionicons name="checkmark" size={16} color="#059669" />
-                  ) : (
-                    <Text
-                      style={[
-                        styles.modalValueText,
-                        {
-                          color: colors.primary,
-                          fontWeight: "700",
-                          textAlign: "right",
-                        },
-                      ]}
-                    >
-                      {improvement
-                        ? `-${improvement.percentage.toFixed(2)}%`
-                        : "--"}
-                    </Text>
-                  )}
+            <View style={{ padding: 16 }}>
+              <View style={styles.modalTable}>
+                <View style={styles.modalTableHeader}>
+                  <Text
+                    style={[
+                      styles.modalHeaderCell,
+                      { textAlign: "left", flex: 0.8 },
+                    ]}
+                  >
+                    Cut
+                  </Text>
+                  <Text style={[styles.modalHeaderCell, { flex: 1.2, textAlign: "left" }]}>Standard</Text>
+                  <Text style={[styles.modalHeaderCell, { textAlign: "right" }]}>
+                    % Imp. Needed
+                  </Text>
+                  <Text style={styles.modalHeaderCell}>Time Drop Needed</Text>
+                  <Text style={[styles.modalHeaderCell, { paddingRight: 8, borderRightWidth: 0 }]}>Per 50</Text>
                 </View>
-                <Text style={styles.modalCell}>
-                  {!hasUserTime || improvement?.achieved
-                    ? "--"
-                    : `-${improvement?.totalSeconds.toFixed(2)}s`}
-                </Text>
-                <Text style={styles.modalCell}>
-                  {!hasUserTime || improvement?.achieved
-                    ? "--"
-                    : `-${improvement?.per50.toFixed(2)}s`}
-                </Text>
+
+                <View
+                  style={[
+                    styles.modalRow,
+                    { borderBottomWidth: 0 },
+                    hasUserTime &&
+                      improvement?.achieved &&
+                      styles.modalRowAchieved,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.modalCell,
+                      { textAlign: "left", flex: 0.8, fontWeight: "800", fontFamily: "PublicSans-Black" },
+                    ]}
+                  >
+                    {standardLabel}
+                  </Text>
+                  <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2, textAlign: "left" }]}>
+                    {normalizeTimeDisplay(standard)}
+                  </Text>
+                  <View style={[styles.modalCell, { alignItems: "flex-end", justifyContent: "center" }]}>
+                    {!hasUserTime ? (
+                      <Ionicons name="remove" size={16} color="#94a3b8" />
+                    ) : improvement?.achieved ? (
+                      <Ionicons name="checkmark" size={16} color="#059669" />
+                    ) : (
+                      <Text
+                        style={[
+                          styles.modalValueText,
+                          {
+                            color: "#000000",
+                            fontWeight: "700",
+                            fontFamily: "PublicSans-Bold",
+                            textAlign: "right",
+                          },
+                        ]}
+                      >
+                        {improvement
+                          ? `-${improvement.percentage.toFixed(2)}%`
+                          : "--"}
+                      </Text>
+                    )}
+                  </View>
+                  <Text style={[styles.modalCell, { justifyContent: "center" }, improvement?.achieved && { color: "#059669" }]}>
+                    {!hasUserTime || !improvement
+                      ? "--"
+                      : improvement.achieved
+                        ? `+${Math.abs(improvement.totalSeconds).toFixed(2)}s`
+                        : `-${improvement.totalSeconds.toFixed(2)}s`}
+                  </Text>
+                  <Text style={[styles.modalCell, { paddingRight: 8, borderRightWidth: 0, justifyContent: "center" }, improvement?.achieved && { color: "#059669" }]}>
+                    {!hasUserTime || !improvement
+                      ? "--"
+                      : improvement.achieved
+                        ? `+${Math.abs(improvement.per50).toFixed(2)}s`
+                        : `-${improvement.per50.toFixed(2)}s`}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
@@ -455,7 +476,7 @@ export default function SingleStandardView({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f0f7ff" },
+  container: { flex: 1, backgroundColor: "#f1f5f9" },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
     padding: 24,
@@ -620,7 +641,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
   },
   summaryRow: {
     flexDirection: "row",
@@ -634,7 +655,7 @@ const styles = StyleSheet.create({
   improvementGrid: {
     flexDirection: "row",
     borderTopWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
     paddingTop: 12,
   },
   gridItem: { flex: 1, alignItems: "center" },
@@ -664,45 +685,60 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  modalTable: {
+    backgroundColor: "white",
+    borderWidth: 1.5,
+    borderColor: "#cbd5e1",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
   modalTableHeader: {
     flexDirection: "row",
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
-    marginBottom: 5,
-    paddingHorizontal: 12,
+    backgroundColor: "#f8fafc",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
   },
   modalHeaderCell: {
     flex: 1,
-    fontSize: 11,
-    fontFamily: "PublicSans-Black",
+    fontSize: 9.5,
     fontWeight: "900",
-    color: "#374151",
+    fontFamily: "PublicSans-Black",
+    color: "#475569",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
-    paddingHorizontal: 2,
+    justifyContent: "center",
   },
   modalRow: {
     flexDirection: "row",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: "#f1f5f9",
-    alignItems: "center",
-    paddingHorizontal: 12,
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#cbd5e1",
+    alignItems: "stretch",
+    backgroundColor: "white",
   },
   modalRowAchieved: {
     backgroundColor: "#f0fdf4",
   },
   modalCell: {
     flex: 1,
-    fontSize: 12,
-    color: "#4b5563",
-    fontFamily: "PublicSans-Medium",
-    fontWeight: "500",
+    fontSize: 10.5,
+    color: "#000000",
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRightWidth: 1.5,
+    borderRightColor: "#cbd5e1",
     textAlign: "right",
-    paddingHorizontal: 2,
     justifyContent: "center",
   },
   modalValueText: {
-    fontSize: 12,
+    fontSize: 10.5,
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+    color: "#000000",
   },});
 

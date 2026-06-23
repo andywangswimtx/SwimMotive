@@ -32,7 +32,7 @@ const renderSwimcloudText = (text: string, baseStyle?: any) => {
           return (
             <Text key={index} style={baseStyle}>
               Swimcloud
-              <Text style={{ fontSize: 8, position: "relative", top: -3 }}>©</Text>
+              <Text style={{ fontSize: 11, position: "relative", top: Platform.OS === "ios" ? -2 : 0, verticalAlign: "top" }}>®</Text>
             </Text>
           );
         }
@@ -225,9 +225,9 @@ export default function AboutScreen() {
           ]}
         >
           <View style={[styles.authorizedCard, { marginHorizontal: 0, marginTop: 10, marginBottom: 0 }]}>
-            <Ionicons name="shield-checkmark" size={16} color="#8b5cf6" style={{ marginRight: 8 }} />
+            <Ionicons name="shield-checkmark" size={16} color="#0044ee" style={{ marginRight: 8 }} />
             {renderSwimcloudText(
-              "Swimcloud Power Index data and formula usage has been officially authorized by Swimcloud. All copyrights, trademarks, and intellectual property remain with Swimcloud.",
+              "Swimcloud Power Index and formula used with permission from Swimcloud.",
               styles.authorizedText
             )}
           </View>
@@ -243,7 +243,7 @@ export default function AboutScreen() {
             { label: "NCSA Spring Championships", sub: "2025 · National Club Swimming Assoc." },
             { label: "Futures Championships", sub: "2026 season · 18U & 19+ divisions" },
             { label: "Winter Junior Championships", sub: "2026 Speedo Winter Juniors" },
-            { label: "Pro Swim Series", sub: "2026 TYR Pro Swim · 18U & 19+ divisions" },
+            { label: "TYR Pro Swim Series", sub: "2026 TYR Pro Swim · 18U & 19+ divisions" },
             { label: "Junior National Championships", sub: "2026 Speedo Junior Nationals" },
             { label: "Toyota U.S. Open Championships", sub: "2026 Toyota U.S. Open" },
             { label: "National Championships", sub: "2026 Toyota Nationals · 18U & 19+ divisions" },
@@ -255,7 +255,7 @@ export default function AboutScreen() {
         {/* ────── App Info ────── */}
         <Text style={styles.sectionLabel}>APP INFO</Text>
 
-        <View style={styles.card}>
+        <View style={[styles.card, styles.infoCard]}>
           <InfoRow icon="person" label="Developer" value="Andy L. Wang" />
           <View style={styles.separator} />
           <InfoRow
@@ -395,6 +395,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#f1f5f9",
   },
+  infoCard: {
+    paddingTop: 6,
+    paddingBottom: 6,
+  },
   cardPressed: {
     transform: [{ scale: 0.98 }],
     opacity: 0.9,
@@ -478,8 +482,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f5f9",
   },
   authorizedCard: {
-    backgroundColor: "#f5f3ff",
-    borderColor: "#ddd6fe",
+    backgroundColor: "#eff6ff",
+    borderColor: "#bfdbfe",
     borderWidth: 1,
     padding: 12,
     marginHorizontal: 16,
@@ -489,7 +493,7 @@ const styles = StyleSheet.create({
   },
   authorizedText: {
     fontSize: 12,
-    color: "#6d28d9",
+    color: "#0044ee",
     fontFamily: "PublicSans-Medium",
     fontWeight: "500",
     flex: 1,

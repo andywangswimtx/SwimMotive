@@ -2,23 +2,28 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View, DeviceEventEmitter } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   AgeGroup,
   Gender,
   getEventDisplayName,
-  getFuturesStandard,
+  getFutures18UStandard,
+  getFutures19OStandard,
+  getGulfSeniorStandard,
   getGulfStandard,
   getJrNationalStandard,
   getMotivationalStandards,
   getNCSAStandard,
+  getOlympicStandard,
   getOlympicTrialStandard,
+  getProSwim18UStandard,
   getProSwim19OStandard,
   getTAGSStandard,
   getTSCStandards,
   getToyotaNational18UStandard,
+  getToyotaNational19OStandard,
   getUSOpenStandard,
   getWinterJrStandard,
   mapEventToPowerIndex,
@@ -52,8 +57,10 @@ type ViewMode =
   | "winterJr"
   | "jrNational"
   | "olympicTrial"
+  | "olympic"
   | "tags"
   | "gulf"
+  | "gulfSenior"
   | "toyotaNational18U"
   | "usOpen"
   | "proSwim19O";
@@ -149,15 +156,16 @@ export default function ResultsView({
     const unsubscribe = navigation.addListener("tabPress", () => {
       setViewMode("selection");
     });
-    return unsubscribe;
+    const sub = DeviceEventEmitter.addListener("reset-index-tab", () => {
+      setViewMode("selection");
+    });
+    return () => {
+      unsubscribe();
+      sub.remove();
+    };
   }, [navigation]);
 
-  // Gray out tab when in sub-view
-  useEffect(() => {
-    navigation.setOptions({
-      tabBarActiveTintColor: viewMode !== "selection" ? "#9ca3af" : "#4f46e5",
-    });
-  }, [navigation, viewMode]);
+
 
   // Memoized standards
   const {
@@ -170,9 +178,11 @@ export default function ResultsView({
     olympicTrialStandard,
     tagsStandard,
     gulfStandard,
-    toyotaNational18UStandard,
+    gulfSeniorStandard,
+    toyotaNationalStandard,
     usOpenStandard,
-    proSwim19OStandard,
+    proSwimStandard,
+    olympicStandard,
     powerIndexEvent,
   } = React.useMemo(
     () => ({
@@ -183,16 +193,24 @@ export default function ResultsView({
         event,
       ),
       tscStandards: getTSCStandards(gender, poolType, event),
-      futuresStandard: getFuturesStandard(gender, poolType, event),
+      futuresStandard: ageGroup === "19 & Over"
+        ? getFutures19OStandard(gender, poolType, event)
+        : getFutures18UStandard(gender, poolType, event),
       ncsaStandard: getNCSAStandard(gender, poolType, event),
       winterJrStandard: getWinterJrStandard(gender, poolType, event),
       jrNationalStandard: getJrNationalStandard(gender, poolType, event),
       olympicTrialStandard: getOlympicTrialStandard(gender, poolType, event),
       tagsStandard: getTAGSStandard(gender, poolType, ageGroup, event),
       gulfStandard: getGulfStandard(gender, poolType, ageGroup, event),
-      toyotaNational18UStandard: getToyotaNational18UStandard(gender, poolType, event),
+      gulfSeniorStandard: getGulfSeniorStandard(gender, poolType, event),
+      toyotaNationalStandard: ageGroup === "19 & Over"
+        ? getToyotaNational19OStandard(gender, poolType, event)
+        : getToyotaNational18UStandard(gender, poolType, event),
       usOpenStandard: getUSOpenStandard(gender, poolType, event),
-      proSwim19OStandard: getProSwim19OStandard(gender, poolType, event),
+      proSwimStandard: ageGroup === "19 & Over"
+        ? getProSwim19OStandard(gender, poolType, event)
+        : getProSwim18UStandard(gender, poolType, event),
+      olympicStandard: getOlympicStandard(gender, poolType, event),
       powerIndexEvent: mapEventToPowerIndex(
         poolType,
         event,
@@ -240,15 +258,15 @@ export default function ResultsView({
         <TwoStandardView
           standard={tscStandards.Sectionals_Standard}
           bonusStandard={tscStandards.Sectionals_Bonus_Standard}
-          meetName="Sectionals"
-          standardLabel="Sectionals"
+          meetName="TSC Sectionals"
+          standardLabel="TSC Sectionals"
           bonusLabel="Bonus"
           userTime={userTime}
           event={event}
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="purple"
+          themeColor="#8b5cf6"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -269,7 +287,7 @@ export default function ResultsView({
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="rose"
+          themeColor="#3b82f6"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -290,7 +308,7 @@ export default function ResultsView({
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="orange"
+          themeColor="#f43f5e"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -309,7 +327,7 @@ export default function ResultsView({
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="emerald"
+          themeColor="#f59e0b"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -328,7 +346,7 @@ export default function ResultsView({
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="sky"
+          themeColor="#06b6d4"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -347,7 +365,7 @@ export default function ResultsView({
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="indigo"
+          themeColor="#be123c"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -357,16 +375,18 @@ export default function ResultsView({
   if (viewMode === "tags" && tagsStandard) {
     return (
       <SwipeBackWrapper onSwipeBack={goBack}>
-        <SingleStandardView
+        <TwoStandardView
           standard={tagsStandard.standard}
+          bonusStandard={tagsStandard.bonus}
           meetName={tagsStandard.meet}
           standardLabel="TAGS Cut"
+          bonusLabel="TAGS Bonus"
           userTime={userTime}
           event={event}
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="emerald"
+          themeColor="#14b8a6"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -385,26 +405,45 @@ export default function ResultsView({
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="sky"
+          themeColor="#0284c7"
           onBack={goBack}
         />
       </SwipeBackWrapper>
     );
   }
 
-  if (viewMode === "toyotaNational18U" && toyotaNational18UStandard) {
+  if (viewMode === "gulfSenior" && gulfSeniorStandard) {
     return (
       <SwipeBackWrapper onSwipeBack={goBack}>
         <SingleStandardView
-          standard={toyotaNational18UStandard.standard}
-          meetName={toyotaNational18UStandard.meet}
+          standard={gulfSeniorStandard.standard}
+          meetName={gulfSeniorStandard.meet}
+          standardLabel="Gulf Senior Cut"
+          userTime={userTime}
+          event={event}
+          gender={gender}
+          ageGroup={ageGroup}
+          poolType={poolType}
+          themeColor="#2e4057"
+          onBack={goBack}
+        />
+      </SwipeBackWrapper>
+    );
+  }
+
+  if (viewMode === "toyotaNational18U" && toyotaNationalStandard) {
+    return (
+      <SwipeBackWrapper onSwipeBack={goBack}>
+        <SingleStandardView
+          standard={toyotaNationalStandard.standard}
+          meetName={toyotaNationalStandard.meet}
           standardLabel="National Cut"
           userTime={userTime}
           event={event}
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="orange"
+          themeColor="#ea580c"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -414,35 +453,58 @@ export default function ResultsView({
   if (viewMode === "usOpen" && usOpenStandard) {
     return (
       <SwipeBackWrapper onSwipeBack={goBack}>
-        <SingleStandardView
+        <TwoStandardView
           standard={usOpenStandard.standard}
+          bonusStandard={usOpenStandard.bonus}
           meetName={usOpenStandard.meet}
-          standardLabel="U.S. Open Cut"
+          standardLabel="Qualifying"
+          bonusLabel="18U Bonus"
           userTime={userTime}
           event={event}
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="indigo"
+          themeColor="#4338ca"
           onBack={goBack}
         />
       </SwipeBackWrapper>
     );
   }
 
-  if (viewMode === "proSwim19O" && proSwim19OStandard) {
+  if (viewMode === "proSwim19O" && proSwimStandard) {
     return (
       <SwipeBackWrapper onSwipeBack={goBack}>
         <SingleStandardView
-          standard={proSwim19OStandard.standard}
-          meetName={proSwim19OStandard.meet}
-          standardLabel="Pro Swim Cut"
+          standard={proSwimStandard.standard}
+          meetName={proSwimStandard.meet}
+          standardLabel="TYR Pro Swim Cut"
           userTime={userTime}
           event={event}
           gender={gender}
           ageGroup={ageGroup}
           poolType={poolType}
-          colorClass="emerald"
+          themeColor="#ec4899"
+          onBack={goBack}
+        />
+      </SwipeBackWrapper>
+    );
+  }
+
+  if (viewMode === "olympic" && olympicStandard) {
+    return (
+      <SwipeBackWrapper onSwipeBack={goBack}>
+        <TwoStandardView
+          standard={olympicStandard.standard}
+          bonusStandard={olympicStandard.bonus}
+          meetName={olympicStandard.meet}
+          standardLabel="A cut"
+          bonusLabel="B cut"
+          userTime={userTime}
+          event={event}
+          gender={gender}
+          ageGroup={ageGroup}
+          poolType={poolType}
+          themeColor="#b45309"
           onBack={goBack}
         />
       </SwipeBackWrapper>
@@ -461,6 +523,40 @@ export default function ResultsView({
       subtitle: "2024–2028 · B through AAAA",
       available: !!motivationalStandards,
     },
+    // 1. Gulf Age Group (only for 13-14)
+    ...(ageGroup === "13-14" ? [{
+      id: "gulf" as ViewMode,
+      icon: "water",
+      iconLib: "Ionicons" as const,
+      color: "#0284c7",
+      iconBg: "#f0f9ff",
+      label: "Gulf Championships",
+      subtitle: `2025 Gulf Age Group · ${poolType}`,
+      available: !!gulfStandard,
+    }] : []),
+    // 2. Gulf Senior (for 15 & over)
+    ...(ageGroup !== "13-14" ? [{
+      id: "gulfSenior" as ViewMode,
+      icon: "water",
+      iconLib: "Ionicons" as const,
+      color: "#2e4057",
+      iconBg: "#f0f4f8",
+      label: "Gulf Senior Champs",
+      subtitle: `2025–26 Gulf Senior · ${poolType}`,
+      available: !!gulfSeniorStandard,
+    }] : []),
+    // 3. TAGS (only for 13-14)
+    ...(ageGroup === "13-14" ? [{
+      id: "tags" as ViewMode,
+      icon: "location",
+      iconLib: "Ionicons" as const,
+      color: "#14b8a6",
+      iconBg: "#f0fdfa",
+      label: "TAGS Championships",
+      subtitle: `2026 Texas Age Group · ${poolType}`,
+      available: !!tagsStandard,
+    }] : []),
+    // 4. Sectionals (TSC)
     {
       id: "tsc",
       icon: "trophy",
@@ -471,16 +567,18 @@ export default function ResultsView({
       subtitle: "Sectionals & Bonus standards",
       available: !!tscStandards,
     },
+    // 5. NCSA Standards
     {
       id: "ncsa",
       icon: "star",
       iconLib: "Ionicons",
-      color: "#0ea5e9",
-      iconBg: "#f0f9ff",
+      color: "#06b6d4",
+      iconBg: "#ecfeff",
       label: "NCSA Standards",
       subtitle: "2025 Spring Championships",
       available: !!ncsaStandard,
     },
+    // 6. Futures
     {
       id: "futures",
       icon: "rocket",
@@ -491,6 +589,7 @@ export default function ResultsView({
       subtitle: "2026 Futures Championships",
       available: !!futuresStandard,
     },
+    // 7. Winter Jr.
     {
       id: "winterJr",
       icon: "snow",
@@ -501,6 +600,18 @@ export default function ResultsView({
       subtitle: "2026 Speedo Winter Juniors",
       available: !!winterJrStandard,
     },
+    // 8. Pro Swim
+    {
+      id: "proSwim19O",
+      icon: "flame",
+      iconLib: "Ionicons",
+      color: "#ec4899",
+      iconBg: "#fdf2f8",
+      label: ageGroup === "19 & Over" ? "TYR Pro Swim Series (19+)" : "TYR Pro Swim Series (18U)",
+      subtitle: ageGroup === "19 & Over" ? "2026 TYR Pro Swim Series (19 & Over)" : "2026 TYR Pro Swim Series (18 & Under)",
+      available: !!proSwimStandard,
+    },
+    // 9. Jr. National
     {
       id: "jrNational",
       icon: "flag",
@@ -511,17 +622,7 @@ export default function ResultsView({
       subtitle: "2026 Speedo Junior Nationals",
       available: !!jrNationalStandard,
     },
-    {
-      id: "olympicTrial",
-      icon: "medal",
-      iconLib: "Ionicons",
-      color: "#be123c",
-      iconBg: "#fff1f2",
-      label: "Olympic Trials",
-      subtitle: "2024 US Olympic Trials Standards",
-      available: !!olympicTrialStandard,
-      notAvailableReason: poolType === "SCY" ? "LCM Only" : "Not available for this event",
-    },
+    // 10. U.S. Open
     {
       id: "usOpen",
       icon: "shield-checkmark",
@@ -532,52 +633,42 @@ export default function ResultsView({
       subtitle: "2026 Toyota U.S. Open Championships",
       available: !!usOpenStandard,
     },
+    // 11. National Champs
     {
       id: "toyotaNational18U",
       icon: "trophy",
       iconLib: "Ionicons",
       color: "#ea580c",
       iconBg: "#fff7ed",
-      label: "National Championships (18U)",
-      subtitle: "2026 Toyota National Championships (18&U)",
-      available: !!toyotaNational18UStandard,
+      label: ageGroup === "19 & Over" ? "National Championships (19+)" : "National Championships (18U)",
+      subtitle: ageGroup === "19 & Over" ? "2026 Toyota National Championships (19+)" : "2026 Toyota National Championships (18U)",
+      available: !!toyotaNationalStandard,
     },
+    // 12. Olympic Trials
     {
-      id: "proSwim19O",
-      icon: "flame",
+      id: "olympicTrial",
+      icon: "medal",
       iconLib: "Ionicons",
-      color: "#059669",
-      iconBg: "#ecfdf5",
-      label: "Pro Swim Series (19+)",
-      subtitle: "2026 TYR Pro Swim Series (19 & Over)",
-      available: !!proSwim19OStandard,
+      color: "#be123c",
+      iconBg: "#fef2f2",
+      label: "Olympic Trials",
+      subtitle: "2024 US Olympic Trials Standards",
+      available: !!olympicTrialStandard,
+      notAvailableReason: poolType === "SCY" ? "LCM Only" : "Not available for this event",
+    },
+    // 13. Olympic Standards
+    {
+      id: "olympic",
+      icon: "globe",
+      iconLib: "Ionicons",
+      color: "#b45309",
+      iconBg: "#fef3c7",
+      label: "LA28 Olympic Games",
+      subtitle: "LA28 Olympic Entry Standards",
+      available: !!olympicStandard,
+      notAvailableReason: poolType === "SCY" ? "LCM Only" : "Not available for this event",
     },
   ];
-
-  if (ageGroup === "13-14") {
-    buttons.splice(1, 0, 
-      {
-        id: "tags",
-        icon: "location",
-        iconLib: "Ionicons",
-        color: "#059669",
-        iconBg: "#ecfdf5",
-        label: "TAGS Championships",
-        subtitle: `2025 Texas Age Group · ${poolType}`,
-        available: !!tagsStandard,
-      },
-      {
-        id: "gulf",
-        icon: "water",
-        iconLib: "Ionicons",
-        color: "#0284c7",
-        iconBg: "#f0f9ff",
-        label: "Gulf Championships",
-        subtitle: `2025 Gulf Age Group · ${poolType}`,
-        available: !!gulfStandard,
-      }
-    );
-  }
 
   // Format event for header subtitle
   const eventDisplay = getEventDisplayName(event);
@@ -592,7 +683,7 @@ export default function ResultsView({
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.headerTitle}>Swim Standards</Text>
-            <Text style={styles.headerSubtitle}>Choose a standard or swipe right</Text>
+            <Text style={styles.headerSubtitle}>tap on a standard to see details</Text>
           </View>
           <Pressable onPress={onBackToInput} style={styles.headerBackBtn}>
             <Ionicons name="chevron-back" size={20} color="#fff" />
@@ -642,7 +733,9 @@ export default function ResultsView({
           <View style={styles.piUnavailable}>
             <Ionicons name="analytics-outline" size={18} color="#94a3b8" />
             <Text style={styles.piUnavailableText}>
-              Power Index not available for this event
+              Swimcloud
+              <Text style={{ fontSize: 11, position: "relative", top: Platform.OS === "ios" ? -2 : 0, verticalAlign: "top" }}>®</Text>
+              {" Power Index not available for this event"}
             </Text>
           </View>
         )}
@@ -669,17 +762,17 @@ export default function ResultsView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f4ff",
+    backgroundColor: "#f1f5f9",
   },
 
   // ── Header ──
   header: {
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#0044ee",
     paddingHorizontal: 20,
     paddingBottom: 16,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
-    shadowColor: "#4f46e5",
+    shadowColor: "#0044ee",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.2,
     shadowRadius: 20,
@@ -792,7 +885,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8fafc",
     shadowOpacity: 0,
     elevation: 0,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
   },
   iconBubble: {
     width: 42,
@@ -838,7 +931,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
     borderStyle: "dashed",
   },
   piUnavailableText: {
@@ -858,7 +951,7 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 0,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f1f5f9",
     borderStyle: "dashed",
   },
   comingSoonText: {

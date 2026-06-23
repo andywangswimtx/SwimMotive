@@ -107,13 +107,13 @@ export function getMotivationalStandards(
   if (poolType === "SCY") {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/SCY girls moti cuts.json")
-        : require("../assets/timeData/SCY boys moti cuts.json");
+        ? require("../assets/timeData/Other_cuts/USA_moti_SCY_girls_cuts.json")
+        : require("../assets/timeData/Other_cuts/USA_moti_SCY_boys_cuts.json");
   } else {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/LCM girls moti cuts.json")
-        : require("../assets/timeData/LCM boys moti cuts.json");
+        ? require("../assets/timeData/Other_cuts/USA_moti_LCM_girls_cuts.json")
+        : require("../assets/timeData/Other_cuts/USA_moti_LCM_boys_cuts.json");
   }
 
   const genderKey = gender === "Girl" ? "Girls" : "Boys";
@@ -186,17 +186,17 @@ export function getTSCStandards(
   if (poolType === "SCY") {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/TSC sectional SCY girls.json")
-        : require("../assets/timeData/TSC sectional SCY boys.json");
+        ? require("../assets/timeData/Texas_Swimming/TSC_sectional_SCY_girls.json")
+        : require("../assets/timeData/Texas_Swimming/TSC_sectional_SCY_boys.json");
   } else {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/TSC sectional LCM girls.json")
-        : require("../assets/timeData/TSC sectional LCM boys.json");
+        ? require("../assets/timeData/Texas_Swimming/TSC_sectional_LCM_girls.json")
+        : require("../assets/timeData/Texas_Swimming/TSC_sectional_LCM_boys.json");
   }
 
   const genderKey = gender === "Girl" ? "Women" : "Men";
-  const rootKey = `2026_TSC_${genderKey}_Sectionals_Standards_${poolType}`;
+  const rootKey = `2026_TSC_${genderKey}_Sectional_Standards_${poolType}`;
 
   // Convert event format from XX_FR to XX_FREE, etc.
   const tscEvent = event
@@ -207,7 +207,11 @@ export function getTSCStandards(
 
   try {
     const standards = data[rootKey]?.[tscEvent];
-    return standards || null;
+    if (!standards) return null;
+    return {
+      Sectionals_Standard: standards.Sectional_Standard || "",
+      Sectionals_Bonus_Standard: standards.Sectional_Bonus_Standard || "",
+    };
   } catch {
     return null;
   }
@@ -231,13 +235,13 @@ export function getNCSAStandard(
   if (poolType === "SCY") {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/NCSA SCY girls.json")
-        : require("../assets/timeData/NCSA SCY boys.json");
+        ? require("../assets/timeData/Other_cuts/NCSA_SCY_girls.json")
+        : require("../assets/timeData/Other_cuts/NCSA_SCY_boys.json");
   } else {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/NCSA LCM girls.json")
-        : require("../assets/timeData/NCSA LCM boys.json");
+        ? require("../assets/timeData/Other_cuts/NCSA_LCM_girls.json")
+        : require("../assets/timeData/Other_cuts/NCSA_LCM_boys.json");
   }
 
   // Map app event code (e.g. 500_FR) to JSON event name (e.g. "500 FREE")
@@ -282,13 +286,13 @@ export function getWinterJrStandard(
   if (poolType === "SCY") {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/winter jr SCY girls.json")
-        : require("../assets/timeData/winter jr SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/winter_jr_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/winter_jr_SCY_boys.json");
   } else {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/winter jr LCM girls.json")
-        : require("../assets/timeData/winter jr LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/winter_jr_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/winter_jr_LCM_boys.json");
   }
 
   // Map app event code (50_FR) to JSON event name (50 FR)
@@ -320,13 +324,13 @@ export function getJrNationalStandard(
   if (poolType === "SCY") {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/Jr national SCY girls.json")
-        : require("../assets/timeData/Jr national SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/Jr_national_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/Jr_national_SCY_boys.json");
   } else {
     data =
       gender === "Girl"
-        ? require("../assets/timeData/Jr national LCM girls.json")
-        : require("../assets/timeData/Jr national LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/Jr_national_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/Jr_national_LCM_boys.json");
   }
 
   // Map app event code (50_FR) to JSON event name (50 FR)
@@ -374,7 +378,7 @@ export function getOlympicTrialStandard(
   const olympicEvent = `${distance} ${strokeNames[stroke] || stroke}`;
 
   try {
-    const olympicTrialLcm = require("../assets/timeData/2024 US Olympic Trial Standards LCM.json");
+    const olympicTrialLcm = require("../assets/timeData/USA_Swimming/2024_US_Olympic_Trial_Standards_LCM.json");
     const standardObj = olympicTrialLcm.events?.find(
       (s: any) => s.event === olympicEvent,
     );
@@ -399,34 +403,43 @@ export function getTAGSStandard(
   poolType: PoolType,
   ageGroup: AgeGroup,
   event: string,
-): SingleStandard | null {
+): TwoStandard | null {
   if (ageGroup !== "13-14") return null;
 
   try {
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/TAGS SCY girls.json")
-        : require("../assets/timeData/TAGS SCY boys.json");
+        ? require("../assets/timeData/Texas_Swimming/2026_TAGS_girls_SCY.json")
+        : require("../assets/timeData/Texas_Swimming/2026_TAGS_boys_SCY.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/TAGS LCM girls.json")
-        : require("../assets/timeData/TAGS LCM boys.json");
+        ? require("../assets/timeData/Texas_Swimming/2026_TAGS_girls_LCM.json")
+        : require("../assets/timeData/Texas_Swimming/2026_TAGS_boys_LCM.json");
     }
 
-    const standard = poolType === "SCY" 
-      ? data.TAGS_Standards_SCY?.[ageGroup]?.[event]
-      : data.TAGS_Standards_LCM?.[ageGroup]?.[event];
-    if (!standard) return null;
+    const genderKey = gender === "Girl" ? "Girls" : "Boys";
+    const rootKey = `2026_TAGS_${genderKey}_13-14_Standards_${poolType}`;
+
+    const tagsEvent = event
+      .replace("_FR", "_FREE")
+      .replace("_BK", "_BACK")
+      .replace("_BR", "_BREAST")
+      .replace("_FL", "_FLY");
+
+    const standardObj = data[rootKey]?.[tagsEvent];
+    if (!standardObj || !standardObj.Standard) return null;
 
     return {
-      standard,
-      meet: "2025 TAGS Championships",
+      standard: standardObj.Standard,
+      bonus: standardObj.Bonus_Standard || "",
+      meet: "2026 TAGS Championships",
     };
   } catch {
     return null;
   }
 }
+
 
 // Get Gulf standards (13-14 only)
 export function getGulfStandard(
@@ -441,22 +454,84 @@ export function getGulfStandard(
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/GULF SCY girls.json")
-        : require("../assets/timeData/GULF SCY boys.json");
+        ? require("../assets/timeData/Texas_Swimming/gulf_age_group_13-14_SCY_girls.json")
+        : require("../assets/timeData/Texas_Swimming/gulf_age_group_13-14_SCY_boys.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/GULF LCM girls.json")
-        : require("../assets/timeData/GULF LCM boys.json");
+        ? require("../assets/timeData/Texas_Swimming/gulf_age_group_13-14_LCM_girls.json")
+        : require("../assets/timeData/Texas_Swimming/gulf_age_group_13-14_LCM_boys.json");
     }
 
-    const standard = poolType === "SCY"
-      ? data.GULF_Standards_SCY?.[ageGroup]?.[event]
-      : data.GULF_Standards_LCM?.[ageGroup]?.[event];
-    if (!standard) return null;
+    const gulfEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === gulfEvent);
+    if (!standardObj) return null;
 
     return {
-      standard,
-      meet: "2025 Gulf Championships",
+      standard: standardObj.standard,
+      meet: data.meet || "Gulf Age Group Championship",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get Gulf Senior standards
+export function getGulfSeniorStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): SingleStandard | null {
+  try {
+    let data: any;
+    if (poolType === "SCY") {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Texas_Swimming/gulf_senior_SCY_girls.json")
+        : require("../assets/timeData/Texas_Swimming/gulf_senior_SCY_boys.json");
+    } else {
+      data = gender === "Girl"
+        ? require("../assets/timeData/Texas_Swimming/gulf_senior_LCM_girls.json")
+        : require("../assets/timeData/Texas_Swimming/gulf_senior_LCM_boys.json");
+    }
+
+    const gulfEvent = event.replace("_", " ");
+    const standardObj = data.standards?.find((s: any) => s.event === gulfEvent);
+    if (!standardObj) return null;
+
+    return {
+      standard: standardObj.standard,
+      meet: data.meet || "Gulf Senior Championship",
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get Olympic (LA28) standards
+export function getOlympicStandard(
+  gender: Gender,
+  poolType: PoolType,
+  event: string,
+): TwoStandard | null {
+  if (poolType === "SCY") return null;
+
+  try {
+    const aData = gender === "Girl"
+      ? require("../assets/timeData/Other_cuts/2028_Olympic_Qualifying_Women_A-times.json")
+      : require("../assets/timeData/Other_cuts/2028_Olympic_Qualifying_Men_A-times.json");
+    const bData = gender === "Girl"
+      ? require("../assets/timeData/Other_cuts/2028_Olympic_Qualifying_Women_B-times.json")
+      : require("../assets/timeData/Other_cuts/2028_Olympic_Qualifying_Men_B-times.json");
+
+    const searchEvent = event.replace("_", " ");
+    const aObj = aData.standards?.find((s: any) => s.event === searchEvent);
+    const bObj = bData.standards?.find((s: any) => s.event === searchEvent);
+
+    if (!aObj) return null;
+
+    return {
+      standard: aObj.standard,
+      bonus: bObj ? bObj.standard : "",
+      meet: aData.meet || "LA28 Olympic Games",
     };
   } catch {
     return null;
@@ -473,12 +548,12 @@ export function getToyotaNational18UStandard(
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/Toyota National 18U SCY girls.json")
-        : require("../assets/timeData/Toyota National 18U SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/Toyota_National_18U_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/Toyota_National_18U_SCY_boys.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/Toyota National 18U LCM girls.json")
-        : require("../assets/timeData/Toyota National 18U LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/Toyota_National_18U_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/Toyota_National_18U_LCM_boys.json");
     }
 
     const standardEvent = event.replace("_", " ");
@@ -504,12 +579,12 @@ export function getToyotaNational19OStandard(
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/Toyota National 19O SCY girls.json")
-        : require("../assets/timeData/Toyota National 19O SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/Toyota_National_19O_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/Toyota_National_19O_SCY_boys.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/Toyota National 19O LCM girls.json")
-        : require("../assets/timeData/Toyota National 19O LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/Toyota_National_19O_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/Toyota_National_19O_LCM_boys.json");
     }
 
     const standardEvent = event.replace("_", " ");
@@ -535,12 +610,12 @@ export function getUSOpenStandard(
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/US Open SCY girls.json")
-        : require("../assets/timeData/US Open SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/US_Open_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/US_Open_SCY_boys.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/US Open LCM girls.json")
-        : require("../assets/timeData/US Open LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/US_Open_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/US_Open_LCM_boys.json");
     }
 
     const standardEvent = event.replace("_", " ");
@@ -567,12 +642,12 @@ export function getProSwim19OStandard(
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/Pro Swim 19O SCY girls.json")
-        : require("../assets/timeData/Pro Swim 19O SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/Pro_Swim_19O_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/Pro_Swim_19O_SCY_boys.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/Pro Swim 19O LCM girls.json")
-        : require("../assets/timeData/Pro Swim 19O LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/Pro_Swim_19O_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/Pro_Swim_19O_LCM_boys.json");
     }
 
     const standardEvent = event.replace("_", " ");
@@ -598,12 +673,12 @@ export function getProSwim18UStandard(
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/Pro Swim 18U SCY girls.json")
-        : require("../assets/timeData/Pro Swim 18U SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/Pro_Swim_18U_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/Pro_Swim_18U_SCY_boys.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/Pro Swim 18U LCM girls.json")
-        : require("../assets/timeData/Pro Swim 18U LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/Pro_Swim_18U_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/Pro_Swim_18U_LCM_boys.json");
     }
 
     const standardEvent = event.replace("_", " ");
@@ -629,12 +704,12 @@ export function getFutures18UStandard(
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/futrures SCY girls.json")
-        : require("../assets/timeData/futrures SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/futrures_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/futrures_SCY_boys.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/futrures LCM girls.json")
-        : require("../assets/timeData/futrures LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/futrures_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/futrures_LCM_boys.json");
     }
 
     const standardEvent = event.replace("_", " ");
@@ -660,12 +735,12 @@ export function getFutures19OStandard(
     let data: any;
     if (poolType === "SCY") {
       data = gender === "Girl"
-        ? require("../assets/timeData/Futures 19O SCY girls.json")
-        : require("../assets/timeData/Futures 19O SCY boys.json");
+        ? require("../assets/timeData/USA_Swimming/Futures_19O_SCY_girls.json")
+        : require("../assets/timeData/USA_Swimming/Futures_19O_SCY_boys.json");
     } else {
       data = gender === "Girl"
-        ? require("../assets/timeData/Futures 19O LCM girls.json")
-        : require("../assets/timeData/Futures 19O LCM boys.json");
+        ? require("../assets/timeData/USA_Swimming/Futures_19O_LCM_girls.json")
+        : require("../assets/timeData/USA_Swimming/Futures_19O_LCM_boys.json");
     }
 
     const standardEvent = event.replace("_", " ");
