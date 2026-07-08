@@ -163,7 +163,7 @@ export default function AboutScreen() {
                 style={styles.logo}
               />
             </View>
-            <Text style={styles.appTitle}>Swim Calculator</Text>
+            <Text style={styles.appTitle}>SwimCalc++</Text>
             <Text style={styles.tagline}>Chase your goals</Text>
 
             {/* Version pills */}
@@ -261,8 +261,8 @@ export default function AboutScreen() {
           <InfoRow
             icon="mail"
             label="Contact"
-            value="andy.wl@outlook.com"
-            onPress={() => Linking.openURL("mailto:andy.wl@outlook.com")}
+            value="andywang.swimtx@gmail.com"
+            onPress={() => Linking.openURL("mailto:andywang.swimtx@gmail.com")}
           />
           <View style={styles.separator} />
           <InfoRow
@@ -279,7 +279,7 @@ export default function AboutScreen() {
             Made by a high school swimmer
           </Text>
           <Text style={styles.footerCopy}>
-            © 2026 Swim Calculator. All rights reserved.
+            © 2026 SwimCalc++. All rights reserved.
           </Text>
         </View>
       </ScrollView>

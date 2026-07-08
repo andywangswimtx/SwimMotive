@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "SwimCalcRN",
+    "name": "SwimCalc++",
     "slug": "swimTimeRN",
     "version": "0.3.0",
     "orientation": "portrait",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.andywl.swimcalc",
+      "bundleIdentifier": "com.andywl.swimcalc0",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }

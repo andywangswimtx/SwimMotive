@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import {
   Platform,
   Pressable,
@@ -118,6 +118,7 @@ const STANDARDS_CONFIG = [
 
 export default function AllStandardsScreen() {
   const insets = useSafeAreaInsets();
+  // Synchronized scroll refs and handlers removed as layout is simplified to a single vertical ScrollView.
   const [gender, setGender] = useState<Gender>("Boy");
   const [poolType, setPoolType] = useState<PoolType>("SCY");
   const [ageGroup, setAgeGroup] = useState<AgeGroup>("15-16");
@@ -253,8 +254,8 @@ export default function AllStandardsScreen() {
               return (
                 <View key={evt} style={[styles.tableRow, isLast && { borderBottomWidth: 0 }]}>
                   <Text style={[styles.tableCell, { flex: hasBonus ? 2 : 3, fontWeight: "700" }]}>{evt.replace("_", " ")}</Text>
-                  <Text style={[styles.tableCell, { flex: hasBonus ? 2 : 3, color: getStrokeColor(evt), fontWeight: "900", borderRightWidth: hasBonus ? 1.5 : 0 }]}>{time}</Text>
-                  {hasBonus && <Text style={[styles.tableCell, { flex: 2, color: "#64748b", fontWeight: "700", borderRightWidth: 0 }]}>{bonus || "--"}</Text>}
+                  <Text style={[styles.tableCell, { flex: hasBonus ? 2 : 3, color: getStrokeColor(evt), fontFamily: "PublicSans-Bold", fontWeight: "700", borderRightWidth: hasBonus ? 1.5 : 0 }]}>{time}</Text>
+                  {hasBonus && <Text style={[styles.tableCell, { flex: 2, color: "#64748b", fontFamily: "PublicSans-Bold", fontWeight: "700", borderRightWidth: 0 }]}>{bonus || "--"}</Text>}
                 </View>
               );
             })}
@@ -272,37 +273,62 @@ export default function AllStandardsScreen() {
         </Pressable>
         <Text style={styles.detailTitle}>Motivational ({ageGroup})</Text>
       </View>
-      <ScrollView horizontal contentContainerStyle={{ paddingBottom: 20 }}>
-        <View style={styles.table}>
-          <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeadCell, { width: 100 }]}>Event</Text>
-            <Text style={[styles.tableHeadCell, { width: 80 }]}>AAAA</Text>
-            <Text style={[styles.tableHeadCell, { width: 80 }]}>AAA</Text>
-            <Text style={[styles.tableHeadCell, { width: 80 }]}>AA</Text>
-            <Text style={[styles.tableHeadCell, { width: 80 }]}>A</Text>
-            <Text style={[styles.tableHeadCell, { width: 80 }]}>BB</Text>
-            <Text style={[styles.tableHeadCell, { width: 80, borderRightWidth: 0 }]}>B</Text>
-          </View>
-          <ScrollView>
-            {events.map((evt, idx) => {
-              const moti = getMotivationalStandards(gender, poolType, ageGroup, evt);
-              if (!moti) return null;
-              const isLast = idx === events.length - 1;
-              return (
-                <View key={evt} style={[styles.tableRow, isLast && { borderBottomWidth: 0 }]}>
-                  <Text style={[styles.tableCell, { width: 100, fontWeight: "700" }]}>{evt.replace("_", " ")}</Text>
-                  <Text style={[styles.tableCell, { width: 80, color: getStrokeColor(evt), fontWeight: "700" }]}>{moti.AAAA}</Text>
-                  <Text style={[styles.tableCell, { width: 80, color: getStrokeColor(evt), fontWeight: "700" }]}>{moti.AAA}</Text>
-                  <Text style={[styles.tableCell, { width: 80, color: getStrokeColor(evt), fontWeight: "700" }]}>{moti.AA}</Text>
-                  <Text style={[styles.tableCell, { width: 80, color: getStrokeColor(evt), fontWeight: "700" }]}>{moti.A}</Text>
-                  <Text style={[styles.tableCell, { width: 80, color: getStrokeColor(evt), fontWeight: "700" }]}>{moti.BB}</Text>
-                  <Text style={[styles.tableCell, { width: 80, color: getStrokeColor(evt), fontWeight: "700", borderRightWidth: 0 }]}>{moti.B}</Text>
+      <View style={{ flex: 1, margin: 16, borderRadius: 8, overflow: "hidden", borderWidth: 1.5, borderColor: "#cbd5e1", backgroundColor: "white" }}>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+          <View style={{ flexDirection: "row" }}>
+            {/* Left Sticky Column */}
+            <View style={{ width: 100, borderRightWidth: 1.5, borderRightColor: "#cbd5e1", backgroundColor: "white" }}>
+              {/* Header Cell */}
+              <View style={{ height: 44, backgroundColor: "#f8fafc", justifyContent: "center", paddingHorizontal: 12, borderBottomWidth: 1.5, borderBottomColor: "#cbd5e1" }}>
+                <Text style={{ fontSize: 12, fontWeight: "800", color: "#475569", fontFamily: "PublicSans-ExtraBold" }}>Event</Text>
+              </View>
+              {/* Data Cells */}
+              {events.map((evt, idx) => {
+                const isLast = idx === events.length - 1;
+                return (
+                  <View key={evt} style={{ height: 44, justifyContent: "center", paddingHorizontal: 12, borderBottomWidth: isLast ? 0 : 1.5, borderBottomColor: "#cbd5e1", backgroundColor: "white" }}>
+                    <Text style={{ fontSize: 13, color: "#334155", fontWeight: "700", fontFamily: "PublicSans-SemiBold" }}>
+                      {evt.replace("_", " ")}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+
+            {/* Right Scrollable Grid */}
+            {/* @ts-ignore */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1 }} className="no-scrollbar">
+              <View>
+                {/* Header Row */}
+                <View style={{ flexDirection: "row", backgroundColor: "#f8fafc", height: 44, borderBottomWidth: 1.5, borderBottomColor: "#cbd5e1" }}>
+                  {["AAAA", "AAA", "AA", "A", "BB", "B"].map((head, hIdx) => (
+                    <View key={head} style={{ width: 90, justifyContent: "center", paddingHorizontal: 8, borderRightWidth: hIdx === 5 ? 0 : 1.5, borderRightColor: "#cbd5e1" }}>
+                      <Text style={{ fontSize: 12, fontWeight: "800", color: "#475569", fontFamily: "PublicSans-ExtraBold", textAlign: "center" }}>{head}</Text>
+                    </View>
+                  ))}
                 </View>
-              );
-            })}
-          </ScrollView>
-        </View>
-      </ScrollView>
+                {/* Data Rows */}
+                {events.map((evt, idx) => {
+                  const moti = getMotivationalStandards(gender, poolType, ageGroup, evt);
+                  if (!moti) return null;
+                  const isLast = idx === events.length - 1;
+                  return (
+                    <View key={evt} style={{ flexDirection: "row", height: 44, borderBottomWidth: isLast ? 0 : 1.5, borderBottomColor: "#cbd5e1" }}>
+                      {["AAAA", "AAA", "AA", "A", "BB", "B"].map((level, lIdx) => (
+                        <View key={level} style={{ width: 90, justifyContent: "center", paddingHorizontal: 8, borderRightWidth: lIdx === 5 ? 0 : 1.5, borderRightColor: "#cbd5e1" }}>
+                          <Text style={{ fontSize: 13, color: getStrokeColor(evt), fontWeight: "700", fontFamily: "PublicSans-Bold", textAlign: "center" }}>
+                            {moti[level as keyof typeof moti]}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 
@@ -314,46 +340,88 @@ export default function AllStandardsScreen() {
         </Pressable>
         {renderSwimcloudText("Swimcloud Power Index Times", styles.detailTitle)}
       </View>
-      <ScrollView horizontal contentContainerStyle={{ paddingBottom: 20 }}>
-        <View style={styles.table}>
-          <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeadCell, { width: 100 }]}>Event</Text>
-            {SCORE_HEADERS.map((score, sIdx) => {
-              const isLastScore = sIdx === SCORE_HEADERS.length - 1;
-              return (
-                <Text key={score} style={[styles.tableHeadCell, { width: 75 }, isLastScore && { borderRightWidth: 0 }]}>{score}</Text>
-              );
-            })}
-          </View>
-          <ScrollView>
-            {events.map((evt, idx) => {
-              const piEvt = mapEventToPowerIndex(poolType, evt);
-              if (!piEvt) return null;
-              const refTimes = getSwimData(gender)[piEvt as keyof SwimData];
-              const isLast = idx === events.length - 1;
-              return (
-                <View key={evt} style={[styles.tableRow, isLast && { borderBottomWidth: 0 }]}>
-                  <Text style={[styles.tableCell, { width: 100, fontWeight: "700" }]}>{evt.replace("_", " ")}</Text>
+      <View style={{ flex: 1, margin: 16, borderRadius: 8, overflow: "hidden", borderWidth: 1.5, borderColor: "#cbd5e1", backgroundColor: "white" }}>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+          <View style={{ flexDirection: "row" }}>
+            {/* Left Sticky Column */}
+            <View style={{ width: 100, borderRightWidth: 1.5, borderRightColor: "#cbd5e1", backgroundColor: "white" }}>
+              {/* Header Cell */}
+              <View style={{ height: 44, backgroundColor: "#f8fafc", justifyContent: "center", paddingHorizontal: 12, borderBottomWidth: 1.5, borderBottomColor: "#cbd5e1" }}>
+                <Text style={{ fontSize: 12, fontWeight: "800", color: "#475569", fontFamily: "PublicSans-ExtraBold" }}>Event</Text>
+              </View>
+              {/* Data Cells */}
+              {events.map((evt, idx) => {
+                const isLast = idx === events.length - 1;
+                return (
+                  <View key={evt} style={{ height: 44, justifyContent: "center", paddingHorizontal: 12, borderBottomWidth: isLast ? 0 : 1.5, borderBottomColor: "#cbd5e1", backgroundColor: "white" }}>
+                    <Text style={{ fontSize: 13, color: "#334155", fontWeight: "700", fontFamily: "PublicSans-SemiBold" }}>
+                      {evt.replace("_", " ")}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+
+            {/* Right Scrollable Grid */}
+            {/* @ts-ignore */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1 }} className="no-scrollbar">
+              <View>
+                {/* Header Row */}
+                <View style={{ flexDirection: "row", backgroundColor: "#f8fafc", height: 44, borderBottomWidth: 1.5, borderBottomColor: "#cbd5e1" }}>
                   {SCORE_HEADERS.map((score, sIdx) => {
-                    const time = interpolateTimeFromScore(score, JSON_SCORE_HEADERS, refTimes);
                     const isLastScore = sIdx === SCORE_HEADERS.length - 1;
                     return (
-                      <Text key={score} style={[styles.tableCell, { width: 75, fontSize: 11, fontWeight: "700", color: getStrokeColor(evt) }, isLastScore && { borderRightWidth: 0 }]}>
-                        {formatTime(time)}
-                      </Text>
+                      <View key={score} style={{ width: 90, justifyContent: "center", paddingHorizontal: 8, borderRightWidth: isLastScore ? 0 : 1.5, borderRightColor: "#cbd5e1" }}>
+                        <Text style={{ fontSize: 12, fontWeight: "800", color: "#475569", fontFamily: "PublicSans-ExtraBold", textAlign: "center" }}>{score}</Text>
+                      </View>
                     );
                   })}
                 </View>
-              );
-            })}
-          </ScrollView>
-        </View>
-      </ScrollView>
+                {/* Data Rows */}
+                {events.map((evt, idx) => {
+                  const piEvt = mapEventToPowerIndex(poolType, evt);
+                  if (!piEvt) return null;
+                  const refTimes = getSwimData(gender)[piEvt as keyof SwimData];
+                  const isLast = idx === events.length - 1;
+                  return (
+                    <View key={evt} style={{ flexDirection: "row", height: 44, borderBottomWidth: isLast ? 0 : 1.5, borderBottomColor: "#cbd5e1" }}>
+                      {SCORE_HEADERS.map((score, sIdx) => {
+                        const time = interpolateTimeFromScore(score, JSON_SCORE_HEADERS, refTimes);
+                        const isLastScore = sIdx === SCORE_HEADERS.length - 1;
+                        return (
+                          <View key={score} style={{ width: 90, justifyContent: "center", paddingHorizontal: 8, borderRightWidth: isLastScore ? 0 : 1.5, borderRightColor: "#cbd5e1" }}>
+                            <Text style={{ fontSize: 13, fontWeight: "700", color: getStrokeColor(evt), fontFamily: "PublicSans-Bold", textAlign: "center" }}>
+                              {formatTime(time)}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
+      {Platform.OS === "web" && (
+        <style dangerouslySetInnerHTML={{ __html: `
+          .no-scrollbar::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+          }
+          .no-scrollbar {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+          }
+        `}} />
+      )}
       <View style={[styles.header, { paddingTop: Math.max(insets.top, 18) }]}>
         <Text style={styles.title}>Standards Library</Text>
         

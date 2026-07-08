@@ -250,7 +250,7 @@ export default function InputScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Header with Filters */}
         <View style={[styles.header, { paddingTop: Math.max(insets.top, 18) }]}>
-          <Text style={styles.title}>Swim Calculator</Text>
+          <Text style={styles.title}>SwimCalc++</Text>
           <Text style={styles.subtitle}>Select your race and enter your time</Text>
 
           <View style={styles.filterBar}>

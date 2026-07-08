@@ -56,6 +56,21 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen
+        name="pi-comparison"
+        options={{
+          title: "PI Comparison",
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
+              <Ionicons
+                name={focused ? "git-compare" : "git-compare-outline"}
+                size={22}
+                color={color}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="about"
         options={{
           title: "About",

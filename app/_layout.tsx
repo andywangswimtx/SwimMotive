@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { Platform, View, StyleSheet } from 'react-native';
 import {
   useFonts,
   PublicSans_400Regular,
@@ -42,15 +43,50 @@ export default function RootLayout() {
     return null;
   }
 
-  return (
-    <UserProvider>
+  const renderContent = () => (
+    <>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
+    </>
+  );
+
+  if (Platform.OS === 'web') {
+    return (
+      <UserProvider>
+        <View style={styles.webContainer}>
+          <View style={styles.webPreview}>
+            {renderContent()}
+          </View>
+        </View>
+      </UserProvider>
+    );
+  }
+
+  return (
+    <UserProvider>
+      {renderContent()}
     </UserProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  webContainer: {
+    flex: 1,
+    backgroundColor: '#0f172a', // Sleek dark slate background for desktop preview
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  webPreview: {
+    width: 440, // iPhone 16/18 Pro Max viewport width
+    height: 1014, // iPhone 16/18 Pro Max viewport height + 6% (956 * 1.04 * 1.02)
+    backgroundColor: '#ffffff',
+    overflow: 'hidden',
+  },
+});
 
 
 

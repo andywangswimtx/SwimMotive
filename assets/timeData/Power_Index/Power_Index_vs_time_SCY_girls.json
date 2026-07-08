@@ -1,7 +1,7 @@
 {
   "pool": "SCY",
   "gender": "Women",
-  "season": "2025-2026",
+  "season": "2026-2027",
   "events": [
     {
       "name": "50 FREE",
@@ -26,17 +26,17 @@
       "distance": 100,
       "stroke": "FREE",
       "standards": [
-        { "powerIndex": 1, "time": "48.39" },
-        { "powerIndex": 10, "time": "49.80" },
-        { "powerIndex": 20, "time": "51.27" },
-        { "powerIndex": 30, "time": "52.67" },
-        { "powerIndex": 40, "time": "54.00" },
-        { "powerIndex": 50, "time": "55.26" },
-        { "powerIndex": 60, "time": "56.47" },
-        { "powerIndex": 70, "time": "57.63" },
-        { "powerIndex": 80, "time": "58.75" },
-        { "powerIndex": 90, "time": "59.82" },
-        { "powerIndex": 100, "time": "1:00.87" }
+        { "powerIndex": 1, "time": "48.19" },
+        { "powerIndex": 10, "time": "49.59" },
+        { "powerIndex": 20, "time": "51.06" },
+        { "powerIndex": 30, "time": "52.45" },
+        { "powerIndex": 40, "time": "53.78" },
+        { "powerIndex": 50, "time": "55.04" },
+        { "powerIndex": 60, "time": "56.24" },
+        { "powerIndex": 70, "time": "57.40" },
+        { "powerIndex": 80, "time": "58.51" },
+        { "powerIndex": 90, "time": "59.58" },
+        { "powerIndex": 100, "time": "1:00.62" }
       ]
     },
     {
@@ -44,17 +44,17 @@
       "distance": 200,
       "stroke": "FREE",
       "standards": [
-        { "powerIndex": 1, "time": "1:44.79" },
-        { "powerIndex": 10, "time": "1:47.84" },
-        { "powerIndex": 20, "time": "1:51.04" },
-        { "powerIndex": 30, "time": "1:54.07" },
-        { "powerIndex": 40, "time": "1:56.94" },
-        { "powerIndex": 50, "time": "1:59.68" },
-        { "powerIndex": 60, "time": "2:02.30" },
-        { "powerIndex": 70, "time": "2:04.81" },
-        { "powerIndex": 80, "time": "2:07.23" },
-        { "powerIndex": 90, "time": "2:09.56" },
-        { "powerIndex": 100, "time": "2:11.81" }
+        { "powerIndex": 1, "time": "1:44.69" },
+        { "powerIndex": 10, "time": "1:47.74" },
+        { "powerIndex": 20, "time": "1:50.93" },
+        { "powerIndex": 30, "time": "1:53.96" },
+        { "powerIndex": 40, "time": "1:56.83" },
+        { "powerIndex": 50, "time": "1:59.57" },
+        { "powerIndex": 60, "time": "2:02.19" },
+        { "powerIndex": 70, "time": "2:04.70" },
+        { "powerIndex": 80, "time": "2:07.11" },
+        { "powerIndex": 90, "time": "2:09.43" },
+        { "powerIndex": 100, "time": "2:11.69" }
       ]
     },
     {
@@ -62,17 +62,17 @@
       "distance": 500,
       "stroke": "FREE",
       "standards": [
-        { "powerIndex": 1, "time": "4:40.29" },
-        { "powerIndex": 10, "time": "4:48.45" },
-        { "powerIndex": 20, "time": "4:57.02" },
-        { "powerIndex": 30, "time": "5:05.12" },
-        { "powerIndex": 40, "time": "5:12.80" },
-        { "powerIndex": 50, "time": "5:20.13" },
-        { "powerIndex": 60, "time": "5:27.14" },
-        { "powerIndex": 70, "time": "5:33.86" },
-        { "powerIndex": 80, "time": "5:40.32" },
-        { "powerIndex": 90, "time": "5:46.54" },
-        { "powerIndex": 100, "time": "5:52.56" }
+        { "powerIndex": 1, "time": "4:40.39" },
+        { "powerIndex": 10, "time": "4:48.56" },
+        { "powerIndex": 20, "time": "4:57.12" },
+        { "powerIndex": 30, "time": "5:05.22" },
+        { "powerIndex": 40, "time": "5:12.92" },
+        { "powerIndex": 50, "time": "5:20.25" },
+        { "powerIndex": 60, "time": "5:27.26" },
+        { "powerIndex": 70, "time": "5:33.98" },
+        { "powerIndex": 80, "time": "5:40.44" },
+        { "powerIndex": 90, "time": "5:46.67" },
+        { "powerIndex": 100, "time": "5:52.68" }
       ]
     },
     {
@@ -134,17 +134,17 @@
       "distance": 100,
       "stroke": "BACK",
       "standards": [
-        { "powerIndex": 1, "time": "52.09" },
-        { "powerIndex": 10, "time": "53.60" },
-        { "powerIndex": 20, "time": "55.19" },
-        { "powerIndex": 30, "time": "56.70" },
-        { "powerIndex": 40, "time": "58.13" },
-        { "powerIndex": 50, "time": "59.49" },
-        { "powerIndex": 60, "time": "1:00.79" },
-        { "powerIndex": 70, "time": "1:02.04" },
-        { "powerIndex": 80, "time": "1:03.24" },
-        { "powerIndex": 90, "time": "1:04.40" },
-        { "powerIndex": 100, "time": "1:05.52" }
+        { "powerIndex": 1, "time": "51.99" },
+        { "powerIndex": 10, "time": "53.50" },
+        { "powerIndex": 20, "time": "55.09" },
+        { "powerIndex": 30, "time": "56.59" },
+        { "powerIndex": 40, "time": "58.02" },
+        { "powerIndex": 50, "time": "59.38" },
+        { "powerIndex": 60, "time": "1:00.68" },
+        { "powerIndex": 70, "time": "1:01.92" },
+        { "powerIndex": 80, "time": "1:03.12" },
+        { "powerIndex": 90, "time": "1:04.27" },
+        { "powerIndex": 100, "time": "1:05.40" }
       ]
     },
     {
@@ -152,17 +152,17 @@
       "distance": 200,
       "stroke": "BACK",
       "standards": [
-        { "powerIndex": 1, "time": "1:53.89" },
-        { "powerIndex": 10, "time": "1:57.20" },
-        { "powerIndex": 20, "time": "2:00.68" },
-        { "powerIndex": 30, "time": "2:03.97" },
-        { "powerIndex": 40, "time": "2:07.10" },
-        { "powerIndex": 50, "time": "2:10.08" },
-        { "powerIndex": 60, "time": "2:12.92" },
-        { "powerIndex": 70, "time": "2:15.65" },
-        { "powerIndex": 80, "time": "2:18.28" },
-        { "powerIndex": 90, "time": "2:20.81" },
-        { "powerIndex": 100, "time": "2:23.26" }
+        { "powerIndex": 1, "time": "1:53.59" },
+        { "powerIndex": 10, "time": "1:56.90" },
+        { "powerIndex": 20, "time": "2:00.37" },
+        { "powerIndex": 30, "time": "2:03.65" },
+        { "powerIndex": 40, "time": "2:06.76" },
+        { "powerIndex": 50, "time": "2:09.73" },
+        { "powerIndex": 60, "time": "2:12.57" },
+        { "powerIndex": 70, "time": "2:15.30" },
+        { "powerIndex": 80, "time": "2:17.91" },
+        { "powerIndex": 90, "time": "2:20.44" },
+        { "powerIndex": 100, "time": "2:22.88" }
       ]
     },
     {
@@ -170,17 +170,17 @@
       "distance": 50,
       "stroke": "BREAST",
       "standards": [
-        { "powerIndex": 1, "time": "27.69" },
-        { "powerIndex": 10, "time": "28.49" },
-        { "powerIndex": 20, "time": "29.34" },
-        { "powerIndex": 30, "time": "30.14" },
-        { "powerIndex": 40, "time": "30.90" },
-        { "powerIndex": 50, "time": "31.62" },
-        { "powerIndex": 60, "time": "32.31" },
-        { "powerIndex": 70, "time": "32.98" },
-        { "powerIndex": 80, "time": "33.62" },
-        { "powerIndex": 90, "time": "34.23" },
-        { "powerIndex": 100, "time": "34.83" }
+        { "powerIndex": 1, "time": "27.85" },
+        { "powerIndex": 10, "time": "28.66" },
+        { "powerIndex": 20, "time": "29.51" },
+        { "powerIndex": 30, "time": "30.31" },
+        { "powerIndex": 40, "time": "31.08" },
+        { "powerIndex": 50, "time": "31.80" },
+        { "powerIndex": 60, "time": "32.50" },
+        { "powerIndex": 70, "time": "33.17" },
+        { "powerIndex": 80, "time": "33.81" },
+        { "powerIndex": 90, "time": "34.43" },
+        { "powerIndex": 100, "time": "35.04" }
       ]
     },
     {
@@ -188,17 +188,17 @@
       "distance": 100,
       "stroke": "BREAST",
       "standards": [
-        { "powerIndex": 1, "time": "59.79" },
-        { "powerIndex": 10, "time": "1:01.53" },
-        { "powerIndex": 20, "time": "1:03.35" },
-        { "powerIndex": 30, "time": "1:05.08" },
-        { "powerIndex": 40, "time": "1:06.72" },
-        { "powerIndex": 50, "time": "1:08.29" },
-        { "powerIndex": 60, "time": "1:09.78" },
-        { "powerIndex": 70, "time": "1:11.21" },
-        { "powerIndex": 80, "time": "1:12.59" },
-        { "powerIndex": 90, "time": "1:13.92" },
-        { "powerIndex": 100, "time": "1:15.21" }
+        { "powerIndex": 1, "time": "59.69" },
+        { "powerIndex": 10, "time": "1:01.42" },
+        { "powerIndex": 20, "time": "1:03.25" },
+        { "powerIndex": 30, "time": "1:04.97" },
+        { "powerIndex": 40, "time": "1:06.61" },
+        { "powerIndex": 50, "time": "1:08.17" },
+        { "powerIndex": 60, "time": "1:09.66" },
+        { "powerIndex": 70, "time": "1:11.09" },
+        { "powerIndex": 80, "time": "1:12.47" },
+        { "powerIndex": 90, "time": "1:13.79" },
+        { "powerIndex": 100, "time": "1:15.08" }
       ]
     },
     {
@@ -206,17 +206,17 @@
       "distance": 200,
       "stroke": "BREAST",
       "standards": [
-        { "powerIndex": 1, "time": "2:09.39" },
-        { "powerIndex": 10, "time": "2:13.16" },
-        { "powerIndex": 20, "time": "2:17.11" },
-        { "powerIndex": 30, "time": "2:20.85" },
-        { "powerIndex": 40, "time": "2:24.40" },
-        { "powerIndex": 50, "time": "2:27.78" },
-        { "powerIndex": 60, "time": "2:31.01" },
-        { "powerIndex": 70, "time": "2:34.12" },
-        { "powerIndex": 80, "time": "2:37.10" },
-        { "powerIndex": 90, "time": "2:39.97" },
-        { "powerIndex": 100, "time": "2:42.75" }
+        { "powerIndex": 1, "time": "2:09.59" },
+        { "powerIndex": 10, "time": "2:13.36" },
+        { "powerIndex": 20, "time": "2:17.32" },
+        { "powerIndex": 30, "time": "2:21.07" },
+        { "powerIndex": 40, "time": "2:24.62" },
+        { "powerIndex": 50, "time": "2:28.01" },
+        { "powerIndex": 60, "time": "2:31.25" },
+        { "powerIndex": 70, "time": "2:34.35" },
+        { "powerIndex": 80, "time": "2:37.34" },
+        { "powerIndex": 90, "time": "2:40.22" },
+        { "powerIndex": 100, "time": "2:43.01" }
       ]
     },
     {
@@ -224,17 +224,17 @@
       "distance": 50,
       "stroke": "FLY",
       "standards": [
-        { "powerIndex": 1, "time": "23.99" },
-        { "powerIndex": 10, "time": "24.68" },
-        { "powerIndex": 20, "time": "25.42" },
-        { "powerIndex": 30, "time": "26.11" },
-        { "powerIndex": 40, "time": "26.77" },
-        { "powerIndex": 50, "time": "27.40" },
-        { "powerIndex": 60, "time": "28.00" },
-        { "powerIndex": 70, "time": "28.57" },
-        { "powerIndex": 80, "time": "29.12" },
-        { "powerIndex": 90, "time": "29.66" },
-        { "powerIndex": 100, "time": "30.18" }
+        { "powerIndex": 1, "time": "23.87" },
+        { "powerIndex": 10, "time": "24.56" },
+        { "powerIndex": 20, "time": "25.29" },
+        { "powerIndex": 30, "time": "25.98" },
+        { "powerIndex": 40, "time": "26.63" },
+        { "powerIndex": 50, "time": "27.26" },
+        { "powerIndex": 60, "time": "27.86" },
+        { "powerIndex": 70, "time": "28.43" },
+        { "powerIndex": 80, "time": "28.98" },
+        { "powerIndex": 90, "time": "29.51" },
+        { "powerIndex": 100, "time": "30.03" }
       ]
     },
     {
@@ -278,17 +278,17 @@
       "distance": 100,
       "stroke": "IM",
       "standards": [
-        { "powerIndex": 1, "time": "52.99" },
-        { "powerIndex": 10, "time": "54.53" },
-        { "powerIndex": 20, "time": "56.15" },
-        { "powerIndex": 30, "time": "57.68" },
-        { "powerIndex": 40, "time": "59.13" },
-        { "powerIndex": 50, "time": "1:00.52" },
-        { "powerIndex": 60, "time": "1:01.84" },
-        { "powerIndex": 70, "time": "1:03.11" },
-        { "powerIndex": 80, "time": "1:04.33" },
-        { "powerIndex": 90, "time": "1:05.51" },
-        { "powerIndex": 100, "time": "1:06.66" }
+        { "powerIndex": 1, "time": "54.09" },
+        { "powerIndex": 10, "time": "55.66" },
+        { "powerIndex": 20, "time": "57.31" },
+        { "powerIndex": 30, "time": "58.88" },
+        { "powerIndex": 40, "time": "1:00.36" },
+        { "powerIndex": 50, "time": "1:01.77" },
+        { "powerIndex": 60, "time": "1:03.13" },
+        { "powerIndex": 70, "time": "1:04.42" },
+        { "powerIndex": 80, "time": "1:05.67" },
+        { "powerIndex": 90, "time": "1:06.87" },
+        { "powerIndex": 100, "time": "1:08.04" }
       ]
     },
     {
@@ -314,17 +314,17 @@
       "distance": 400,
       "stroke": "IM",
       "standards": [
-        { "powerIndex": 1, "time": "4:09.89" },
-        { "powerIndex": 10, "time": "4:17.17" },
-        { "powerIndex": 20, "time": "4:24.80" },
-        { "powerIndex": 30, "time": "4:32.02" },
-        { "powerIndex": 40, "time": "4:38.88" },
-        { "powerIndex": 50, "time": "4:45.41" },
-        { "powerIndex": 60, "time": "4:51.66" },
-        { "powerIndex": 70, "time": "4:57.65" },
-        { "powerIndex": 80, "time": "5:03.41" },
-        { "powerIndex": 90, "time": "5:08.96" },
-        { "powerIndex": 100, "time": "5:14.32" }
+        { "powerIndex": 1, "time": "4:09.59" },
+        { "powerIndex": 10, "time": "4:16.86" },
+        { "powerIndex": 20, "time": "4:24.49" },
+        { "powerIndex": 30, "time": "4:31.70" },
+        { "powerIndex": 40, "time": "4:38.54" },
+        { "powerIndex": 50, "time": "4:45.07" },
+        { "powerIndex": 60, "time": "4:51.31" },
+        { "powerIndex": 70, "time": "4:57.29" },
+        { "powerIndex": 80, "time": "5:03.04" },
+        { "powerIndex": 90, "time": "5:08.58" },
+        { "powerIndex": 100, "time": "5:13.94" }
       ]
     }
   ]

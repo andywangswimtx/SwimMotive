@@ -15,7 +15,7 @@ export default function ComingSoon({ style }: { style?: StyleProp<ViewStyle> }) 
       <View style={[styles.infoRow, { marginTop: 8 }]}>
         <Ionicons name="alert-circle-outline" size={14} color="#94a3b8" />
         <Text style={styles.infoText}>
-          please report issues to andy.wl@outlook.com
+          please report issues to andywang.swimtx@gmail.com
         </Text>
       </View>
     </View>

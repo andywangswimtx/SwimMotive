@@ -19,6 +19,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "andywang.swimtx@gmail.com", 
+        "ascAppId": "6784389958", 
+        "appleTeamID": "M85NGTZLAK"
+      }
+    }
   }
 }
