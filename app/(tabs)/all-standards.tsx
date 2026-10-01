@@ -14,12 +14,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ComingSoon from "../../components/ComingSoon";
 import { colors } from "../../theme/colors";
 import {
+    AGC_SOURCES,
+    agcSourceSupportsCourse,
     AgeGroup,
     Gender,
+    getAGCStandard,
     getEventsForPoolType,
-    getIllinoisAGCStandard,
     getMotivationalStandards,
-    PoolType
+    getTagStandards,
+    PoolType,
+    tagSupportsCourse
 } from "../../utils/dataManager";
 
 const getStrokeColor = (event: string): string => {
@@ -32,12 +36,45 @@ const getStrokeColor = (event: string): string => {
   return colors.text;
 };
 
-type StandardMode = "selection" | "motivational" | "tags";
+type StandardMode = "selection" | "motivational" | `agc:${string}` | "tags";
 
-const STANDARDS_CONFIG = [
-  { id: "motivational", label: "USA Swimming Motivationals", icon: "book", color: colors.primary, bg: colors.accentSoft, description: "2024–2028 Motivational Standards Level B to AAAA" },
-  { id: "tags", label: "Illinois AGC Championships", icon: "book", color: colors.primaryPressed, bg: "#FFE6AD", description: "2026 Illinois Age Group Champs Cuts" },
-] as const;
+// Distinct accent colors cycled across the AGC source entries.
+const AGC_LIST_COLORS = [
+  { color: colors.primaryPressed, bg: "#FFE6AD" },
+  { color: "#1D6F42", bg: "#D7F2E0" },
+  { color: "#1D4E89", bg: "#D6E6FA" },
+  { color: "#7A3B9C", bg: "#EAD9F7" },
+  { color: "#8B4513", bg: "#F3DFC6" },
+  { color: "#0E7C86", bg: "#D1F0F2" },
+  { color: "#A3341B", bg: "#FBDCD2" },
+  { color: "#4B5D1E", bg: "#E2EBC9" },
+  { color: "#B3771E", bg: "#FAE6C2" },
+];
+
+const STANDARDS_CONFIG = (() => {
+  const buildAgcConfig = (source: (typeof AGC_SOURCES)[number], paletteIdx: number, icon: string = "book") => {
+    const palette = AGC_LIST_COLORS[paletteIdx % AGC_LIST_COLORS.length];
+    return {
+      id: `agc:${source.id}` as StandardMode,
+      label: source.label,
+      icon,
+      color: palette.color,
+      bg: palette.bg,
+      description: `${source.meetName} Cuts`,
+      supportsCourse: (poolType: PoolType) => agcSourceSupportsCourse(source.id, poolType),
+    };
+  };
+
+  const ncsaSource = AGC_SOURCES.find((s) => s.id === "ncsa");
+  const otherSources = AGC_SOURCES.filter((s) => s.id !== "ncsa");
+
+  return [
+    { id: "motivational" as StandardMode, label: "USA Swimming Motivationals", icon: "globe", color: colors.primary, bg: colors.accentSoft, description: "2024–2028 Motivational Standards Level B to AAAA", supportsCourse: (_poolType: PoolType) => true },
+    ...(ncsaSource ? [buildAgcConfig(ncsaSource, 0, "flag")] : []),
+    { id: "tags" as StandardMode, label: "Texas AGC (TAGS)", icon: "star", color: "#A3341B", bg: "#FBDCD2", description: "2026 TAGS Championships Cuts & Bonus Cuts", supportsCourse: (poolType: PoolType) => tagSupportsCourse(poolType) },
+    ...otherSources.map((source, idx) => buildAgcConfig(source, idx + 1)),
+  ];
+})();
 
 export default function AllStandardsScreen() {
   const insets = useSafeAreaInsets();
@@ -65,30 +102,39 @@ export default function AllStandardsScreen() {
 
   const cleanTime = (t: any) => {
     if (typeof t !== "string") return t;
+    if (!t.trim()) return "-";
     return t.startsWith(":") ? t.substring(1) : t;
   };
 
   const renderSelection = () => (
     <ScrollView contentContainerStyle={styles.scrollContent}>
       <Text style={styles.sectionTitle}>Championship Standards</Text>
-      {STANDARDS_CONFIG.map((config) => (
-        <Pressable
-          key={config.id}
-          onPress={() => setMode(config.id)}
-          style={styles.listCard}
-        >
-          <View style={[styles.listIcon, { backgroundColor: config.bg }]}>
-            <Ionicons name={config.icon as any} size={22} color={config.color} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.listTitle}>{config.label}</Text>
-            <Text style={styles.listSub}>{config.description}</Text>
-          </View>
-          <View style={styles.arrowIcon}>
-            <Ionicons name="chevron-forward" size={18} color={colors.border} />
-          </View>
-        </Pressable>
-      ))}
+      {STANDARDS_CONFIG.map((config) => {
+        const isSupported = config.supportsCourse(poolType);
+        return (
+          <Pressable
+            key={config.id}
+            onPress={() => isSupported && setMode(config.id)}
+            disabled={!isSupported}
+            style={[styles.listCard, !isSupported && styles.listCardDisabled]}
+          >
+            <View style={[styles.listIcon, { backgroundColor: isSupported ? config.bg : colors.surfaceWarm }]}>
+              <Ionicons name={config.icon as any} size={22} color={isSupported ? config.color : colors.border} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.listTitle, !isSupported && styles.listTitleDisabled]}>{config.label}</Text>
+              <Text style={styles.listSub}>{isSupported ? config.description : `Not available for ${poolType}`}</Text>
+            </View>
+            {isSupported ? (
+              <View style={styles.arrowIcon}>
+                <Ionicons name="chevron-forward" size={18} color={colors.border} />
+              </View>
+            ) : (
+              <Ionicons name="lock-closed" size={16} color={colors.border} />
+            )}
+          </Pressable>
+        );
+      })}
       <ComingSoon style={{ marginTop: 10 }} />
     </ScrollView>
   );
@@ -96,6 +142,13 @@ export default function AllStandardsScreen() {
   const renderDetail = () => {
     if (mode === "motivational") return renderMotivationalTable();
     if (mode === "tags") return renderTagsTable();
+    if (mode.startsWith("agc:")) {
+      const sourceId = mode.slice("agc:".length);
+      const source = AGC_SOURCES.find((s) => s.id === sourceId);
+      if (source) {
+        return renderSingleCutTable(source.label, (evt) => getAGCStandard(source.id, gender, poolType, ageGroup, evt));
+      }
+    }
     return renderSelection();
   };
 
@@ -105,7 +158,44 @@ export default function AllStandardsScreen() {
         <Pressable onPress={() => setMode("selection")} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={colors.textMuted} />
         </Pressable>
-        <Text style={styles.detailTitle}>Illinois AGC Championships ({ageGroup})</Text>
+        <Text style={styles.detailTitle}>TAGS Championships ({ageGroup})</Text>
+      </View>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
+        <View style={styles.table}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeadCell, { flex: 2 }]}>Event</Text>
+            <Text style={[styles.tableHeadCell, { flex: 2 }]}>Cut</Text>
+            <Text style={[styles.tableHeadCell, { flex: 2, borderRightWidth: 0 }]}>Bonus</Text>
+          </View>
+          {events.map((evt, idx) => {
+            const tagResult = getTagStandards(gender, poolType, ageGroup, evt);
+            const cutTime = tagResult.tags ? cleanTime(tagResult.tags.standard) : "-";
+            const bonusTime = tagResult.bonus ? cleanTime(tagResult.bonus.standard) : "-";
+            const isLast = idx === events.length - 1;
+
+            return (
+              <View key={evt} style={[styles.tableRow, isLast && { borderBottomWidth: 0 }]}>
+                <Text style={[styles.tableCell, { flex: 2, fontWeight: "700" }]}>{evt.replace("_", " ")}</Text>
+                <Text style={[styles.tableCell, { flex: 2, color: getStrokeColor(evt), fontFamily: "PublicSans-Bold", fontWeight: "700" }]}>{cutTime}</Text>
+                <Text style={[styles.tableCell, { flex: 2, color: colors.textMuted, fontFamily: "PublicSans-Bold", fontWeight: "700", borderRightWidth: 0 }]}>{bonusTime}</Text>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </View>
+  );
+
+  const renderSingleCutTable = (
+    title: string,
+    getStandard: (evt: string) => { standard: string; meet: string } | null,
+  ) => (
+    <View style={{ flex: 1 }}>
+      <View style={styles.detailHeader}>
+        <Pressable onPress={() => setMode("selection")} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={24} color={colors.textMuted} />
+        </Pressable>
+        <Text style={styles.detailTitle}>{title} ({ageGroup})</Text>
       </View>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={styles.table}>
@@ -114,10 +204,8 @@ export default function AllStandardsScreen() {
             <Text style={[styles.tableHeadCell, { flex: 2, borderRightWidth: 0 }]}>Cut</Text>
           </View>
           {events.map((evt, idx) => {
-            const std = getIllinoisAGCStandard(gender, poolType, ageGroup, evt);
-            if (!std) return null;
-
-            const time = cleanTime(std.standard);
+            const std = getStandard(evt);
+            const time = std ? cleanTime(std.standard) : "-";
             const isLast = idx === events.length - 1;
 
             return (
@@ -183,7 +271,7 @@ export default function AllStandardsScreen() {
                       {["AAAA", "AAA", "AA", "A", "BB", "B"].map((level, lIdx) => (
                         <View key={level} style={{ width: 90, justifyContent: "center", paddingHorizontal: 8, borderRightWidth: lIdx === 5 ? 0 : 1.5, borderRightColor: colors.border }}>
                           <Text style={{ fontSize: 13, color: getStrokeColor(evt), fontWeight: "700", fontFamily: "PublicSans-Bold", textAlign: "center" }}>
-                            {moti ? moti[level as keyof typeof moti] : "—"}
+                            {moti ? (moti[level as keyof typeof moti] || "-") : "-"}
                           </Text>
                         </View>
                       ))}
@@ -246,7 +334,7 @@ export default function AllStandardsScreen() {
             </View>
           </View>
 
-          {(mode === "motivational" || mode === "tags") && (
+          {mode !== "selection" && (
             <View style={[styles.filterRow, { marginTop: 10 }]}>
               <View style={styles.filterGroup}>
                 {(["9&U", "10", "11", "12", "13", "14"] as AgeGroup[]).map((age) => (
@@ -301,8 +389,10 @@ const styles = StyleSheet.create({
   },
   listIcon: { padding: 12, borderRadius: 0, marginRight: 16 },
   listTitle: { fontSize: 16, fontWeight: "800", color: colors.text, fontFamily: "PublicSans-ExtraBold" },
+  listTitleDisabled: { color: colors.textSubtle },
   listSub: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
   arrowIcon: { backgroundColor: colors.surfaceWarm, padding: 8, borderRadius: 0 },
+  listCardDisabled: { opacity: 0.5 },
 
   sectionTitle: { fontSize: 13, fontWeight: "800", color: colors.textSubtle, letterSpacing: 1, marginBottom: 12, marginLeft: 4, marginTop: 8, fontFamily: "PublicSans-ExtraBold" },
 

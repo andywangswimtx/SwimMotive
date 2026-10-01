@@ -3,5 +3,12 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
+  },
+  "chat.tools.terminal.autoApprove": {
+    "/^node -e \"const a=require\\(process\\.env\\.TEMP\\+'\\\\\\\\swim-audit\\\\\\\\IL-AGC-2026\\.js'\\)\\.AGE_GROUP_CHAMPS_STANDARDS; const m=require\\(process\\.env\\.TEMP\\+'\\\\\\\\swim-audit\\\\\\\\motiv_time_standards_2024to28\\.js'\\)\\.MOTIVATIONAL_STANDARDS; const valid=/\\^\\(\\?:\\(\\?:\\\\\\\\d\\+:\\)\\?\\\\\\\\d\\{1,2\\}\\|:\\\\\\\\d\\{2\\}\\)\\\\\\\\\\.\\\\\\\\d\\{2\\}\\$/; let badTimes=\\[\\],dups=\\[\\],badMotiv=\\[\\]; for\\(const c of a\\)for\\(const g of c\\.standards\\)\\{const names=g\\.events\\.map\\(e=>e\\.event\\); for\\(const n of new Set\\(names\\.filter\\(\\(x,i\\)=>names\\.indexOf\\(x\\)!==i\\)\\)\\)dups\\.push\\(c\\.course\\+' '\\+g\\.sex\\+' '\\+g\\.age\\+' '\\+n\\); for\\(const e of g\\.events\\)if\\(!valid\\.test\\(e\\.time\\)\\)badTimes\\.push\\(c\\.course\\+' '\\+g\\.sex\\+' '\\+g\\.age\\+' '\\+e\\.event\\+'='\\+e\\.time\\);\\} for\\(const \\[course,ages\\] of Object\\.entries\\(m\\)\\)for\\(const \\[age,events\\] of Object\\.entries\\(ages\\)\\)for\\(const \\[event,sexes\\] of Object\\.entries\\(events\\)\\)for\\(const sex of \\['G','B'\\]\\)\\{const row=sexes\\[sex\\]; if\\(!Array\\.isArray\\(row\\)\\|\\|row\\.length!==6\\|\\|row\\.some\\(x=>!valid\\.test\\(x\\)\\)\\)badMotiv\\.push\\(course\\+' '\\+age\\+' '\\+event\\+' '\\+sex\\);\\} const sets=a\\.map\\(c=>c\\.course\\+': '\\+\\[\\.\\.\\.new Set\\(c\\.standards\\.flatMap\\(g=>g\\.events\\.map\\(e=>e\\.event\\)\\)\\)\\]\\.join\\(', '\\)\\); console\\.log\\('AGC bad times='\\+badTimes\\.length\\+' duplicates='\\+dups\\.length\\); console\\.log\\('Motiv bad rows='\\+badMotiv\\.length\\); console\\.log\\('AGC event sets:'\\); console\\.log\\(sets\\.join\\('\\\\\\\\n'\\)\\); if\\(badTimes\\.length\\)console\\.log\\(badTimes\\.slice\\(0,5\\)\\.join\\('\\\\\\\\n'\\)\\); if\\(badMotiv\\.length\\)console\\.log\\(badMotiv\\.slice\\(0,5\\)\\.join\\('\\\\\\\\n'\\)\\);\"$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "npx tsc": true
   }
 }

@@ -20,9 +20,13 @@ import SwipeBackWrapper from "../../components/SwipeBackWrapper";
 import { useUserContext } from "../../context/UserContext";
 import { colors } from "../../theme/colors";
 import {
+    AGC_SOURCES,
     AgeGroup,
     Gender,
+    getAGCStandard,
     getEventsForPoolType,
+    getMotivationalStandards,
+    getTagStandards,
     PoolType,
 } from "../../utils/dataManager";
 
@@ -114,17 +118,45 @@ export default function InputScreen() {
   const distancesForStroke = allAvailableEvents
     .filter(evt => evt.endsWith(`_${selectedStroke}`))
     .map(evt => evt.split("_")[0]);
+  const distanceOptions = distancesForStroke.map((distance) => ({
+    distance,
+    available:
+      getMotivationalStandards(
+        gender,
+        poolType,
+        ageGroup,
+        `${distance}_${selectedStroke}`,
+      ) !== null ||
+      AGC_SOURCES.some(
+        (source) =>
+          getAGCStandard(
+            source.id,
+            gender,
+            poolType,
+            ageGroup,
+            `${distance}_${selectedStroke}`,
+          ) !== null,
+      ) ||
+      (() => {
+        const tag = getTagStandards(
+          gender,
+          poolType,
+          ageGroup,
+          `${distance}_${selectedStroke}`,
+        );
+        return !!tag.tags || !!tag.bonus;
+      })(),
+  }));
+  const availableDistances = distanceOptions
+    .filter((option) => option.available)
+    .map((option) => option.distance);
 
-  // Ensure selectedDistance is valid when stroke/pool changes
+  // Ensure selectedDistance remains a valid event when filters change.
   useEffect(() => {
-    const availableDistances = getEventsForPoolType(poolType)
-      .filter(evt => evt.endsWith(`_${selectedStroke}`))
-      .map(evt => evt.split("_")[0]);
-
     if (!availableDistances.includes(selectedDistance)) {
       setSelectedDistance(availableDistances[0] || "");
     }
-  }, [selectedStroke, poolType, selectedDistance]);
+  }, [availableDistances, selectedDistance]);
 
   const handleTimeChange = (text: string) => {
     isInternalUpdate.current = true;
@@ -247,7 +279,7 @@ export default function InputScreen() {
         {/* Header with Filters */}
         <View style={[styles.header, { paddingTop: Math.max(insets.top, 18) }]}>
           <Text style={styles.title}>
-            SwimMotiv (<Text style={styles.titleState}>IL</Text>)
+            SwimMotiv
           </Text>
           <Text style={styles.subtitle}>Select your race and enter your time</Text>
 
@@ -302,14 +334,25 @@ export default function InputScreen() {
             <Text style={styles.sectionLabel}>SELECT DISTANCE</Text>
             <View style={styles.distancesContainer}>
               <View style={styles.distancesRow}>
-                {distancesForStroke.map((d) => (
+                {distanceOptions.map(({ distance, available }) => (
                   <Pressable
-                    key={d}
-                    onPress={() => setSelectedDistance(d)}
-                    style={[styles.distanceBtn, selectedDistance === d && styles.distanceBtnActive]}
+                    key={distance}
+                    onPress={() => setSelectedDistance(distance)}
+                    disabled={!available}
+                    style={[
+                      styles.distanceBtn,
+                      !available && styles.distanceBtnDisabled,
+                      selectedDistance === distance && available && styles.distanceBtnActive,
+                    ]}
                   >
-                    <Text style={[styles.distanceText, selectedDistance === d && styles.distanceTextActive]}>
-                      {d}
+                    <Text
+                      style={[
+                        styles.distanceText,
+                        !available && styles.distanceTextDisabled,
+                        selectedDistance === distance && available && styles.distanceTextActive,
+                      ]}
+                    >
+                      {distance}
                     </Text>
                   </Pressable>
                 ))}
@@ -433,8 +476,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
+  distanceBtnDisabled: { backgroundColor: colors.canvas, borderColor: colors.divider, opacity: 0.65 },
   distanceBtnActive: { backgroundColor: colors.primary, borderColor: colors.primary },
   distanceText: { fontSize: 14, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: colors.textMuted },
+  distanceTextDisabled: { color: colors.border },
   distanceTextActive: { color: "white" },
 
   // Input Card

@@ -49,11 +49,12 @@ export default function MotivationalStandardsView({
   const hasUserTime = !!userSeconds;
 
   const cuts = ["B", "BB", "A", "AA", "AAA", "AAAA"] as const;
+  const availableCuts = cuts.filter((cut) => timeToSeconds(standards[cut]) !== null);
 
   const cutTimes: Record<string, number> = {};
-  for (const cut of cuts) {
+  for (const cut of availableCuts) {
     const t = timeToSeconds(standards[cut]);
-    if (t) cutTimes[cut] = t;
+    if (t !== null) cutTimes[cut] = t;
   }
 
   const allTimes = hasUserTime
@@ -113,14 +114,15 @@ export default function MotivationalStandardsView({
 
   const userCutLabel = (() => {
     if (!hasUserTime) return null;
-    for (let i = cuts.length - 1; i >= 0; i--) {
-      if (userSeconds! <= cutTimes[cuts[i]]) return cuts[i];
+    for (let i = availableCuts.length - 1; i >= 0; i--) {
+      if (userSeconds! <= cutTimes[availableCuts[i]]) return availableCuts[i];
     }
     return null;
   })();
 
   const improvements = cuts.map((cut) => {
     const imp = hasUserTime
+      && cutTimes[cut] !== undefined
       ? calculateImprovement(
           userSeconds!,
           cutTimes[cut],
@@ -189,7 +191,7 @@ export default function MotivationalStandardsView({
             <View style={styles.chartArea}>
               {/* Colored Segments */}
               <View style={styles.segmentsRow}>
-                {cuts.map((cut, i) => {
+                {availableCuts.map((cut, i) => {
                   const cutColors: Record<string, string> = {
                     B: "#f3f4f6", // Light gray
                     BB: "#FFE7A0",
@@ -200,7 +202,7 @@ export default function MotivationalStandardsView({
                   };
 
                   const currentPos = getPosition(cutTimes[cut]);
-                  const nextCut = cuts[i + 1];
+                  const nextCut = availableCuts[i + 1];
                   const nextPos = nextCut
                     ? getPosition(cutTimes[nextCut])
                     : 100;
@@ -221,7 +223,7 @@ export default function MotivationalStandardsView({
               </View>
 
               {/* Cut Lines and Labels */}
-              {cuts.map((cut, idx) => {
+              {availableCuts.map((cut, idx) => {
                 const pos = getPosition(cutTimes[cut]);
                 const isOdd = idx % 2 !== 0;
                 return (

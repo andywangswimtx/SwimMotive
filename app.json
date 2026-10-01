@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "SwimMotiv (IL)",
+    "name": "SwimMotiv",
     "slug": "swimmotiv",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "swimmotiv",
@@ -11,18 +11,17 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.andywl.swimmotiv",
-      "buildNumber": "91526",
+      "buildNumber": "92026",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.andywl.swimmotiv",
-      "versionCode": 91126,
+      "versionCode": 92026,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,

@@ -165,18 +165,18 @@ export default function AboutScreen() {
               />
             </View>
             <Text style={styles.appTitle}>
-              SwimMotiv (<Text style={styles.appTitleState}>IL</Text>)
+              SwimMotiv
             </Text>
             <Text style={styles.tagline}>Know your times, Chase your goals</Text>
 
             {/* Version pills */}
             <View style={styles.pillRow}>
               <View style={styles.pill}>
-                <Text style={styles.pillText}>App Version 0.1.0</Text>
+                <Text style={styles.pillText}>App Version 0.1.1</Text>
               </View>
               <View style={[styles.pill, styles.pillAccent]}>
                 <Text style={[styles.pillText, styles.pillAccentText]}>
-                  Build 91126
+                  Build 92026
                 </Text>
               </View>
             </View>
@@ -192,7 +192,8 @@ export default function AboutScreen() {
           iconColor={colors.primaryPressed}
           iconBg="#FFE2B6"
           items={[
-            { label: "Motivational Standards", sub: "2024–2028 cycle · USA Swimming (10&U, 11-12, 13-14)" },
+            { label: "Motivational Standards", sub: "2024-2028 · USA Swimming (age 10, 11, 12, 13, 14)" },
+            { label: "NCSA Age Group Championships", sub: "2027 · NCSA Age Group Championship Standards (age 11&U, 12, 13, 14)" },
           ]}
         />
 
@@ -203,8 +204,40 @@ export default function AboutScreen() {
           iconBg={colors.accentSoft}
           items={[
             {
+              label: "Texas Age Group Championships (TAGS)",
+              sub: "2026 · Texas Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+            },
+            {
               label: "Illinois Age Group Championships",
-              sub: "2026 · Illinois Age Group Swimming Standards (9&U, 10, 11, 12, 13, 14)",
+              sub: "2026 · Illinois Age Group Championship Standards (age 9&U, 10, 11, 12, 13, 14)",
+            },
+            {
+              label: "Central California Age Group Championships",
+              sub: "2024–2026 · Central California Age Group Championship Standards (age 9&U, 10, 11, 12, 13, 14)",
+            },
+            {
+              label: "Florida Gold Coast Age Group Championships",
+              sub: "2026–2027 · Florida Gold Coast Age Group Championship Standards (age 9&U, 10, 11, 12, 13, 14)",
+            },
+            {
+              label: "Florida Age Group Championships",
+              sub: "2026 · Florida Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+            },
+            {
+              label: "Louisiana State Championships",
+              sub: "2026 · Louisiana State Championship Standards (age 9&U, 10, 11, 12, 13, 14)",
+            },
+            {
+              label: "Middle Atlantic Age Group Championships",
+              sub: "2027 · Middle Atlantic Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+            },
+            {
+              label: "Pacific Age Group Championships",
+              sub: "2026–2027 · Pacific Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+            },
+            {
+              label: "Potomac Valley Age Group Championships",
+              sub: "2027 · Potomac Valley Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
             },
           ]}
         />

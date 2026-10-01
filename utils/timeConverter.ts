@@ -44,6 +44,7 @@ export function secondsToTime(seconds: number): string {
 // strips leading "0:" so "0:29.89" → "29.89"
 export function normalizeTimeDisplay(timeStr: string): string {
   let trimmed = timeStr.trim();
+  if (!trimmed) return "-";
   if (trimmed.startsWith(":")) {
     trimmed = trimmed.substring(1);
   }
