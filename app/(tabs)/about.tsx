@@ -1,18 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useCallback, useState } from "react";
 import {
-  Image,
-  LayoutAnimation,
-  Linking,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  UIManager,
-  View,
+    Image,
+    LayoutAnimation,
+    Linking,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    UIManager,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { colors } from "../../theme/colors";
 
 // Enable LayoutAnimation on Android
 if (
@@ -93,7 +94,7 @@ const AccordionSection = ({
         <Ionicons
           name={expanded ? "chevron-up" : "chevron-down"}
           size={18}
-          color="#94a3b8"
+          color={colors.textSubtle}
         />
       </View>
 
@@ -126,16 +127,16 @@ const InfoRow = ({ icon, label, value, onPress }: InfoRowProps) => (
       pressed && onPress && { opacity: 0.7 },
     ]}
   >
-    <Ionicons name={icon} size={16} color="#94a3b8" />
+    <Ionicons name={icon} size={16} color={colors.textSubtle} />
     <Text style={styles.infoLabel}>{label}</Text>
-    <Text style={[styles.infoValue, onPress && { color: "#6366f1" }]}>
+    <Text style={[styles.infoValue, onPress && { color: colors.primary }]}>
       {value}
     </Text>
     {onPress && (
       <Ionicons
         name="open-outline"
         size={14}
-        color="#6366f1"
+        color={colors.primary}
         style={{ marginLeft: 4 }}
       />
     )}
@@ -163,17 +164,19 @@ export default function AboutScreen() {
                 style={styles.logo}
               />
             </View>
-            <Text style={styles.appTitle}>SwimCalc++</Text>
-            <Text style={styles.tagline}>Chase your goals</Text>
+            <Text style={styles.appTitle}>
+              SwimMotiv (<Text style={styles.appTitleState}>IL</Text>)
+            </Text>
+            <Text style={styles.tagline}>Know your times, Chase your goals</Text>
 
             {/* Version pills */}
             <View style={styles.pillRow}>
               <View style={styles.pill}>
-                <Text style={styles.pillText}>App Version 0.4.0</Text>
+                <Text style={styles.pillText}>App Version 0.1.0</Text>
               </View>
               <View style={[styles.pill, styles.pillAccent]}>
                 <Text style={[styles.pillText, styles.pillAccentText]}>
-                  Build 60620
+                  Build 91126
                 </Text>
               </View>
             </View>
@@ -184,71 +187,25 @@ export default function AboutScreen() {
         <Text style={styles.sectionLabel}>DATA SOURCES</Text>
 
         <AccordionSection
-          title="LSC, Sectionals & Champs"
-          icon="trophy"
-          iconColor="#f59e0b"
-          iconBg="#fef3c7"
+          title="USA Swimming Standards"
+          icon="medal"
+          iconColor={colors.primaryPressed}
+          iconBg="#FFE2B6"
           items={[
-            {
-              label: "Gulf Championships",
-              sub: "2025 · Gulf Swimming Age Group Standards",
-            },
-            {
-              label: "Gulf Senior Championships",
-              sub: "2025–2026 · Gulf Swimming Senior Standards",
-            },
-            {
-              label: "TAGS Championships",
-              sub: "2026 · Texas Age Group Swimming Standards",
-            },
-            {
-              label: "TSC Sectionals",
-              sub: "Texas Senior Circuit Standards",
-            },
+            { label: "Motivational Standards", sub: "2024–2028 cycle · USA Swimming (10&U, 11-12, 13-14)" },
           ]}
         />
 
         <AccordionSection
-          title="Swimcloud Power Index"
-          icon="analytics"
-          iconColor="#8b5cf6"
-          iconBg="#ede9fe"
+          title="State/LSC Age Group Champs"
+          icon="trophy"
+          iconColor={colors.primary}
+          iconBg={colors.accentSoft}
           items={[
             {
-              label: "Swimcloud Power Index Time Standards",
-              sub: "2025 · Swimcloud",
+              label: "Illinois Age Group Championships",
+              sub: "2026 · Illinois Age Group Swimming Standards (9&U, 10, 11, 12, 13, 14)",
             },
-            {
-              label: "Swimcloud Power Index Equation",
-              sub: "Proprietary formula · Swimcloud",
-            },
-          ]}
-        >
-          <View style={[styles.authorizedCard, { marginHorizontal: 0, marginTop: 10, marginBottom: 0 }]}>
-            <Ionicons name="shield-checkmark" size={16} color="#0044ee" style={{ marginRight: 8 }} />
-            {renderSwimcloudText(
-              "Swimcloud Power Index and formula used with permission from Swimcloud.",
-              styles.authorizedText
-            )}
-          </View>
-        </AccordionSection>
-
-        <AccordionSection
-          title="National & Olympic Standards"
-          icon="medal"
-          iconColor="#ef4444"
-          iconBg="#fee2e2"
-          items={[
-            { label: "Motivational Standards", sub: "2024–2028 cycle" },
-            { label: "NCSA Spring Championships", sub: "2025 · National Club Swimming Assoc." },
-            { label: "Futures Championships", sub: "2026 season · 18U & 19+ divisions" },
-            { label: "Winter Junior Championships", sub: "2026 Speedo Winter Juniors" },
-            { label: "TYR Pro Swim Series", sub: "2026 TYR Pro Swim · 18U & 19+ divisions" },
-            { label: "Junior National Championships", sub: "2026 Speedo Junior Nationals" },
-            { label: "Toyota U.S. Open Championships", sub: "2026 Toyota U.S. Open" },
-            { label: "National Championships", sub: "2026 Toyota Nationals · 18U & 19+ divisions" },
-            { label: "Olympic Trials", sub: "2024 · Indianapolis" },
-            { label: "LA28 Olympic Games", sub: "LA28 Olympic Entry Standards" },
           ]}
         />
 
@@ -279,7 +236,7 @@ export default function AboutScreen() {
             Made by a high school swimmer
           </Text>
           <Text style={styles.footerCopy}>
-            © 2026 SwimCalc++. All rights reserved.
+            © 2026 SwimMotiv. All rights reserved.
           </Text>
         </View>
       </ScrollView>
@@ -291,12 +248,12 @@ export default function AboutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: colors.canvas,
   },
 
   // Header background shape
   headerBg: {
-    backgroundColor: "#0044ee",
+    backgroundColor: colors.primary,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
@@ -335,9 +292,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     letterSpacing: -0.5,
   },
+  appTitleState: {
+    color: "#FFF0B8",
+  },
   tagline: {
     fontSize: 15,
-    color: "#c7d2fe",
+    color: "#FFF0B8",
     marginTop: 4,
     fontFamily: "PublicSans-Medium",
     fontWeight: "500",
@@ -359,7 +319,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "PublicSans-Bold",
     fontWeight: "700",
-    color: "#e0e7ff",
+    color: "#FFF7D6",
   },
   pillAccent: {
     backgroundColor: "rgba(255,255,255,0.25)",
@@ -373,7 +333,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
-    color: "#94a3b8",
+    color: colors.textSubtle,
     letterSpacing: 1.2,
     marginLeft: 24,
     marginTop: 24,
@@ -382,7 +342,7 @@ const styles = StyleSheet.create({
 
   // Cards
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.surface,
     marginHorizontal: 16,
     marginBottom: 10,
     borderRadius: 0,
@@ -393,7 +353,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 2,
     borderWidth: 1,
-    borderColor: "#f1f5f9",
+    borderColor: colors.border,
   },
   infoCard: {
     paddingTop: 6,
@@ -420,7 +380,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "PublicSans-Bold",
     fontWeight: "700",
-    color: "#1e293b",
+    color: colors.text,
   },
 
   // Expanded accordion content
@@ -428,7 +388,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
+    borderTopColor: colors.divider,
   },
   bulletRow: {
     flexDirection: "row",
@@ -439,7 +399,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 0,
-    backgroundColor: "#0044ee",
+    backgroundColor: colors.primary,
     marginTop: 6,
     marginRight: 10,
   },
@@ -447,11 +407,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
-    color: "#334155",
+    color: colors.text,
   },
   bulletSub: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: colors.textSubtle,
     marginTop: 1,
     fontFamily: "PublicSans-Medium",
     fontWeight: "500",
@@ -465,7 +425,7 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 14,
-    color: "#64748b",
+    color: colors.textMuted,
     fontFamily: "PublicSans-Medium",
     fontWeight: "500",
     marginLeft: 10,
@@ -473,17 +433,17 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontSize: 14,
-    color: "#1e293b",
+    color: colors.text,
     fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
   },
   separator: {
     height: 1,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: colors.divider,
   },
   authorizedCard: {
-    backgroundColor: "#eff6ff",
-    borderColor: "#bfdbfe",
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
     borderWidth: 1,
     padding: 12,
     marginHorizontal: 16,
@@ -493,7 +453,7 @@ const styles = StyleSheet.create({
   },
   authorizedText: {
     fontSize: 12,
-    color: "#0044ee",
+    color: colors.primary,
     fontFamily: "PublicSans-Medium",
     fontWeight: "500",
     flex: 1,
@@ -513,12 +473,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
-    color: "#64748b",
+    color: colors.textMuted,
     textAlign: "center",
   },
   footerCopy: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: colors.textSubtle,
     textAlign: "center",
     marginTop: 6,
   },});

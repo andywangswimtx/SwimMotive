@@ -15,6 +15,7 @@ import {
 } from '@expo-google-fonts/public-sans';
 
 import { UserProvider } from '../context/UserContext';
+import { colors } from '../theme/colors';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -74,7 +75,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   webContainer: {
     flex: 1,
-    backgroundColor: '#0f172a', // Sleek dark slate background for desktop preview
+    backgroundColor: colors.dark,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
   webPreview: {
     width: 440, // iPhone 16/18 Pro Max viewport width
     height: 1014, // iPhone 16/18 Pro Max viewport height + 6% (956 * 1.04 * 1.02)
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.canvas,
     overflow: 'hidden',
   },
 });

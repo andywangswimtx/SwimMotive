@@ -3,27 +3,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  DeviceEventEmitter,
+    DeviceEventEmitter,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useUserContext } from "../../context/UserContext";
-import {
-  AgeGroup,
-  Gender,
-  getEventsForPoolType,
-  PoolType,
-} from "../../utils/dataManager";
 import ComingSoon from "../../components/ComingSoon";
 import ResultsView from "../../components/ResultsView";
 import SwipeBackWrapper from "../../components/SwipeBackWrapper";
+import { useUserContext } from "../../context/UserContext";
+import { colors } from "../../theme/colors";
+import {
+    AgeGroup,
+    Gender,
+    getEventsForPoolType,
+    PoolType,
+} from "../../utils/dataManager";
 
 const STORAGE_KEY = "swim_app_input_prefs_v1";
 
@@ -42,7 +43,7 @@ export default function InputScreen() {
 
   const [gender, setGender] = useState<Gender>("Boy");
   const [poolType, setPoolType] = useState<PoolType>("SCY");
-  const [ageGroup, setAgeGroup] = useState<AgeGroup>("15-16");
+  const [ageGroup, setAgeGroup] = useState<AgeGroup>("11");
   
   const [selectedStroke, setSelectedStroke] = useState("FR");
   const [selectedDistance, setSelectedDistance] = useState("100");
@@ -61,7 +62,9 @@ export default function InputScreen() {
           const parsed = JSON.parse(stored);
           if (parsed.gender) setGender(parsed.gender);
           if (parsed.poolType) setPoolType(parsed.poolType);
-          if (parsed.ageGroup) setAgeGroup(parsed.ageGroup);
+          if (parsed.ageGroup && ["9&U", "10", "11", "12", "13", "14"].includes(parsed.ageGroup)) {
+            setAgeGroup(parsed.ageGroup);
+          }
           if (parsed.selectedStroke) setSelectedStroke(parsed.selectedStroke);
           if (parsed.selectedDistance) setSelectedDistance(parsed.selectedDistance);
         }
@@ -128,30 +131,23 @@ export default function InputScreen() {
     const oldText = userTime;
     const oldSel = selection;
 
-    // 1. Estimate where the cursor is in the raw 'text' input by finding differences
-    let firstDiff = 0;
-    while (firstDiff < text.length && firstDiff < oldText.length && text[firstDiff] === oldText[firstDiff]) {
-      firstDiff++;
-    }
-
-    let estimatedSel = firstDiff;
-    if (text.length > oldText.length) {
-      // Addition
-      estimatedSel = firstDiff + (text.length - oldText.length);
-    } else if (text.length < oldText.length) {
-      // Deletion
-      estimatedSel = firstDiff;
-    } else if (text !== oldText) {
-      // Replacement (same length)
-      let lastDiff = text.length - 1;
-      while (lastDiff >= firstDiff && text[lastDiff] === oldText[lastDiff]) {
-        lastDiff--;
-      }
-      estimatedSel = lastDiff + 1;
+    // 1. Estimate where the cursor is in the raw 'text' input based on previous selection
+    let estimatedSel = oldSel.start;
+    if (oldSel.start !== oldSel.end) {
+      // User replaced a selection
+      const deletedLen = oldSel.end - oldSel.start;
+      const remainingLen = oldText.length - deletedLen;
+      const insertedLen = Math.max(0, text.length - remainingLen);
+      estimatedSel = oldSel.start + insertedLen;
     } else {
-      // No change in text, but maybe selection moved? 
-      // If handleTimeChange is called, something usually changed, but we'll use current sel.
-      estimatedSel = oldSel.start;
+      // No selection prior to change
+      if (text.length > oldText.length) {
+        // Insertion
+        estimatedSel = oldSel.start + (text.length - oldText.length);
+      } else if (text.length < oldText.length) {
+        // Deletion
+        estimatedSel = Math.max(0, oldSel.start - (oldText.length - text.length));
+      }
     }
 
     const cappedSel = Math.max(0, Math.min(text.length, estimatedSel));
@@ -250,7 +246,9 @@ export default function InputScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Header with Filters */}
         <View style={[styles.header, { paddingTop: Math.max(insets.top, 18) }]}>
-          <Text style={styles.title}>SwimCalc++</Text>
+          <Text style={styles.title}>
+            SwimMotiv (<Text style={styles.titleState}>IL</Text>)
+          </Text>
           <Text style={styles.subtitle}>Select your race and enter your time</Text>
 
           <View style={styles.filterBar}>
@@ -259,16 +257,21 @@ export default function InputScreen() {
                 <FilterPill active={gender === "Boy"} label="Boy" onPress={() => setGender("Boy")} />
                 <FilterPill active={gender === "Girl"} label="Girl" onPress={() => setGender("Girl")} />
               </View>
-              <View style={styles.filterGroup}>
-                <FilterPill active={poolType === "SCY"} label="SCY" onPress={() => setPoolType("SCY")} />
-                <FilterPill active={poolType === "LCM"} label="LCM" onPress={() => setPoolType("LCM")} />
-              </View>
             </View>
+
             <View style={[styles.filterRow, { marginTop: 10 }]}>
               <View style={styles.filterGroup}>
-                {["13-14", "15-16", "17-18", "19+"].map((age) => (
-                  <FilterPill key={age} active={ageGroup === (age === "19+" ? "19 & Over" : age)} label={age} onPress={() => setAgeGroup(age === "19+" ? "19 & Over" : age as AgeGroup)} />
+                {(["9&U", "10", "11", "12", "13", "14"] as AgeGroup[]).map((age) => (
+                  <FilterPill key={age} active={ageGroup === age} label={age} onPress={() => setAgeGroup(age)} />
                 ))}
+              </View>
+            </View>
+
+            <View style={[styles.filterRow, { marginTop: 10 }]}>
+              <View style={styles.filterGroup}>
+                <FilterPill active={poolType === "SCY"} label="SCY" onPress={() => setPoolType("SCY")} />
+                <FilterPill active={poolType === "SCM"} label="SCM" onPress={() => setPoolType("SCM")} />
+                <FilterPill active={poolType === "LCM"} label="LCM" onPress={() => setPoolType("LCM")} />
               </View>
             </View>
           </View>
@@ -316,14 +319,14 @@ export default function InputScreen() {
             {/* Time Input Area */}
             <View style={styles.inputCard}>
               <View style={styles.inputHeader}>
-                <Ionicons name="stopwatch-outline" size={18} color="#0044ee" />
+                <Ionicons name="stopwatch-outline" size={18} color={colors.primary} />
                 <Text style={styles.inputActionLabel}>ENTER YOUR TIME</Text>
               </View>
               
               <TextInput
                 style={styles.timeInput}
                 placeholder="0:00.00"
-                placeholderTextColor="#cbd5e1"
+                placeholderTextColor={colors.textSubtle}
                 value={userTime}
                 onChangeText={handleTimeChange}
                 keyboardType="decimal-pad"
@@ -377,26 +380,27 @@ function FilterPill({ active, label, onPress }: { active: boolean; label: string
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f1f5f9" },
+  container: { flex: 1, backgroundColor: colors.canvas },
   header: {
-    backgroundColor: "#0044ee",
+    backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingBottom: 22,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
-  title: { fontSize: 28, fontFamily: "PublicSans-Black", fontWeight: "900", color: "white", letterSpacing: -0.5 },
-  subtitle: { fontSize: 13, color: "#c7d2fe", marginTop: 4, fontFamily: "PublicSans-Medium", fontWeight: "500" },
-  filterBar: { marginTop: 20, width: "100%" },
+  title: { fontSize: 32, fontFamily: "PublicSans-Black", fontWeight: "900", color: "white", letterSpacing: -0.5 },
+  titleState: { color: "#FFF0B8" },
+  subtitle: { fontSize: 15, color: "#FFF0B8", marginTop: 4, fontFamily: "PublicSans-Medium", fontWeight: "500" },
+  filterBar: { marginTop: 40, width: "100%" },
   filterRow: { flexDirection: "row", gap: 8, width: "100%" },
-  filterGroup: { flex: 1, flexDirection: "row", gap: 2, backgroundColor: "rgba(0,0,0,0.1)", padding: 3, borderRadius: 0 },
+  filterGroup: { flex: 1, flexDirection: "row", gap: 2, backgroundColor: "rgba(57,36,7,0.16)", padding: 3, borderRadius: 0 },
   filterBtn: { flex: 1, paddingVertical: 8, borderRadius: 0, alignItems: "center", justifyContent: "center" },
-  filterBtnActive: { backgroundColor: "white" },
-  filterBtnText: { color: "#c7d2fe", fontSize: 13, fontFamily: "PublicSans-Bold", fontWeight: "700" },
-  filterBtnTextActive: { color: "#0044ee" },
+  filterBtnActive: { backgroundColor: colors.surface },
+  filterBtnText: { color: "#FFF0B8", fontSize: 13, fontFamily: "PublicSans-Bold", fontWeight: "700" },
+  filterBtnTextActive: { color: colors.primary },
 
-  mainContent: { paddingHorizontal: 16, paddingBottom: 16, paddingTop: 14 },
-  sectionLabel: { fontSize: 11, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: "#94a3b8", letterSpacing: 1.2, marginBottom: 10, marginTop: 4 },
+  mainContent: { paddingHorizontal: 16, paddingBottom: 16, paddingTop: 28 },
+  sectionLabel: { fontSize: 11, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: colors.textSubtle, letterSpacing: 1.2, marginBottom: 10, marginTop: 8 },
   
   // Scrollers -> Now Grids
   strokesContainer: { width: "100%", marginBottom: 16 },
@@ -407,76 +411,76 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
     paddingHorizontal: 2,
     paddingVertical: 8,
     borderRadius: 0,
     borderWidth: 1,
-    borderColor: "#f1f5f9",
+    borderColor: colors.border,
   },
-  selectorBtnActive: { backgroundColor: "#0044ee", borderColor: "#0044ee" },
-  selectorText: { fontSize: 15, fontFamily: "PublicSans-Bold", fontWeight: "700", color: "#64748b" },
+  selectorBtnActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  selectorText: { fontSize: 15, fontFamily: "PublicSans-Bold", fontWeight: "700", color: colors.textMuted },
   selectorTextActive: { color: "white" },
 
   distanceBtn: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
     paddingHorizontal: 2,
     paddingVertical: 9,
     borderRadius: 0,
     borderWidth: 1,
-    borderColor: "#f1f5f9",
+    borderColor: colors.border,
   },
-  distanceBtnActive: { backgroundColor: "#0044ee", borderColor: "#0044ee" },
-  distanceText: { fontSize: 14, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: "#64748b" },
+  distanceBtnActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  distanceText: { fontSize: 14, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: colors.textMuted },
   distanceTextActive: { color: "white" },
 
   // Input Card
   inputCard: {
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
     borderRadius: 0,
     paddingHorizontal: 16,
-    paddingTop: 14,
+    paddingTop: 20,
     paddingBottom: 18,
     marginTop: 30,
     borderWidth: 1,
-    borderColor: "#f1f5f9",
+    borderColor: colors.border,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 15,
     elevation: 5,
   },
-  inputHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 },
-  inputActionLabel: { fontSize: 11, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: "#0044ee", letterSpacing: 1 },
+  inputHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 6, marginBottom: 12 },
+  inputActionLabel: { fontSize: 11, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: colors.primary, letterSpacing: 1 },
   timeInput: {
     fontSize: 48,
     fontFamily: "PublicSans-Black",
     fontWeight: "900",
-    color: "#1e293b",
+    color: colors.text,
     textAlign: "center",
     paddingVertical: 4,
     marginBottom: 21,
   },
   compareBtn: {
-    backgroundColor: "#0044ee",
+    backgroundColor: colors.primary,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
     paddingVertical: 14,
     borderRadius: 0,
-    shadowColor: "#0044ee",
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 15,
     elevation: 10,
   },
-  compareBtnDisabled: { backgroundColor: "#94a3b8", shadowOpacity: 0 },
+  compareBtnDisabled: { backgroundColor: colors.textSubtle, shadowOpacity: 0 },
   errorText: {
-    color: "#ef4444",
+    color: colors.danger,
     fontSize: 12,
     fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
@@ -485,8 +489,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   inputHelperText: {
-    color: "#64748b",
-    fontSize: 9,
+    color: colors.textMuted,
+    fontSize: 12,
     fontFamily: "PublicSans-Medium",
     fontWeight: "500",
     textAlign: "center",

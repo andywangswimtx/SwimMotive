@@ -1,23 +1,24 @@
 {
   "expo": {
-    "name": "SwimCalc++",
-    "slug": "swimTimeRN",
-    "version": "0.3.0",
+    "name": "SwimMotiv (IL)",
+    "slug": "swimmotiv",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "swimcalcrn",
+    "scheme": "swimmotiv",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.andywl.swimcalc0",
+      "bundleIdentifier": "com.andywl.swimmotiv",
+      "buildNumber": "91526",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.andywl.swimcalc",
-      "versionCode": 1,
+      "package": "com.andywl.swimmotiv",
+      "versionCode": 91126,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -54,8 +55,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "623ed786-2116-4864-87d0-14ee4626d1a0"
+        "projectId": "c8ec04d9-5978-43cf-bb70-e3518342690c"
       }
-    }
+    },
+    "owner": "benwl"
   }
 }

@@ -2,14 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
 import { Platform, StyleSheet, View, DeviceEventEmitter } from "react-native";
+import { colors } from "../../theme/colors";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#0044ee",
-        tabBarInactiveTintColor: "#94a3b8",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSubtle,
         tabBarLabelStyle: styles.tabLabel,
         tabBarStyle: styles.tabBar,
         tabBarItemStyle: styles.tabItem,
@@ -56,21 +57,6 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen
-        name="pi-comparison"
-        options={{
-          title: "PI Comparison",
-          tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-              <Ionicons
-                name={focused ? "git-compare" : "git-compare-outline"}
-                size={22}
-                color={color}
-              />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="about"
         options={{
           title: "About",
@@ -95,7 +81,7 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.surface,
     borderTopWidth: 0,
     height: Platform.OS === "ios" ? 94 : 72,
     paddingBottom: Platform.OS === "ios" ? 32 : 12,
@@ -123,7 +109,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconWrapActive: {
-    backgroundColor: "#eef2ff",
+    backgroundColor: colors.accentSoft,
   },
 });
 

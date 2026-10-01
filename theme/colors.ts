@@ -1,0 +1,21 @@
+/** Shared palette derived from the SwimMotiv icon. */
+export const colors = {
+  canvas: "#FFF9E8",
+  surface: "#FFFDF7",
+  surfaceWarm: "#FFF4D1",
+  primary: "#D85F00",
+  primaryPressed: "#B94700",
+  accent: "#FFC800",
+  accentSoft: "#FFF0B8",
+  text: "#392407",
+  textMuted: "#76582F",
+  textSubtle: "#9A7848",
+  border: "#F0D58E",
+  divider: "#F7E8BF",
+  success: "#397A38",
+  successSoft: "#E8F5D8",
+  danger: "#B94200",
+  dangerSoft: "#FFE1C7",
+  overlay: "rgba(57, 36, 7, 0.14)",
+  dark: "#321D00",
+} as const;

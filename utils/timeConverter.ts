@@ -56,7 +56,7 @@ export function calculateImprovement(
   userTime: number,
   targetTime: number,
   eventDistance: number,
-  poolType: "SCY" | "LCM",
+  poolType: "SCY" | "LCM" | "SCM",
 ) {
   const achieved = userTime <= targetTime;
   const improvement = userTime - targetTime;

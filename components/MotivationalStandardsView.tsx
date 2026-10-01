@@ -9,7 +9,8 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { Gender } from "../utils/dataManager";
+import { colors } from "../theme/colors";
+import type { Gender, PoolType } from "../utils/dataManager";
 import {
   getEventDisplayName,
   MotivationalStandards,
@@ -28,7 +29,7 @@ interface Props {
   event: string;
   gender: Gender;
   ageGroup: string;
-  poolType: "SCY" | "LCM";
+  poolType: PoolType;
   onBack: () => void;
 }
 
@@ -145,7 +146,7 @@ export default function MotivationalStandardsView({
           <Text style={styles.backText}>← Back to Selection Page</Text>
         </Pressable>
 
-        <Text style={styles.title}>USA Swimming Motivational Cuts</Text>
+        <Text style={styles.title}>USA Swimming Motivational Levels</Text>
         <Text style={styles.subtitle}>
           {gender} · {ageGroup} · {poolType} · {getEventDisplayName(event)}
         </Text>
@@ -174,7 +175,7 @@ export default function MotivationalStandardsView({
             ) : hasUserTime ? (
               <Text style={styles.orangeAchievement}>Working towards qualifying</Text>
             ) : (
-              <Text style={[styles.orangeAchievement, { color: "#94a3b8" }]}>
+              <Text style={[styles.orangeAchievement, { color: colors.textSubtle }]}>
                 Benchmark comparison list
               </Text>
             )}
@@ -191,7 +192,7 @@ export default function MotivationalStandardsView({
                 {cuts.map((cut, i) => {
                   const cutColors: Record<string, string> = {
                     B: "#f3f4f6", // Light gray
-                    BB: "#bfdbfe", // Blue
+                    BB: "#FFE7A0",
                     A: "#bbf7d0", // Green
                     AA: "#fef08a", // Yellow
                     AAA: "#fed7aa", // Orange
@@ -440,7 +441,7 @@ export default function MotivationalStandardsView({
                         </Text>
                         <View style={[styles.modalCell, { alignItems: "flex-end", justifyContent: "center" }]}>
                           {!hasUserTime ? (
-                            <Ionicons name="remove" size={16} color="#94a3b8" />
+                            <Ionicons name="remove" size={16} color={colors.textSubtle} />
                           ) : row.achieved ? (
                             <Ionicons name="checkmark" size={16} color="#059669" />
                           ) : (
@@ -481,16 +482,16 @@ export default function MotivationalStandardsView({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f1f5f9" },
+  container: { flex: 1, backgroundColor: colors.canvas },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
-    backgroundColor: "#0044ee",
+    backgroundColor: colors.primary,
     padding: 24,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
   backButton: { marginBottom: 16 },
-  backText: { color: "#bfdbfe", fontSize: 14, fontWeight: "600" },
+  backText: { color: "#FFF0B8", fontSize: 14, fontWeight: "600" },
   title: {
     color: "white",
     fontFamily: "PublicSans-Black",
@@ -498,12 +499,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     letterSpacing: -0.5,
   },
-  subtitle: { color: "#bfdbfe", fontSize: 13, marginTop: 4, fontWeight: "500" },
+  subtitle: { color: "#FFF0B8", fontSize: 13, marginTop: 4, fontWeight: "500" },
 
   scrollContent: { padding: 16, paddingBottom: 40 },
 
   card: {
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
     borderRadius: 0,
     padding: 20,
     shadowColor: "#000",
@@ -517,12 +518,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24,
   },
-  smallLabel: { fontSize: 14, color: "#6b7280", fontWeight: "600" },
+  smallLabel: { fontSize: 14, color: colors.textMuted, fontWeight: "600" },
   time: {
     fontSize: 36,
     fontFamily: "PublicSans-Black",
     fontWeight: "900",
-    color: "#2563eb",
+    color: colors.primary,
     letterSpacing: -1,
   },
   greenAchievement: {
@@ -533,7 +534,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   orangeAchievement: {
-    color: "#d97706",
+    color: colors.primary,
     fontFamily: "PublicSans-Bold",
     fontWeight: "700",
     marginTop: 4,
@@ -567,7 +568,7 @@ const styles = StyleSheet.create({
   cutLine: {
     width: 1.5,
     height: 80,
-    backgroundColor: "#4b5563",
+    backgroundColor: colors.textMuted,
     top: 5,
   },
   cutNameLabel: {
@@ -576,7 +577,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
-    color: "#374151",
+    color: colors.text,
   },
   cutTimeLabel: {
     position: "absolute",
@@ -584,20 +585,20 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
-    color: "#6b7280",
+    color: colors.textMuted,
   },
   userMarkerLine: {
     position: "absolute",
     height: 80,
     width: 3,
-    backgroundColor: "#ef4444",
+    backgroundColor: colors.danger,
     top: 5,
     zIndex: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   userMarkerBadge: {
-    backgroundColor: "#ef4444",
+    backgroundColor: colors.danger,
     paddingHorizontal: 4,
     paddingVertical: 2,
     borderRadius: 0,
@@ -617,19 +618,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 4,
   },
-  axisText: { fontSize: 11, color: "#9ca3af", fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
+  axisText: { fontSize: 11, color: colors.textSubtle, fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
 
   hint: {
     textAlign: "center",
     fontSize: 14,
-    color: "#9ca3af",
+    color: colors.textSubtle,
     marginTop: 12,
     fontWeight: "500",
   },
 
   divider: {
     height: 1,
-    backgroundColor: "#f3f4f6",
+    backgroundColor: colors.divider,
     marginTop: 24,
     marginBottom: 14,
   },
@@ -639,21 +640,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
-    color: "#1f2937",
+    color: colors.text,
     marginBottom: 16,
   },
   table: {
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
     borderWidth: 1.5,
-    borderColor: "#cbd5e1",
+    borderColor: colors.border,
     borderRadius: 8,
     overflow: "hidden",
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: "#f8fafc",
+    backgroundColor: colors.surfaceWarm,
     borderBottomWidth: 1.5,
-    borderBottomColor: "#cbd5e1",
+    borderBottomColor: colors.border,
     alignItems: "stretch",
   },
   tableHeaderCell: {
@@ -661,23 +662,23 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     fontWeight: "900",
     fontFamily: "PublicSans-Black",
-    color: "#475569",
+    color: colors.textMuted,
     paddingVertical: 10,
     paddingHorizontal: 6,
     borderRightWidth: 1.5,
-    borderRightColor: "#cbd5e1",
+    borderRightColor: colors.border,
     textAlign: "right",
     justifyContent: "center",
   },
   tableRow: {
     flexDirection: "row",
     borderBottomWidth: 1.5,
-    borderBottomColor: "#cbd5e1",
+    borderBottomColor: colors.border,
     alignItems: "stretch",
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
   },
   rowAchieved: {
-    backgroundColor: "#f0fdf4",
+    backgroundColor: colors.successSoft,
   },
   tableCell: {
     flex: 1,
@@ -688,14 +689,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 6,
     borderRightWidth: 1.5,
-    borderRightColor: "#cbd5e1",
+    borderRightColor: colors.border,
     textAlign: "right",
     justifyContent: "center",
   },
   redText: { color: "#000000", fontFamily: "PublicSans-Bold", fontWeight: "700" },
   orangeText: { color: "#000000", fontFamily: "PublicSans-Bold", fontWeight: "700" },
   emptyGrid: {
-    backgroundColor: "#f8fafc",
+    backgroundColor: colors.surfaceWarm,
     padding: 16,
     borderRadius: 0,
     flexDirection: "row",
@@ -703,10 +704,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#f1f5f9",
+    borderColor: colors.divider,
   },
   emptyGridText: {
-    color: "#64748b",
+    color: colors.textMuted,
     marginLeft: 8,
     fontWeight: "600",
     fontSize: 14,
@@ -718,30 +719,30 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   modal: {
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
     borderRadius: 0,
     maxHeight: "80%",
     overflow: "hidden",
   },
   modalHeader: {
-    backgroundColor: "#0044ee",
+    backgroundColor: colors.primary,
     padding: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   modalTable: {
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
     borderWidth: 1.5,
-    borderColor: "#cbd5e1",
+    borderColor: colors.border,
     borderRadius: 8,
     overflow: "hidden",
   },
   modalTableHeader: {
     flexDirection: "row",
-    backgroundColor: "#f8fafc",
+    backgroundColor: colors.surfaceWarm,
     borderBottomWidth: 1.5,
-    borderBottomColor: "#cbd5e1",
+    borderBottomColor: colors.border,
     alignItems: "stretch",
   },
   modalHeaderCell: {
@@ -749,23 +750,23 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     fontWeight: "900",
     fontFamily: "PublicSans-Black",
-    color: "#475569",
+    color: colors.textMuted,
     paddingVertical: 10,
     paddingHorizontal: 6,
     borderRightWidth: 1.5,
-    borderRightColor: "#cbd5e1",
+    borderRightColor: colors.border,
     textAlign: "right",
     justifyContent: "center",
   },
   modalRow: {
     flexDirection: "row",
     borderBottomWidth: 1.5,
-    borderBottomColor: "#cbd5e1",
+    borderBottomColor: colors.border,
     alignItems: "stretch",
-    backgroundColor: "white",
+    backgroundColor: colors.surface,
   },
   modalRowAchieved: {
-    backgroundColor: "#f0fdf4",
+    backgroundColor: colors.successSoft,
   },
   modalCell: {
     flex: 1,
@@ -776,7 +777,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 6,
     borderRightWidth: 1.5,
-    borderRightColor: "#cbd5e1",
+    borderRightColor: colors.border,
     textAlign: "right",
     justifyContent: "center",
   },

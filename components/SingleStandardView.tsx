@@ -10,7 +10,8 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { getEventDisplayName } from "../utils/dataManager";
+import { colors as palette } from "../theme/colors";
+import { getEventDisplayName, PoolType } from "../utils/dataManager";
 import {
   calculateImprovement,
   getEventDistance,
@@ -27,7 +28,7 @@ interface Props {
   event: string;
   gender: string;
   ageGroup: string;
-  poolType: "SCY" | "LCM";
+  poolType: PoolType;
   themeColor: string;
   onBack: () => void;
 }
@@ -126,7 +127,7 @@ export default function SingleStandardView({
   };
 
   const colors = {
-    header: "#0044ee",
+    header: palette.primary,
     primary: themeColor,
     zone: themeColor,
     marker: themeColor,
@@ -182,7 +183,7 @@ export default function SingleStandardView({
                 Working towards qualifying
               </Text>
             ) : (
-              <Text style={[styles.orangeAchievement, { color: "#94a3b8" }]}>
+              <Text style={[styles.orangeAchievement, { color: palette.textSubtle }]}>
                 Benchmark comparison
               </Text>
             )}
@@ -327,11 +328,11 @@ export default function SingleStandardView({
                   <Ionicons
                     name="information-circle-outline"
                     size={18}
-                    color="#64748b"
+                    color={palette.textMuted}
                   />
                   <Text
                     style={{
-                      color: "#64748b",
+                      color: palette.textMuted,
                       marginLeft: 6,
                       fontWeight: "600",
                     }}
@@ -430,7 +431,7 @@ export default function SingleStandardView({
                   </Text>
                   <View style={[styles.modalCell, { alignItems: "flex-end", justifyContent: "center" }]}>
                     {!hasUserTime ? (
-                      <Ionicons name="remove" size={16} color="#94a3b8" />
+                      <Ionicons name="remove" size={16} color={palette.textSubtle} />
                     ) : improvement?.achieved ? (
                       <Ionicons name="checkmark" size={16} color="#059669" />
                     ) : (
@@ -476,7 +477,7 @@ export default function SingleStandardView({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f1f5f9" },
+  container: { flex: 1, backgroundColor: palette.canvas },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
     padding: 24,
@@ -484,7 +485,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
   },
   backButton: { marginBottom: 16 },
-  backText: { color: "rgba(255,255,255,0.7)", fontSize: 14, fontWeight: "600" },
+  backText: { color: "#FFF0B8", fontSize: 14, fontWeight: "600" },
   title: {
     color: "white",
     fontFamily: "PublicSans-Black",
@@ -493,7 +494,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   subtitle: {
-    color: "rgba(255,255,255,0.8)",
+    color: "#FFF0B8",
     fontSize: 13,
     marginTop: 4,
     fontFamily: "PublicSans-Medium",
@@ -503,7 +504,7 @@ const styles = StyleSheet.create({
   scrollContent: { padding: 16, paddingBottom: 40 },
 
   card: {
-    backgroundColor: "white",
+    backgroundColor: palette.surface,
     borderRadius: 0,
     padding: 20,
     shadowColor: "#000",
@@ -517,7 +518,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24,
   },
-  smallLabel: { fontSize: 14, color: "#6b7280", fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
+  smallLabel: { fontSize: 14, color: palette.textMuted, fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
   time: { fontSize: 36, fontFamily: "PublicSans-Black", fontWeight: "900", letterSpacing: -1 },
   greenAchievement: {
     color: "#059669",
@@ -539,7 +540,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 12,
     paddingVertical: 8,
-    backgroundColor: "#f8fafc",
+    backgroundColor: palette.surfaceWarm,
     borderRadius: 0,
   },
 
@@ -562,7 +563,7 @@ const styles = StyleSheet.create({
   cutLine: {
     width: 1.5,
     height: 80,
-    backgroundColor: "#4b5563",
+    backgroundColor: palette.textMuted,
     top: 5,
   },
   cutNameLabel: {
@@ -571,7 +572,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: "PublicSans-Black",
     fontWeight: "900",
-    color: "#1f2937",
+    color: palette.text,
   },
   cutTimeLabel: {
     position: "absolute",
@@ -579,7 +580,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: "PublicSans-Bold",
     fontWeight: "700",
-    color: "#4b5563",
+    color: palette.textMuted,
   },
   userMarkerLine: {
     position: "absolute",
@@ -610,12 +611,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 4,
   },
-  axisText: { fontSize: 11, color: "#9ca3af", fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
+  axisText: { fontSize: 11, color: palette.textSubtle, fontFamily: "PublicSans-SemiBold", fontWeight: "600" },
 
   hint: {
     textAlign: "center",
     fontSize: 12,
-    color: "#9ca3af",
+    color: palette.textSubtle,
     marginTop: 12,
     fontFamily: "PublicSans-Medium",
     fontWeight: "500",
@@ -623,7 +624,7 @@ const styles = StyleSheet.create({
 
   divider: {
     height: 1,
-    backgroundColor: "#f3f4f6",
+    backgroundColor: palette.divider,
     marginTop: 24,
     marginBottom: 14,
   },
@@ -633,15 +634,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
-    color: "#1f2937",
+    color: palette.text,
     marginBottom: 16,
   },
   summaryCard: {
-    backgroundColor: "#f8fafc",
+    backgroundColor: palette.surfaceWarm,
     borderRadius: 0,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#f1f5f9",
+    borderColor: palette.divider,
   },
   summaryRow: {
     flexDirection: "row",
@@ -649,24 +650,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  summaryLabel: { color: "#64748b", fontFamily: "PublicSans-SemiBold", fontWeight: "600", fontSize: 14 },
-  summaryValue: { color: "#1e293b", fontFamily: "PublicSans-ExtraBold", fontWeight: "800", fontSize: 18 },
+  summaryLabel: { color: palette.textMuted, fontFamily: "PublicSans-SemiBold", fontWeight: "600", fontSize: 14 },
+  summaryValue: { color: palette.text, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", fontSize: 18 },
 
   improvementGrid: {
     flexDirection: "row",
     borderTopWidth: 1,
-    borderColor: "#f1f5f9",
+    borderColor: palette.divider,
     paddingTop: 12,
   },
   gridItem: { flex: 1, alignItems: "center" },
   gridLabel: {
     fontSize: 10,
-    color: "#64748b",
+    color: palette.textMuted,
     fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
     marginBottom: 2,
   },
-  gridValue: { fontSize: 13, fontFamily: "PublicSans-Bold", fontWeight: "700", color: "#334155" },
+  gridValue: { fontSize: 13, fontFamily: "PublicSans-Bold", fontWeight: "700", color: palette.text },
 
   modalOverlay: {
     flex: 1,
@@ -675,7 +676,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   modal: {
-    backgroundColor: "white",
+    backgroundColor: palette.surface,
     borderRadius: 0,
     overflow: "hidden",
   },
@@ -686,17 +687,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalTable: {
-    backgroundColor: "white",
+    backgroundColor: palette.surface,
     borderWidth: 1.5,
-    borderColor: "#cbd5e1",
+    borderColor: palette.border,
     borderRadius: 8,
     overflow: "hidden",
   },
   modalTableHeader: {
     flexDirection: "row",
-    backgroundColor: "#f8fafc",
+    backgroundColor: palette.surfaceWarm,
     borderBottomWidth: 1.5,
-    borderBottomColor: "#cbd5e1",
+    borderBottomColor: palette.border,
     alignItems: "stretch",
   },
   modalHeaderCell: {
@@ -704,23 +705,23 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     fontWeight: "900",
     fontFamily: "PublicSans-Black",
-    color: "#475569",
+    color: palette.textMuted,
     paddingVertical: 10,
     paddingHorizontal: 6,
     borderRightWidth: 1.5,
-    borderRightColor: "#cbd5e1",
+    borderRightColor: palette.border,
     textAlign: "right",
     justifyContent: "center",
   },
   modalRow: {
     flexDirection: "row",
     borderBottomWidth: 1.5,
-    borderBottomColor: "#cbd5e1",
+    borderBottomColor: palette.border,
     alignItems: "stretch",
-    backgroundColor: "white",
+    backgroundColor: palette.surface,
   },
   modalRowAchieved: {
-    backgroundColor: "#f0fdf4",
+    backgroundColor: palette.successSoft,
   },
   modalCell: {
     flex: 1,
@@ -731,7 +732,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 6,
     borderRightWidth: 1.5,
-    borderRightColor: "#cbd5e1",
+    borderRightColor: palette.border,
     textAlign: "right",
     justifyContent: "center",
   },
