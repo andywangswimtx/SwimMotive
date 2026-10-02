@@ -54,7 +54,7 @@ export default function PowerPointsView({
 
   // Find highest achieved point level
   const achievedLevels = table.filter(
-    (row) => hasUserTime && userSeconds! <= row.seconds,
+    (row) => hasUserTime && row.seconds !== null && userSeconds! <= row.seconds,
   );
   const highestAchieved =
     achievedLevels.length > 0 ? achievedLevels[0] : null;
@@ -153,7 +153,9 @@ export default function PowerPointsView({
           {/* Score and Label row */}
           <View style={styles.ppScoreRow}>
             <Text style={[styles.ppScore, { color: ppStyle.text }]}>
-              {calcResult ? calcResult.displayPoints : "— —"}
+              {calcResult
+                ? `${calcResult.displayPoints}${calcResult.isExtrapolatedHigh ? " (est.)" : ""}`
+                : "— —"}
             </Text>
             <Text style={[styles.ppScoreCategory, { color: ppStyle.text }]}>
               {calcResult ? ppStyle.label : "Enter time to see score"}
@@ -212,7 +214,8 @@ export default function PowerPointsView({
             {/* Table Rows (1100 down to 1) */}
             {table.map((row, idx) => {
               const isLast = idx === table.length - 1;
-              const achieved = hasUserTime && userSeconds! <= row.seconds;
+              const achieved =
+                hasUserTime && row.seconds !== null && userSeconds! <= row.seconds;
               const isCurrentHighestAchieved =
                 highestAchieved && highestAchieved.point === row.point;
 
@@ -220,13 +223,16 @@ export default function PowerPointsView({
               let dropText = "-";
               let per50Text = "-";
 
-              if (hasUserTime) {
+              if (row.seconds === null) {
+                imprText = "—";
+                dropText = "—";
+                per50Text = "—";
+              } else if (hasUserTime) {
                 if (!achieved) {
                   const impr = calculateImprovement(
                     userSeconds!,
                     row.seconds,
                     eventDistance,
-                    poolType,
                   );
                   imprText = `${impr.percentage.toFixed(1)}%`;
                   dropText = `-${impr.totalSeconds.toFixed(2)}s`;
@@ -272,7 +278,7 @@ export default function PowerPointsView({
                   {/* Standard Time */}
                   <View style={[styles.colTime, styles.cellCenter]}>
                     <Text style={[styles.tableCellText, styles.timeText]}>
-                      {normalizeTimeDisplay(row.timeDisplay)}
+                      {row.seconds === null ? "Unavailable" : normalizeTimeDisplay(row.timeDisplay)}
                     </Text>
                   </View>
 

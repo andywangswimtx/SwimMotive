@@ -1,26 +1,26 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Modal,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../theme/colors";
 import type { Gender, PoolType } from "../utils/dataManager";
 import {
-  getEventDisplayName,
-  MotivationalStandards,
+    getEventDisplayName,
+    MotivationalStandards,
 } from "../utils/dataManager";
 import {
-  calculateImprovement,
-  getEventDistance,
-  normalizeTimeDisplay,
-  secondsToTime,
-  timeToSeconds,
+    calculateImprovement,
+    getEventDistance,
+    normalizeTimeDisplay,
+    secondsToTime,
+    timeToSeconds,
 } from "../utils/timeConverter";
 
 interface Props {
@@ -127,12 +127,12 @@ export default function MotivationalStandardsView({
           userSeconds!,
           cutTimes[cut],
           eventDistance,
-          poolType,
         )
       : null;
     return {
       cut,
       standardTime: standards[cut],
+      available: cutTimes[cut] !== undefined,
       achieved: imp?.achieved ?? false,
       percentage: imp?.percentage ?? 0,
       totalSeconds: imp?.totalSeconds ?? 0,
@@ -348,7 +348,7 @@ export default function MotivationalStandardsView({
                       {row.cut}
                     </Text>
                     <Text style={[styles.tableCell, { flex: 1.2, textAlign: "left" }]}>
-                      {normalizeTimeDisplay(row.standardTime)}
+                      {row.available ? normalizeTimeDisplay(row.standardTime) : "—"}
                     </Text>
                     <Text
                       style={[
@@ -357,7 +357,7 @@ export default function MotivationalStandardsView({
                         row.achieved ? { color: "#059669", fontWeight: "700" } : styles.redText,
                       ]}
                     >
-                      {!hasUserTime
+                      {!hasUserTime || !row.available
                         ? "--"
                         : row.achieved
                           ? `+${Math.abs(row.totalSeconds).toFixed(2)}s`
@@ -370,7 +370,7 @@ export default function MotivationalStandardsView({
                         row.achieved ? { color: "#059669", fontWeight: "700" } : styles.orangeText,
                       ]}
                     >
-                      {!hasUserTime
+                      {!hasUserTime || !row.available
                         ? "--"
                         : row.achieved
                           ? `+${Math.abs(row.per50).toFixed(2)}s`
@@ -439,10 +439,10 @@ export default function MotivationalStandardsView({
                           {row.cut}
                         </Text>
                         <Text style={[styles.modalCell, { fontWeight: "700", flex: 1.2, textAlign: "left" }]}>
-                          {normalizeTimeDisplay(row.standardTime)}
+                          {row.available ? normalizeTimeDisplay(row.standardTime) : "—"}
                         </Text>
                         <View style={[styles.modalCell, { alignItems: "flex-end", justifyContent: "center" }]}>
-                          {!hasUserTime ? (
+                          {!hasUserTime || !row.available ? (
                             <Ionicons name="remove" size={16} color={colors.textSubtle} />
                           ) : row.achieved ? (
                             <Ionicons name="checkmark" size={16} color="#059669" />
@@ -458,14 +458,14 @@ export default function MotivationalStandardsView({
                           )}
                         </View>
                         <Text style={[styles.modalCell, row.achieved && { color: "#059669" }, { justifyContent: "center" }]}>
-                          {!hasUserTime
+                          {!hasUserTime || !row.available
                             ? "--"
                             : row.achieved
                               ? `+${Math.abs(row.totalSeconds).toFixed(2)}s`
                               : `-${row.totalSeconds.toFixed(2)}s`}
                         </Text>
                         <Text style={[styles.modalCell, { paddingRight: 8, borderRightWidth: 0, justifyContent: "center" }, row.achieved && { color: "#059669" }]}>
-                          {!hasUserTime
+                          {!hasUserTime || !row.available
                             ? "--"
                             : row.achieved
                               ? `+${Math.abs(row.per50).toFixed(2)}s`

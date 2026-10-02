@@ -3,15 +3,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    DeviceEventEmitter,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  DeviceEventEmitter,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ComingSoon from "../../components/ComingSoon";
@@ -20,14 +20,14 @@ import SwipeBackWrapper from "../../components/SwipeBackWrapper";
 import { useUserContext } from "../../context/UserContext";
 import { colors } from "../../theme/colors";
 import {
-    AGC_SOURCES,
-    AgeGroup,
-    Gender,
-    getAGCStandard,
-    getEventsForPoolType,
-    getMotivationalStandards,
-    getTagStandards,
-    PoolType,
+  AGC_SOURCES,
+  AgeGroup,
+  Gender,
+  getAGCStandard,
+  getEventsForPoolType,
+  getMotivationalStandards,
+  getTagStandards,
+  PoolType,
 } from "../../utils/dataManager";
 
 const STORAGE_KEY = "swim_app_input_prefs_v1";
@@ -231,11 +231,18 @@ export default function InputScreen() {
       const s = digits.slice(0, -2);
       const c = digits.slice(-2);
       formatted = `${s}.${c}`;
-    } else {
+    } else if (digits.length <= 6) {
       const m = digits.slice(0, -4);
       const s = digits.slice(-4, -2);
       const c = digits.slice(-2);
       formatted = `${m}:${s}.${c}`;
+    } else {
+      // 7+ digits: hour-long times (e.g. 1500/1650 free), h:mm:ss.cc
+      const h = digits.slice(0, -6);
+      const m = digits.slice(-6, -4);
+      const s = digits.slice(-4, -2);
+      const c = digits.slice(-2);
+      formatted = `${h}:${m}:${s}.${c}`;
     }
 
     // Find the new position in the formatted string
@@ -279,7 +286,8 @@ export default function InputScreen() {
         {/* Header with Filters */}
         <View style={[styles.header, { paddingTop: Math.max(insets.top, 18) }]}>
           <Text style={styles.title}>
-            SwimMotiv
+            SwimMotiv{" "}
+            <Text style={styles.titleAge}> [Age 14&U]</Text>
           </Text>
           <Text style={styles.subtitle}>Select your race and enter your time</Text>
 
@@ -311,8 +319,56 @@ export default function InputScreen() {
 
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
           <View style={styles.mainContent}>
-            
+
+            {/* Time Input Area */}
+            <View style={styles.inputCard}>
+              <View style={styles.inputHeader}>
+                <Ionicons name="stopwatch-outline" size={18} color={colors.primary} />
+                <Text style={styles.inputActionLabel}>ENTER YOUR TIME</Text>
+              </View>
+
+              <TextInput
+                style={styles.timeInput}
+                placeholder="0:00.00"
+                placeholderTextColor={colors.textSubtle}
+                value={userTime}
+                onChangeText={handleTimeChange}
+                keyboardType="decimal-pad"
+                selectTextOnFocus={true}
+                selection={selection}
+                onSelectionChange={(e) => {
+                  if (isInternalUpdate.current) {
+                    isInternalUpdate.current = false;
+                    return;
+                  }
+                  setSelection(e.nativeEvent.selection);
+                }}
+              />
+
+              {timeError ? (
+                <Text style={styles.errorText}>{timeError}</Text>
+              ) : (
+                <Text style={styles.inputHelperText}>
+                  {"Just type digits \"4855\" → 48.55;  \"170288\" → 17:02.88"}
+                </Text>
+              )}
+
+              <Pressable
+                onPress={handleCompare}
+                style={({ pressed }) => [
+                  styles.compareBtn,
+                  (!userTime.trim() || !!timeError) && styles.compareBtnDisabled,
+                  pressed && styles.compareBtnPressed,
+                ]}
+                disabled={!userTime.trim() || !!timeError}
+              >
+                <Text style={styles.compareBtnText}>Analyze Performance</Text>
+                <Ionicons name="sparkles" size={16} color="#fff" />
+              </Pressable>
+            </View>
+
             {/* Stroke Selector */}
+            <Text style={styles.sectionLabel}></Text>
             <Text style={styles.sectionLabel}>SELECT STROKE</Text>
             <View style={styles.strokesContainer}>
               <View style={styles.strokesRow}>
@@ -359,53 +415,6 @@ export default function InputScreen() {
               </View>
             </View>
 
-            {/* Time Input Area */}
-            <View style={styles.inputCard}>
-              <View style={styles.inputHeader}>
-                <Ionicons name="stopwatch-outline" size={18} color={colors.primary} />
-                <Text style={styles.inputActionLabel}>ENTER YOUR TIME</Text>
-              </View>
-              
-              <TextInput
-                style={styles.timeInput}
-                placeholder="0:00.00"
-                placeholderTextColor={colors.textSubtle}
-                value={userTime}
-                onChangeText={handleTimeChange}
-                keyboardType="decimal-pad"
-                selectTextOnFocus={true}
-                selection={selection}
-                onSelectionChange={(e) => {
-                  if (isInternalUpdate.current) {
-                    isInternalUpdate.current = false;
-                    return;
-                  }
-                  setSelection(e.nativeEvent.selection);
-                }}
-              />
-
-              {timeError ? (
-                <Text style={styles.errorText}>{timeError}</Text>
-              ) : (
-                <Text style={styles.inputHelperText}>
-                  {"ex: type \"4855\" → 48.55, type \"170288\" → 17:02.88"}
-                </Text>
-              )}
-
-              <Pressable
-                onPress={handleCompare}
-                style={({ pressed }) => [
-                  styles.compareBtn,
-                  (!userTime.trim() || !!timeError) && styles.compareBtnDisabled,
-                  pressed && styles.compareBtnPressed,
-                ]}
-                disabled={!userTime.trim() || !!timeError}
-              >
-                <Text style={styles.compareBtnText}>Analyze Performance</Text>
-                <Ionicons name="sparkles" size={16} color="#fff" />
-              </Pressable>
-            </View>
-
             <ComingSoon />
           </View>
         </KeyboardAvoidingView>
@@ -431,7 +440,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
-  title: { fontSize: 32, fontFamily: "PublicSans-Black", fontWeight: "900", color: "white", letterSpacing: -0.5 },
+  title: {   fontSize: 32,  fontFamily: "PublicSans-Black",  fontWeight: "900",  color: "white",  letterSpacing: -0.5,},
+  titleAge: {  fontSize: 20,  color: "#FFF0B8",},
   titleState: { color: "#FFF0B8" },
   subtitle: { fontSize: 15, color: "#FFF0B8", marginTop: 4, fontFamily: "PublicSans-Medium", fontWeight: "500" },
   filterBar: { marginTop: 40, width: "100%" },
@@ -442,7 +452,7 @@ const styles = StyleSheet.create({
   filterBtnText: { color: "#FFF0B8", fontSize: 13, fontFamily: "PublicSans-Bold", fontWeight: "700" },
   filterBtnTextActive: { color: colors.primary },
 
-  mainContent: { paddingHorizontal: 16, paddingBottom: 16, paddingTop: 28 },
+  mainContent: { paddingHorizontal: 16, paddingBottom: 16, paddingTop: 20 },
   sectionLabel: { fontSize: 11, fontFamily: "PublicSans-ExtraBold", fontWeight: "800", color: colors.textSubtle, letterSpacing: 1.2, marginBottom: 10, marginTop: 8 },
   
   // Scrollers -> Now Grids
@@ -487,9 +497,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 0,
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingTop: 5,
     paddingBottom: 18,
-    marginTop: 30,
+    marginTop: 5,
     borderWidth: 1,
     borderColor: colors.border,
     shadowColor: "#000",

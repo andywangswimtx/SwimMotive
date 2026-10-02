@@ -295,7 +295,7 @@ export default function DualCutStandardView({
               const cutSecondsVal = timeToSeconds(cut.time);
               const improvement =
                 hasUserTime && cutSecondsVal !== null
-                  ? calculateImprovement(userSeconds!, cutSecondsVal, eventDistance, poolType)
+                  ? calculateImprovement(userSeconds!, cutSecondsVal, eventDistance)
                   : null;
 
               return (
@@ -377,7 +377,7 @@ export default function DualCutStandardView({
                   const cutSecondsVal = timeToSeconds(cut.time);
                   const improvement =
                     hasUserTime && cutSecondsVal !== null
-                      ? calculateImprovement(userSeconds!, cutSecondsVal, eventDistance, poolType)
+                      ? calculateImprovement(userSeconds!, cutSecondsVal, eventDistance)
                       : null;
                   const isLast = idx === cuts.length - 1;
 

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Modal,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -13,11 +13,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors as palette } from "../theme/colors";
 import { getEventDisplayName, PoolType } from "../utils/dataManager";
 import {
-  calculateImprovement,
-  getEventDistance,
-  normalizeTimeDisplay,
-  secondsToTime,
-  timeToSeconds,
+    calculateImprovement,
+    getEventDistance,
+    normalizeTimeDisplay,
+    secondsToTime,
+    timeToSeconds,
 } from "../utils/timeConverter";
 
 interface Props {
@@ -104,7 +104,7 @@ export default function SingleStandardView({
   finalTicks.push(maxTime, minTime);
 
   const improvement = hasUserTime
-    ? calculateImprovement(userSeconds!, standardTime, eventDistance, poolType)
+    ? calculateImprovement(userSeconds!, standardTime, eventDistance)
     : null;
 
   const standardPos = getPosition(standardTime);

@@ -2,7 +2,7 @@
   "expo": {
     "name": "SwimMotiv",
     "slug": "swimmotiv",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "swimmotiv",
@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.andywl.swimmotiv",
-      "buildNumber": "92026",
+      "buildNumber": "100226",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }

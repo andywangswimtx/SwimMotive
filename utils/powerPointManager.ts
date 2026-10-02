@@ -9,6 +9,9 @@ export interface PowerPointCalculationResult {
   displayPoints: string;
   isExtrapolatedHigh: boolean;
   isBelowMin: boolean;
+  // True when the official calculator has a genuine gap at this point/time
+  // (no official score exists) - never a fabricated/interpolated value.
+  isNoScore: boolean;
   table: PowerPointsTable;
 }
 
@@ -18,7 +21,8 @@ export type PowerPointCategory =
   | "competitive"
   | "developing"
   | "base"
-  | "offchart";
+  | "offchart"
+  | "unavailable";
 
 export interface PowerPointCategoryConfig {
   category: PowerPointCategory;
@@ -88,6 +92,15 @@ export const POWER_POINT_CATEGORY_STYLES: Record<
     icon: "alert-circle",
     iconLib: "Ionicons",
   },
+  unavailable: {
+    category: "unavailable",
+    label: "No Score",
+    bg: "#ffffff",
+    text: "#6b7280",
+    border: "#9ca3af",
+    icon: "help-circle",
+    iconLib: "Ionicons",
+  },
 };
 
 export function interpretPowerPoints(
@@ -99,6 +112,13 @@ export function interpretPowerPoints(
   if (!result) {
     return {
       config: POWER_POINT_CATEGORY_STYLES.developing,
+      barPercent: 0,
+    };
+  }
+
+  if (result.isNoScore) {
+    return {
+      config: POWER_POINT_CATEGORY_STYLES.unavailable,
       barPercent: 0,
     };
   }
@@ -147,6 +167,14 @@ export function getPowerPointsTable(
 /**
  * Calculate USA Swimming Power Point using linear interpolation between the
  * nearest power point levels (1100, 1000, 900, ..., 100, 10, 1).
+ *
+ * Table entries with `seconds: null` mark a genuine gap in the official
+ * calculator (no time maps to that point value). This function never
+ * interpolates through a gap or invents a value for it - it reports
+ * `isNoScore: true` instead. At the slow end, the official calculator
+ * floors at the slowest *recorded* level with no cutoff, unless that
+ * slowest level is itself a gap (e.g. scores 1-5 don't exist for some
+ * event/age combos), in which case slower times are also "no score".
  */
 export function calculatePowerPoint(
   userSeconds: number | null,
@@ -157,63 +185,105 @@ export function calculatePowerPoint(
     return null;
   }
 
+  // Build the list of genuinely-scored (non-gap) entries, remembering
+  // whether a gap was skipped immediately before each one so brackets that
+  // straddle a gap are never linearly interpolated.
+  const valid: { point: number; seconds: number }[] = [];
+  const gapBeforeValid: boolean[] = [];
+  let sawGapSincePrevValid = false;
+  for (const row of table) {
+    if (row.seconds === null) {
+      sawGapSincePrevValid = true;
+      continue;
+    }
+    valid.push({ point: row.point, seconds: row.seconds });
+    gapBeforeValid.push(sawGapSincePrevValid);
+    sawGapSincePrevValid = false;
+  }
+  if (valid.length === 0) return null;
+
+  const noScoreResult = (): PowerPointCalculationResult => ({
+    points: 0,
+    displayPoints: "—",
+    isExtrapolatedHigh: false,
+    isBelowMin: false,
+    isNoScore: true,
+    table,
+  });
+
   // Table is sorted descending by points (1100 down to 1),
   // which corresponds to ascending time in seconds (fastest first, slowest last).
-  const highest = table[0]; // point: 1100
-  const lowest = table[table.length - 1]; // point: 1
+  const highest = valid[0];
+  const lowest = valid[valid.length - 1];
+  const lowestIsGenuineFloor = table[table.length - 1].seconds !== null;
 
-  // Faster than or equal to 1100 points
+  // Faster than or equal to the fastest recorded level
   if (userSeconds <= highest.seconds) {
     if (userSeconds === highest.seconds) {
       return {
-        points: 1100,
-        displayPoints: "1100",
+        points: highest.point,
+        displayPoints: `${highest.point}`,
         isExtrapolatedHigh: false,
         isBelowMin: false,
+        isNoScore: false,
         table,
       };
     }
-    // Extrapolate above 1100 using rate between 1000 and 1100
-    const secondHighest = table[1];
-    const timeDiff = secondHighest.seconds - highest.seconds;
+    // Extrapolate above the fastest level using the rate from the next segment.
+    // Unverified against the official curve - callers should label this an estimate.
+    const secondHighest = valid[1];
+    const timeDiff = secondHighest ? secondHighest.seconds - highest.seconds : 0;
     const rate = timeDiff > 0 ? (highest.point - secondHighest.point) / timeDiff : 100;
-    const extrapolated = 1100 + (highest.seconds - userSeconds) * rate;
+    const extrapolated = highest.point + (highest.seconds - userSeconds) * rate;
     const rounded = Math.round(extrapolated);
     return {
       points: rounded,
       displayPoints: `${rounded}`,
       isExtrapolatedHigh: true,
       isBelowMin: false,
+      isNoScore: false,
       table,
     };
   }
 
-  // Slower than or equal to 1 point
+  // Slower than or equal to the slowest recorded level
   if (userSeconds >= lowest.seconds) {
     if (userSeconds === lowest.seconds) {
       return {
-        points: 1,
-        displayPoints: "1",
+        points: lowest.point,
+        displayPoints: `${lowest.point}`,
         isExtrapolatedHigh: false,
         isBelowMin: false,
+        isNoScore: false,
         table,
       };
     }
+    if (!lowestIsGenuineFloor) {
+      // The slowest level itself is a genuine gap - no score exists here.
+      return noScoreResult();
+    }
+    // Official calculator floors at the slowest recorded point with no cutoff.
     return {
-      points: 0,
-      displayPoints: "< 1",
+      points: lowest.point,
+      displayPoints: `${lowest.point}`,
       isExtrapolatedHigh: false,
-      isBelowMin: true,
+      isBelowMin: false,
+      isNoScore: false,
       table,
     };
   }
 
-  // Linear interpolation between the two bracket points
-  for (let i = 0; i < table.length - 1; i++) {
-    const fast = table[i];     // e.g. 700 pts (faster time)
-    const slow = table[i + 1]; // e.g. 600 pts (slower time)
+  // Linear interpolation between adjacent recorded (non-gap) levels
+  for (let i = 0; i < valid.length - 1; i++) {
+    const fast = valid[i];     // e.g. 700 pts (faster time)
+    const slow = valid[i + 1]; // e.g. 600 pts (slower time)
 
     if (userSeconds >= fast.seconds && userSeconds <= slow.seconds) {
+      if (gapBeforeValid[i + 1]) {
+        // A point level was skipped between these two recorded times - the
+        // real curve isn't linear here, so don't fabricate an in-between score.
+        return noScoreResult();
+      }
       const timeSpan = slow.seconds - fast.seconds;
       if (timeSpan === 0) {
         return {
@@ -221,6 +291,7 @@ export function calculatePowerPoint(
           displayPoints: `${fast.point}`,
           isExtrapolatedHigh: false,
           isBelowMin: false,
+          isNoScore: false,
           table,
         };
       }
@@ -232,6 +303,7 @@ export function calculatePowerPoint(
         displayPoints: `${rounded}`,
         isExtrapolatedHigh: false,
         isBelowMin: false,
+        isNoScore: false,
         table,
       };
     }
@@ -239,3 +311,4 @@ export function calculatePowerPoint(
 
   return null;
 }
+

@@ -202,12 +202,26 @@ function normalizeEventLabel(label: string): string {
   return label.trim().replace(/\s+/g, " ").toLowerCase();
 }
 
+// Relay rows are written with the stroke token fully capitalized ("200 FR",
+// "200 MR") while individual events use title case ("200 Fr", "200 IM" is
+// the only natural exception, but medley relay is always "MR", never "IM").
+// Check case BEFORE lowercasing so relay vs. individual can be told apart.
+function isRelayEventLabel(label: string): boolean {
+  const match = label.trim().match(/^\d+\s*([A-Za-z]+)$/);
+  if (!match) return false;
+  const strokeRaw = match[1];
+  return strokeRaw === "FR" || strokeRaw === "MR";
+}
+
 // Some datasets spell out strokes in full ("50 Freestyle") while others
 // abbreviate them ("50 Fr"). Canonicalize both to a distance+stroke code
-// (e.g. "50FR") so event lookups match regardless of label style.
+// (e.g. "50FR") so event lookups match regardless of label style. Relay rows
+// get a distinct suffix so they never collide with same-distance individual
+// events (e.g. "200 FR" relay vs. "200 Fr" individual freestyle).
 function canonicalEventKey(label: string): string {
+  const relaySuffix = isRelayEventLabel(label) ? "-RELAY" : "";
   const match = normalizeEventLabel(label).match(/^(\d+)\s*(.+)$/);
-  if (!match) return normalizeEventLabel(label);
+  if (!match) return normalizeEventLabel(label) + relaySuffix;
 
   const [, distance, strokeRaw] = match;
   const strokeMap: Record<string, string> = {
@@ -218,7 +232,7 @@ function canonicalEventKey(label: string): string {
     im: "IM", medley: "IM", "individual medley": "IM",
   };
   const strokeCode = strokeMap[strokeRaw] || strokeRaw.toUpperCase();
-  return `${distance}${strokeCode}`;
+  return `${distance}${strokeCode}${relaySuffix}`;
 }
 
 function getMotivationalAgeKey(ageGroup: AgeGroup): AgeGroup {

@@ -1,16 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useCallback, useState } from "react";
 import {
-    Image,
-    LayoutAnimation,
-    Linking,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    UIManager,
-    View,
+  Image,
+  LayoutAnimation,
+  Linking,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  UIManager,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../theme/colors";
@@ -172,11 +172,11 @@ export default function AboutScreen() {
             {/* Version pills */}
             <View style={styles.pillRow}>
               <View style={styles.pill}>
-                <Text style={styles.pillText}>App Version 0.1.1</Text>
+                <Text style={styles.pillText}>App Version 0.1.2</Text>
               </View>
               <View style={[styles.pill, styles.pillAccent]}>
                 <Text style={[styles.pillText, styles.pillAccentText]}>
-                  Build 92026
+                  Build 100226
                 </Text>
               </View>
             </View>
@@ -205,39 +205,39 @@ export default function AboutScreen() {
           items={[
             {
               label: "Texas Age Group Championships (TAGS)",
-              sub: "2026 · Texas Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+              sub: "2026 · Texas Age Group Champs (age 10&U, 11, 12, 13, 14)",
             },
             {
               label: "Illinois Age Group Championships",
-              sub: "2026 · Illinois Age Group Championship Standards (age 9&U, 10, 11, 12, 13, 14)",
+              sub: "2026 · Illinois Age Group Champs (age 9&U, 10, 11, 12, 13, 14)",
             },
             {
               label: "Central California Age Group Championships",
-              sub: "2024–2026 · Central California Age Group Championship Standards (age 9&U, 10, 11, 12, 13, 14)",
+              sub: "2024–2026 · Central California Age Group Champs (age 9&U, 10, 11, 12, 13, 14)",
             },
             {
               label: "Florida Gold Coast Age Group Championships",
-              sub: "2026–2027 · Florida Gold Coast Age Group Championship Standards (age 9&U, 10, 11, 12, 13, 14)",
+              sub: "2026–2027 · Florida Gold Coast Age Group Champs (age 9&U, 10, 11, 12, 13, 14)",
             },
             {
               label: "Florida Age Group Championships",
-              sub: "2026 · Florida Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+              sub: "2026 · Florida Age Group Champs (age 10&U, 11, 12, 13, 14)",
             },
             {
-              label: "Louisiana State Championships",
-              sub: "2026 · Louisiana State Championship Standards (age 9&U, 10, 11, 12, 13, 14)",
+              label: "Louisiana Age Group Championships",
+              sub: "2026 · Louisiana Age Group Champs (age 9&U, 10, 11, 12, 13, 14)",
             },
             {
               label: "Middle Atlantic Age Group Championships",
-              sub: "2027 · Middle Atlantic Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+              sub: "2027 · Middle Atlantic Age Group Champs (age 10&U, 11, 12, 13, 14)",
             },
             {
               label: "Pacific Age Group Championships",
-              sub: "2026–2027 · Pacific Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+              sub: "2026–2027 · Pacific Age Group Champs (age 10&U, 11, 12, 13, 14)",
             },
             {
               label: "Potomac Valley Age Group Championships",
-              sub: "2027 · Potomac Valley Age Group Championship Standards (age 10&U, 11, 12, 13, 14)",
+              sub: "2027 · Potomac Valley Age Group Champs (age 10&U, 11, 12, 13, 14)",
             },
           ]}
         />

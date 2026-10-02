@@ -8,7 +8,9 @@
 
 export interface PowerPointLevelTime {
   point: number;
-  seconds: number;
+  // null marks a genuine gap in the official USA Swimming calculator (no
+  // time maps to this exact point value) - never a fabricated/interpolated time.
+  seconds: number | null;
   timeDisplay: string;
 }
 
@@ -443,8 +445,8 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 1000,
-            "seconds": 34.38,
-            "timeDisplay": "34.38"
+            "seconds": 34.39,
+            "timeDisplay": "34.39"
           },
           {
             "point": 900,
@@ -463,8 +465,8 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 600,
-            "seconds": 42.2,
-            "timeDisplay": "42.20"
+            "seconds": 42.21,
+            "timeDisplay": "42.21"
           },
           {
             "point": 500,
@@ -478,8 +480,8 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 300,
-            "seconds": 49.28,
-            "timeDisplay": "49.28"
+            "seconds": 49.29,
+            "timeDisplay": "49.29"
           },
           {
             "point": 200,
@@ -706,8 +708,8 @@ export const POWER_POINTS_DATA: Record<
         "100_IM": [
           {
             "point": 1100,
-            "seconds": 64.6,
-            "timeDisplay": "1:04.60"
+            "seconds": 64.62,
+            "timeDisplay": "1:04.62"
           },
           {
             "point": 1000,
@@ -731,13 +733,13 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 600,
-            "seconds": 80.6,
-            "timeDisplay": "1:20.60"
+            "seconds": 80.63,
+            "timeDisplay": "1:20.63"
           },
           {
             "point": 500,
-            "seconds": 84.4,
-            "timeDisplay": "1:24.40"
+            "seconds": 84.43,
+            "timeDisplay": "1:24.43"
           },
           {
             "point": 400,
@@ -751,8 +753,8 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 200,
-            "seconds": 98.4,
-            "timeDisplay": "1:38.40"
+            "seconds": 98.42,
+            "timeDisplay": "1:38.42"
           },
           {
             "point": 100,
@@ -761,8 +763,8 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 10,
-            "seconds": 114.81,
-            "timeDisplay": "1:54.81"
+            "seconds": 114.78,
+            "timeDisplay": "1:54.78"
           },
           {
             "point": 1,
@@ -6939,8 +6941,8 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 10,
-            "seconds": 60.43,
-            "timeDisplay": "1:00.43"
+            "seconds": 60.5,
+            "timeDisplay": "1:00.50"
           },
           {
             "point": 1,
@@ -8013,8 +8015,8 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 10,
-            "seconds": 107.9,
-            "timeDisplay": "1:47.90"
+            "seconds": null,
+            "timeDisplay": "Unavailable"
           },
           {
             "point": 1,
@@ -12733,7 +12735,7 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 900,
-            "seconds": 56.331,
+            "seconds": 56.33,
             "timeDisplay": "56.33"
           },
           {
@@ -22591,8 +22593,8 @@ export const POWER_POINTS_DATA: Record<
           },
           {
             "point": 1,
-            "seconds": 244.78,
-            "timeDisplay": "4:04.78"
+            "seconds": null,
+            "timeDisplay": "Unavailable"
           }
         ],
         "200_IM": [
