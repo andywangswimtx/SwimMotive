@@ -287,9 +287,9 @@ export default function InputScreen() {
         <View style={[styles.header, { paddingTop: Math.max(insets.top, 18) }]}>
           <Text style={styles.title}>
             SwimMotiv{" "}
-            <Text style={styles.titleAge}> [Age 14&U]</Text>
+            <Text style={styles.titleAge}> [ Age 14&U ]</Text>
           </Text>
-          <Text style={styles.subtitle}>Select your race and enter your time</Text>
+          <Text style={styles.subtitle}>Enter your time and select your event</Text>
 
           <View style={styles.filterBar}>
             <View style={styles.filterRow}>

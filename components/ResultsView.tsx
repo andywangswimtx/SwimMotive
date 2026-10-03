@@ -6,14 +6,14 @@ import { Alert, DeviceEventEmitter, Platform, Pressable, ScrollView, StyleSheet,
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
-    AGC_SOURCES,
-    AgeGroup,
-    Gender,
-    getAGCStandard,
-    getEventDisplayName,
-    getMotivationalStandards,
-    getTagStandards,
-    PoolType
+  AGC_SOURCES,
+  AgeGroup,
+  Gender,
+  getAGCStandard,
+  getEventDisplayName,
+  getMotivationalStandards,
+  getTagStandards,
+  PoolType
 } from "../utils/dataManager";
 
 import { colors } from "../theme/colors";
@@ -356,8 +356,8 @@ export default function ResultsView({
       <View style={[styles.header, { paddingTop: Math.max(insets.top, 14) }]}>
         <View style={styles.headerTop}>
           <View>
-            <Text style={styles.headerTitle}>Swim Standards</Text>
-            <Text style={styles.headerSubtitle}>tap on a standard to see details</Text>
+            <Text style={styles.headerTitle}>Select a Standard</Text>
+            <Text style={styles.headerSubtitle}>Tap on a standard to see Comparison</Text>
           </View>
           <Pressable onPress={onBackToInput} style={styles.headerBackBtn}>
             <Ionicons name="chevron-back" size={20} color="#fff" />
@@ -470,6 +470,7 @@ export default function ResultsView({
                 ]}
               />
             </View>
+            <Text style={styles.ppHint}>Tap PowerPoint card for details</Text>
           </Pressable>
         ) : (
           <View style={styles.piUnavailable}>
@@ -591,12 +592,12 @@ const styles = StyleSheet.create({
 
   // ── Section labels ──
   sectionLabel: {
-    fontSize: 12,
+    fontSize: 16,
     fontFamily: "PublicSans-ExtraBold",
     fontWeight: "800",
     color: colors.textSubtle,
     letterSpacing: 1.2,
-    marginTop: 20,
+    marginTop: 12,
     marginBottom: 10,
     marginLeft: 4,
   },
@@ -655,6 +656,7 @@ const styles = StyleSheet.create({
   ppScoreRow: {
     flexDirection: "row",
     alignItems: "baseline",
+    justifyContent: "center",
     marginTop: 2,
     marginBottom: 8,
   },
@@ -681,6 +683,14 @@ const styles = StyleSheet.create({
   ppProgressFill: {
     height: "100%",
   },
+  ppHint: {
+    fontSize: 12,
+    fontFamily: "PublicSans-Medium",
+    fontWeight: "500",
+    color: colors.textSubtle,
+    textAlign: "center",
+    marginTop: 8,
+  },
   piUnavailable: {
     flexDirection: "row",
     alignItems: "center",
@@ -704,9 +714,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    padding: 14,
+    padding: 12,
     borderRadius: 0,
-    marginBottom: 10,
+    marginBottom: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
@@ -764,4 +774,3 @@ const styles = StyleSheet.create({
     fontFamily: "PublicSans-SemiBold",
     fontWeight: "600",
   },});
-

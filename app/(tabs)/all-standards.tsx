@@ -2,28 +2,28 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-    DeviceEventEmitter,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  DeviceEventEmitter,
+  Linking,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ComingSoon from "../../components/ComingSoon";
 import { colors } from "../../theme/colors";
 import {
-    AGC_SOURCES,
-    agcSourceSupportsCourse,
-    AgeGroup,
-    Gender,
-    getAGCStandard,
-    getEventsForPoolType,
-    getMotivationalStandards,
-    getTagStandards,
-    PoolType,
-    tagSupportsCourse
+  AGC_SOURCES,
+  agcSourceSupportsCourse,
+  AgeGroup,
+  Gender,
+  getAGCStandard,
+  getEventsForPoolType,
+  getMotivationalStandards,
+  getTagStandards,
+  PoolType,
+  tagSupportsCourse
 } from "../../utils/dataManager";
 
 const getStrokeColor = (event: string): string => {
@@ -108,7 +108,7 @@ export default function AllStandardsScreen() {
 
   const renderSelection = () => (
     <ScrollView contentContainerStyle={styles.scrollContent}>
-      <Text style={styles.sectionTitle}>Championship Standards</Text>
+      <Text style={styles.sectionTitle}>Age Group Championship (AGC) Standards</Text>
       {STANDARDS_CONFIG.map((config) => {
         const isSupported = config.supportsCourse(poolType);
         return (
@@ -135,7 +135,16 @@ export default function AllStandardsScreen() {
           </Pressable>
         );
       })}
-      <ComingSoon style={{ marginTop: 10 }} />
+      <Text style={styles.slcNote}>
+        {"** To add your SLC standards to the app, email "}
+        <Text
+          style={styles.slcEmail}
+          onPress={() => Linking.openURL("mailto:andywang.swimtx@gmail.com")}
+        >
+          andywang.swimtx@gmail.com
+        </Text>
+        .
+      </Text>
     </ScrollView>
   );
 
@@ -373,28 +382,39 @@ const styles = StyleSheet.create({
   filterBtnText: { color: "#FFF0B8", fontSize: 13, fontWeight: "700", fontFamily: "PublicSans-Bold" },
   filterBtnTextActive: { color: colors.primary },
 
-  scrollContent: { padding: 20 },
+  scrollContent: { padding: 12 },
   listCard: { 
     flexDirection: "row", 
     alignItems: "center", 
     backgroundColor: colors.surface, 
     borderRadius: 0, 
-    padding: 16, 
-    marginBottom: 12,
+    padding: 10, 
+    marginBottom: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 2,
   },
-  listIcon: { padding: 12, borderRadius: 0, marginRight: 16 },
+  listIcon: { padding: 8, borderRadius: 0, marginRight: 12 },
   listTitle: { fontSize: 16, fontWeight: "800", color: colors.text, fontFamily: "PublicSans-ExtraBold" },
   listTitleDisabled: { color: colors.textSubtle },
   listSub: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
   arrowIcon: { backgroundColor: colors.surfaceWarm, padding: 8, borderRadius: 0 },
   listCardDisabled: { opacity: 0.5 },
+  slcNote: {
+    color: colors.textMuted,
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 8,
+    marginHorizontal: 4,
+  },
+  slcEmail: {
+    color: colors.primary,
+    textDecorationLine: "underline",
+  },
 
-  sectionTitle: { fontSize: 13, fontWeight: "800", color: colors.textSubtle, letterSpacing: 1, marginBottom: 12, marginLeft: 4, marginTop: 8, fontFamily: "PublicSans-ExtraBold" },
+  sectionTitle: { fontSize: 16, fontWeight: "800", color: colors.textSubtle, letterSpacing: 1, marginBottom: 12, marginLeft: 4, marginTop: 8, fontFamily: "PublicSans-ExtraBold" },
 
   detailHeader: { flexDirection: "row", alignItems: "center", padding: 16, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.divider },
   backBtn: { marginRight: 12 },
@@ -442,4 +462,3 @@ const styles = StyleSheet.create({
     borderRightColor: colors.border,
     fontFamily: "PublicSans-SemiBold",
   },});
-

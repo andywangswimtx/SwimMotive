@@ -1,26 +1,26 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-    Modal,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../theme/colors";
 import type { Gender, PoolType } from "../utils/dataManager";
 import {
-    getEventDisplayName,
-    MotivationalStandards,
+  getEventDisplayName,
+  MotivationalStandards,
 } from "../utils/dataManager";
 import {
-    calculateImprovement,
-    getEventDistance,
-    normalizeTimeDisplay,
-    secondsToTime,
-    timeToSeconds,
+  calculateImprovement,
+  getEventDistance,
+  normalizeTimeDisplay,
+  secondsToTime,
+  timeToSeconds,
 } from "../utils/timeConverter";
 
 interface Props {
@@ -148,7 +148,7 @@ export default function MotivationalStandardsView({
           <Text style={styles.backText}>← Back to Selection Page</Text>
         </Pressable>
 
-        <Text style={styles.title}>USA Swimming Motivational Levels</Text>
+        <Text style={styles.title}>USA Motivational Levels</Text>
         <Text style={styles.subtitle}>
           {gender} · {ageGroup} · {poolType} · {getEventDisplayName(event)}
         </Text>
@@ -382,6 +382,15 @@ export default function MotivationalStandardsView({
             </View>
           </View>
         </View>
+        <Pressable
+          onPress={onBack}
+          style={({ pressed }) => [
+            styles.closeButton,
+            pressed && styles.closeButtonPressed,
+          ]}
+        >
+          <Text style={styles.closeButtonText}>Close</Text>
+        </Pressable>
       </ScrollView>
 
       {/* Modal */}
@@ -504,6 +513,21 @@ const styles = StyleSheet.create({
   subtitle: { color: "#FFF0B8", fontSize: 13, marginTop: 4, fontWeight: "500" },
 
   scrollContent: { padding: 16, paddingBottom: 40 },
+  closeButton: {
+    alignSelf: "flex-end",
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    marginTop: 16,
+  },
+  closeButtonPressed: { opacity: 0.85 },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+  },
 
   card: {
     backgroundColor: colors.surface,
@@ -790,4 +814,3 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
 });
-

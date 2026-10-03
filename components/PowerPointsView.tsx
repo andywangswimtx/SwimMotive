@@ -328,6 +328,16 @@ export default function PowerPointsView({
             })}
           </View>
         </View>
+
+        <Pressable
+          onPress={onBack}
+          style={({ pressed }) => [
+            styles.closeButton,
+            pressed && styles.closeButtonPressed,
+          ]}
+        >
+          <Text style={styles.closeButtonText}>Close</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -474,6 +484,7 @@ const styles = StyleSheet.create({
   ppScoreRow: {
     flexDirection: "row",
     alignItems: "baseline",
+    justifyContent: "center",
     marginTop: 2,
     marginBottom: 8,
   },
@@ -499,6 +510,23 @@ const styles = StyleSheet.create({
   },
   ppProgressFill: {
     height: "100%",
+  },
+  closeButton: {
+    alignSelf: "flex-end",
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    marginTop: 16,
+  },
+  closeButtonPressed: {
+    opacity: 0.85,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
   },
 
   // Table Card

@@ -66,14 +66,14 @@ export interface AgcSource {
 // import its data above and append an entry here.
 export const AGC_SOURCES: AgcSource[] = [
   { id: "il", label: "Illinois AGC", meetName: "2026 Illinois AGC Championships", data: IL_AGC_STANDARDS },
-  { id: "ca-central", label: "Central California AGC", meetName: "2024–2026 Central California AGC Championships", data: CA_CENTRAL_AGC_STANDARDS },
-  { id: "fl-gold-coast", label: "FL Gold Coast AGC", meetName: "2026–2027 Florida Gold Coast AGC Championships", data: FL_GOLD_COAST_AG_STANDARDS },
+  { id: "ca-central", label: "Central California AGC", meetName: "2026 Central California AGC", data: CA_CENTRAL_AGC_STANDARDS },
+  { id: "fl-gold-coast", label: "Gold Coast Florida AGC", meetName: "2027 Florida Gold Coast AGC", data: FL_GOLD_COAST_AG_STANDARDS },
   { id: "fl", label: "Florida AGC", meetName: "2026 Florida Age Group Championships", data: FL_AGE_GROUP_CHAMPS_2026_STANDARDS },
-  { id: "la", label: "Louisiana State Champs", meetName: "2026 Louisiana State Championships", data: LOUISIANA_STATE_CHAMPIONSHIP_STANDARDS },
-  { id: "ma", label: "Middle Atlantic AGC", meetName: "2027 Middle Atlantic AGC Championships", data: MA_AGC_STANDARDS },
-  { id: "ncsa", label: "NCSA AGC", meetName: "2027 NCSA Age Group Championships", data: NCSA_AGC_STANDARDS },
-  { id: "pacific", label: "Pacific AGC", meetName: "2026–2027 Pacific Swimming AGC Championships", data: PACIFIC_AGC_STANDARDS_2026_2027 },
-  { id: "pvs", label: "Potomac Valley AGC", meetName: "2027 Potomac Valley Age Group Championships", data: PVS_AGC_STANDARDS },
+  { id: "la", label: "Louisiana State Champs", meetName: "2026 Louisiana State AGC", data: LOUISIANA_STATE_CHAMPIONSHIP_STANDARDS },
+  { id: "ma", label: "Middle Atlantic AGC", meetName: "2027 Middle Atlantic AGC", data: MA_AGC_STANDARDS },
+  { id: "ncsa", label: "NCSA AGC", meetName: "2027 NCSA Age Group Champs", data: NCSA_AGC_STANDARDS },
+  { id: "pacific", label: "Pacific California AGC", meetName: "2027 Pacific Swimming AGC", data: PACIFIC_AGC_STANDARDS_2026_2027 },
+  { id: "pvs", label: "Potomac Valley AGC", meetName: "2027 Potomac Valley AGC", data: PVS_AGC_STANDARDS },
 ];
 
 export interface TagStandardResult {
@@ -387,8 +387,8 @@ export function getTagStandards(
 }
 
 export {
-    calculatePowerPoint,
-    getPowerPointsTable
+  calculatePowerPoint,
+  getPowerPointsTable
 } from "./powerPointManager";
 export type { PowerPointCalculationResult } from "./powerPointManager";
 

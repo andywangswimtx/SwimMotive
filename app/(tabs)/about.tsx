@@ -56,6 +56,7 @@ interface AccordionProps {
   iconBg: string;
   items: SectionItem[];
   children?: React.ReactNode;
+  compact?: boolean;
 }
 
 interface InfoRowProps {
@@ -73,6 +74,7 @@ const AccordionSection = ({
   iconBg,
   items,
   children,
+  compact = false,
 }: AccordionProps) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -84,7 +86,12 @@ const AccordionSection = ({
   return (
     <Pressable
       onPress={toggle}
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      style={({ pressed }) => [
+        styles.card,
+        styles.dataSourceCard,
+        compact && styles.compactDataSourceCard,
+        pressed && styles.cardPressed,
+      ]}
     >
       <View style={styles.cardRow}>
         <View style={[styles.iconBubble, { backgroundColor: iconBg }]}>
@@ -184,13 +191,16 @@ export default function AboutScreen() {
         </View>
 
         {/* ────── Data Sources ────── */}
-        <Text style={styles.sectionLabel}>DATA SOURCES</Text>
+        <Text style={[styles.sectionLabel, styles.dataSourcesLabel]}>
+          DATA SOURCES
+        </Text>
 
         <AccordionSection
           title="USA Swimming Standards"
           icon="medal"
           iconColor={colors.primaryPressed}
           iconBg="#FFE2B6"
+          compact
           items={[
             { label: "Motivational Standards", sub: "2024-2028 · USA Swimming (age 10, 11, 12, 13, 14)" },
             { label: "NCSA Age Group Championships", sub: "2027 · NCSA Age Group Championship Standards (age 11&U, 12, 13, 14)" },
@@ -202,6 +212,7 @@ export default function AboutScreen() {
           icon="trophy"
           iconColor={colors.primary}
           iconBg={colors.accentSoft}
+          compact
           items={[
             {
               label: "Texas Age Group Championships (TAGS)",
@@ -258,7 +269,7 @@ export default function AboutScreen() {
           <InfoRow
             icon="hardware-chip"
             label="Platform"
-            value="iOS · Android"
+            value="iOS  •  Android"
           />
         </View>
 
@@ -269,7 +280,7 @@ export default function AboutScreen() {
             Made by a high school swimmer
           </Text>
           <Text style={styles.footerCopy}>
-            © 2026 SwimMotiv. All rights reserved.
+            © 2026 SwimMotiv   •   All rights reserved.
           </Text>
         </View>
       </ScrollView>
@@ -372,6 +383,11 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 10,
   },
+  dataSourcesLabel: {
+    paddingHorizontal: 6,
+    paddingTop: 12,
+    paddingBottom: 6,
+  },
 
   // Cards
   card: {
@@ -387,6 +403,12 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  dataSourceCard: {
+    padding: 22,
+  },
+  compactDataSourceCard: {
+    paddingVertical: 18,
   },
   infoCard: {
     paddingTop: 6,
@@ -515,4 +537,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 6,
   },});
-

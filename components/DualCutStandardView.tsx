@@ -350,6 +350,15 @@ export default function DualCutStandardView({
             })}
           </View>
         </View>
+        <Pressable
+          onPress={onBack}
+          style={({ pressed }) => [
+            styles.closeButton,
+            pressed && styles.closeButtonPressed,
+          ]}
+        >
+          <Text style={styles.closeButtonText}>Close</Text>
+        </Pressable>
       </ScrollView>
 
       {/* Modal */}
@@ -480,6 +489,21 @@ const styles = StyleSheet.create({
   },
 
   scrollContent: { padding: 16, paddingBottom: 40 },
+  closeButton: {
+    alignSelf: "flex-end",
+    alignItems: "center",
+    backgroundColor: palette.primary,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    marginTop: 16,
+  },
+  closeButtonPressed: { opacity: 0.85 },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontFamily: "PublicSans-Bold",
+    fontWeight: "700",
+  },
 
   card: {
     backgroundColor: palette.surface,
